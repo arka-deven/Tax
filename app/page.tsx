@@ -330,135 +330,206 @@ export default function Home() {
   const warnings = active?.result?.diagnostics.filter((d) => d.severity === "warning") ?? [];
   const infos = active?.result?.diagnostics.filter((d) => d.severity === "info") ?? [];
 
-  // ── No companies yet → Connect screen ─────────────────────────────────────
+  // ── Onboarding step for new company or no companies ─────────────────────────
+  // Determine which onboarding step we're on:
+  // 0 = no companies (show connect)
+  // 1 = company connected but no type (choosingTypeFor set)
+  // 2 = type chosen but EIN/details missing (pendingType set)
+  const onboardingCompany = pendingType
+    ? companies.find((c) => c.id === pendingType.companyId)
+    : choosingTypeFor
+    ? companies.find((c) => c.id === choosingTypeFor)
+    : null;
+  const onboardingStep = companies.length === 0 ? 0 : pendingType ? 2 : choosingTypeFor ? 1 : -1;
 
-  if (companies.length === 0) {
+  if (onboardingStep >= 0) {
+    const steps = [
+      { num: 1, label: "Connect QBO" },
+      { num: 2, label: "Entity Type" },
+      { num: 3, label: "Company Details" },
+    ];
+    const currentStep = onboardingStep === 0 ? 1 : onboardingStep === 1 ? 2 : 3;
+
     return (
-      <div className="flex h-screen items-center justify-center bg-(--linen)">
-        <BlurFade delay={0}>
-          <div className="flex flex-col items-center gap-6 max-w-sm text-center px-6">
-            <div className="w-12 h-12 rounded-2xl bg-(--powder-petal) flex items-center justify-center">
-              <FileText size={22} className="text-[#8a7e74]" />
-            </div>
-            <div>
-              <h1 className="text-xl font-semibold text-[#3d3229] tracking-tight">Tax</h1>
-              <p className="text-[#a89f97] text-sm mt-1">Connect your QuickBooks Online account to get started.</p>
-            </div>
-            <button onClick={connectQBO} className="flex items-center gap-2 bg-[#2CA01C] hover:bg-[#248518] text-white text-sm font-semibold px-6 py-3 rounded-xl transition-colors shadow-sm">
-              <Plug size={15} /> Connect QuickBooks Online
-            </button>
-            <p className="text-[#c4bab2] text-xs">Your books are read-only. We never write to QuickBooks.</p>
-          </div>
-        </BlurFade>
-      </div>
-    );
-  }
-
-  // ── Entity type chooser (inline overlay) ──────────────────────────────────
-
-  if (pendingType) {
-    const co = companies.find((c) => c.id === pendingType.companyId);
-    const typeLabel = ENTITY_OPTIONS.find((o) => o.value === pendingType.type)?.label ?? "";
-    return (
-      <div className="flex h-screen items-center justify-center bg-(--linen)">
-        <BlurFade delay={0}>
-          <div className="flex flex-col gap-5 max-w-sm w-full px-6">
-            <div>
-              <div className="flex items-center gap-2 mb-1">
-                <span className="w-2 h-2 rounded-full bg-emerald-400" />
-                <span className="text-xs text-emerald-600 font-medium">{co?.name ?? "Company"} · {typeLabel}</span>
+      <div className="flex h-screen bg-(--linen)">
+        {/* Left — branding */}
+        <div className="hidden lg:flex w-96 bg-(--parchment) flex-col justify-between p-10">
+          <div>
+            <div className="flex items-center gap-3 mb-12">
+              <div className="w-10 h-10 rounded-xl bg-[#3d3229] flex items-center justify-center">
+                <FileText size={20} className="text-white" />
               </div>
-              <h2 className="text-lg font-semibold text-[#3d3229]">Enter your EIN</h2>
-              <p className="text-[#a89f97] text-sm mt-0.5">
-                Your Employer Identification Number is required on every tax return. QBO didn't have it on file.
-              </p>
+              <span className="text-xl font-bold text-[#3d3229]">Tax</span>
             </div>
-            <div>
-              <input
-                type="text"
-                value={einInput}
-                onChange={(e) => {
-                  const v = e.target.value.replace(/[^0-9-]/g, "");
-                  // Auto-format: XX-XXXXXXX
-                  if (v.length === 2 && !v.includes("-") && einInput.length < v.length) {
-                    setEinInput(v + "-");
-                  } else {
-                    setEinInput(v.slice(0, 10));
-                  }
-                }}
-                placeholder="XX-XXXXXXX"
-                className="w-full px-4 py-3 rounded-xl border border-(--dust-grey) bg-(--parchment) text-[#3d3229] font-mono text-lg tracking-wider placeholder:text-[#c4bab2] focus:border-(--almond-silk) focus:outline-none transition-colors"
-              />
-              <p className="text-[10px] text-[#a89f97] mt-1.5 px-1">9-digit number issued by the IRS (format: XX-XXXXXXX)</p>
-            </div>
-            <div className="flex gap-2">
-              <button onClick={() => { setPendingType(null); setEinInput(""); setChoosingTypeFor(pendingType.companyId); }}
-                className="px-4 py-2.5 rounded-xl border border-(--dust-grey) text-sm text-[#8a7e74] hover:bg-(--parchment) transition-colors">
-                Back
-              </button>
-              <button
-                onClick={() => {
-                  if (co) updateCompany(co.id, { ein: einInput });
-                  const pt = pendingType;
-                  setPendingType(null);
-                  setEinInput("");
-                  autoFillCompany(pt.companyId, pt.type);
-                }}
-                disabled={einInput.replace(/-/g, "").length < 9}
-                className="flex-1 px-4 py-2.5 rounded-xl bg-[#3d3229] text-white text-sm font-semibold disabled:opacity-40 hover:bg-[#5a4a3f] transition-colors">
-                Continue
-              </button>
-            </div>
-            <button
-              onClick={() => {
-                const pt = pendingType;
-                setPendingType(null);
-                setEinInput("");
-                autoFillCompany(pt.companyId, pt.type);
-              }}
-              className="text-xs text-[#a89f97] hover:text-[#6b5e52] transition-colors text-center">
-              Skip — I'll add EIN later in the form
-            </button>
+            <h2 className="text-2xl font-bold text-[#3d3229] leading-tight">Automated tax<br />preparation from<br />your books.</h2>
+            <p className="text-sm text-[#8a7e74] mt-4 leading-relaxed">Connect QuickBooks, select your entity type, and we'll prepare every IRS form automatically.</p>
           </div>
-        </BlurFade>
-      </div>
-    );
-  }
-
-  if (choosingTypeFor) {
-    const co = companies.find((c) => c.id === choosingTypeFor);
-    return (
-      <div className="flex h-screen items-center justify-center bg-(--linen)">
-        <BlurFade delay={0}>
-          <div className="flex flex-col gap-5 max-w-sm w-full px-6">
-            <div>
-              <div className="flex items-center gap-2 mb-1">
-                <span className="w-2 h-2 rounded-full bg-emerald-400" />
-                <span className="text-xs text-emerald-600 font-medium">{co?.name ?? "QuickBooks"} connected</span>
+          <div className="space-y-3">
+            {steps.map((s) => (
+              <div key={s.num} className="flex items-center gap-3">
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold transition-colors ${
+                  s.num < currentStep ? "bg-emerald-100 text-emerald-700"
+                  : s.num === currentStep ? "bg-[#3d3229] text-white"
+                  : "bg-(--powder-petal) text-[#a89f97]"
+                }`}>
+                  {s.num < currentStep ? <CheckCircle2 size={16} /> : s.num}
+                </div>
+                <span className={`text-sm ${s.num === currentStep ? "text-[#3d3229] font-semibold" : "text-[#a89f97]"}`}>{s.label}</span>
               </div>
-              <h2 className="text-lg font-semibold text-[#3d3229]">What type of entity is this?</h2>
-              <p className="text-[#a89f97] text-sm mt-0.5">This determines which IRS forms apply. Forms will auto-fill from QBO data.</p>
-            </div>
-            <div className="space-y-2">
-              {ENTITY_OPTIONS.map((opt) => (
-                <button key={opt.value} onClick={() => {
-                  const company = companies.find((c) => c.id === choosingTypeFor);
-                  if (!company?.ein) {
-                    // EIN missing — prompt for it before auto-filling
-                    setPendingType({ companyId: choosingTypeFor, type: opt.value });
-                    setChoosingTypeFor(null);
-                  } else {
-                    autoFillCompany(choosingTypeFor, opt.value);
-                  }
-                }}
-                  className="w-full flex items-center justify-between px-4 py-3 rounded-xl border border-(--dust-grey) hover:border-(--almond-silk) hover:bg-(--parchment) transition-colors text-left">
-                  <div><p className="text-sm font-medium text-[#4a3f35]">{opt.label}</p><p className="text-xs text-[#a89f97]">{opt.sub}</p></div>
-                  <ChevronRight size={14} className="text-[#c4bab2]" />
-                </button>
-              ))}
-            </div>
+            ))}
           </div>
-        </BlurFade>
+        </div>
+
+        {/* Right — form area */}
+        <div className="flex-1 flex items-center justify-center p-8">
+          <BlurFade delay={0} key={currentStep}>
+            <div className="w-full max-w-md">
+
+              {/* Step 1: Connect QBO */}
+              {currentStep === 1 && (
+                <div className="text-center">
+                  <div className="w-16 h-16 rounded-2xl bg-(--parchment) flex items-center justify-center mx-auto mb-6 shadow-sm">
+                    <Plug size={28} className="text-[#8a7e74]" />
+                  </div>
+                  <h2 className="text-2xl font-bold text-[#3d3229]">Connect QuickBooks</h2>
+                  <p className="text-[#8a7e74] text-sm mt-2 mb-8">We'll read your chart of accounts and transactions to prepare your tax returns.</p>
+                  <button onClick={connectQBO} className="flex items-center gap-2.5 mx-auto bg-[#2CA01C] hover:bg-[#248518] text-white text-sm font-semibold px-8 py-3.5 rounded-xl transition-colors shadow-sm">
+                    <Plug size={16} /> Connect QuickBooks Online
+                  </button>
+                  <p className="text-[#c4bab2] text-xs mt-4">Read-only access. We never modify your books.</p>
+                </div>
+              )}
+
+              {/* Step 2: Entity Type */}
+              {currentStep === 2 && (
+                <div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="w-2 h-2 rounded-full bg-emerald-400" />
+                    <span className="text-xs text-emerald-600 font-medium">{onboardingCompany?.name ?? "Company"} connected</span>
+                  </div>
+                  <h2 className="text-2xl font-bold text-[#3d3229]">Entity Type</h2>
+                  <p className="text-[#8a7e74] text-sm mt-1 mb-6">This determines which IRS forms apply.</p>
+                  <div className="space-y-2">
+                    {ENTITY_OPTIONS.map((opt) => (
+                      <button key={opt.value} onClick={() => {
+                        const company = companies.find((c) => c.id === choosingTypeFor);
+                        if (!company?.ein) {
+                          setPendingType({ companyId: choosingTypeFor!, type: opt.value });
+                          setChoosingTypeFor(null);
+                        } else {
+                          autoFillCompany(choosingTypeFor!, opt.value);
+                        }
+                      }}
+                        className="w-full flex items-center justify-between px-4 py-3.5 rounded-xl border border-(--dust-grey) hover:border-(--almond-silk) hover:bg-(--parchment) transition-all text-left group">
+                        <div>
+                          <p className="text-sm font-semibold text-[#3d3229] group-hover:text-[#3d3229]">{opt.label}</p>
+                          <p className="text-xs text-[#a89f97]">{opt.sub}</p>
+                        </div>
+                        <ChevronRight size={14} className="text-[#c4bab2] group-hover:text-[#8a7e74] transition-colors" />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Step 3: Company Details (EIN + manual fields) */}
+              {currentStep === 3 && (() => {
+                const typeLabel = ENTITY_OPTIONS.find((o) => o.value === pendingType?.type)?.label ?? "";
+                return (
+                  <div>
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="w-2 h-2 rounded-full bg-emerald-400" />
+                      <span className="text-xs text-emerald-600 font-medium">{onboardingCompany?.name} · {typeLabel}</span>
+                    </div>
+                    <h2 className="text-2xl font-bold text-[#3d3229]">Company Details</h2>
+                    <p className="text-[#8a7e74] text-sm mt-1 mb-6">These fields are required on tax returns but aren't stored in QuickBooks.</p>
+
+                    <div className="space-y-4">
+                      {/* EIN */}
+                      <div>
+                        <label className="text-xs font-semibold text-[#5a4a3f] block mb-1.5">EIN (Employer Identification Number) *</label>
+                        <input type="text" value={einInput}
+                          onChange={(e) => {
+                            const v = e.target.value.replace(/[^0-9-]/g, "");
+                            if (v.length === 2 && !v.includes("-") && einInput.length < v.length) setEinInput(v + "-");
+                            else setEinInput(v.slice(0, 10));
+                          }}
+                          placeholder="XX-XXXXXXX"
+                          className="w-full px-4 py-3 rounded-xl border border-(--dust-grey) bg-(--linen) text-[#3d3229] font-mono tracking-wider placeholder:text-[#c4bab2] focus:border-(--almond-silk) focus:outline-none transition-colors" />
+                      </div>
+
+                      {/* Date Incorporated / Business Start Date */}
+                      <div className="grid grid-cols-2 gap-3">
+                        <div>
+                          <label className="text-xs font-semibold text-[#5a4a3f] block mb-1.5">
+                            {pendingType?.type === "sole_prop" || pendingType?.type === "llc_single" ? "Business Start Date" : "Date Incorporated"}
+                          </label>
+                          <input type="date"
+                            className="w-full px-3 py-3 rounded-xl border border-(--dust-grey) bg-(--linen) text-[#3d3229] text-sm focus:border-(--almond-silk) focus:outline-none transition-colors" />
+                        </div>
+                        <div>
+                          <label className="text-xs font-semibold text-[#5a4a3f] block mb-1.5">State</label>
+                          <input type="text" placeholder="e.g. DE" maxLength={2}
+                            className="w-full px-3 py-3 rounded-xl border border-(--dust-grey) bg-(--linen) text-[#3d3229] text-sm uppercase placeholder:text-[#c4bab2] focus:border-(--almond-silk) focus:outline-none transition-colors" />
+                        </div>
+                      </div>
+
+                      {/* NAICS / Business Activity */}
+                      <div>
+                        <label className="text-xs font-semibold text-[#5a4a3f] block mb-1.5">Principal Business Activity</label>
+                        <input type="text" placeholder="e.g. Software Development"
+                          className="w-full px-4 py-3 rounded-xl border border-(--dust-grey) bg-(--linen) text-[#3d3229] text-sm placeholder:text-[#c4bab2] focus:border-(--almond-silk) focus:outline-none transition-colors" />
+                      </div>
+
+                      {/* S-Corp specific */}
+                      {pendingType?.type === "s_corp" && (
+                        <div>
+                          <label className="text-xs font-semibold text-[#5a4a3f] block mb-1.5">S-Election Effective Date</label>
+                          <input type="date"
+                            className="w-full px-3 py-3 rounded-xl border border-(--dust-grey) bg-(--linen) text-[#3d3229] text-sm focus:border-(--almond-silk) focus:outline-none transition-colors" />
+                        </div>
+                      )}
+
+                      {/* Partnership/S-Corp: number of owners */}
+                      {(pendingType?.type === "s_corp" || pendingType?.type === "llc_partnership") && (
+                        <div>
+                          <label className="text-xs font-semibold text-[#5a4a3f] block mb-1.5">
+                            Number of {pendingType.type === "s_corp" ? "Shareholders" : "Partners"}
+                          </label>
+                          <input type="number" min={1} placeholder="e.g. 2"
+                            className="w-full px-4 py-3 rounded-xl border border-(--dust-grey) bg-(--linen) text-[#3d3229] text-sm placeholder:text-[#c4bab2] focus:border-(--almond-silk) focus:outline-none transition-colors" />
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="flex gap-2 mt-6">
+                      <button onClick={() => { setPendingType(null); setEinInput(""); setChoosingTypeFor(pendingType!.companyId); }}
+                        className="px-5 py-3 rounded-xl border border-(--dust-grey) text-sm text-[#8a7e74] hover:bg-(--parchment) transition-colors">
+                        Back
+                      </button>
+                      <button
+                        onClick={() => {
+                          if (onboardingCompany) updateCompany(onboardingCompany.id, { ein: einInput });
+                          const pt = pendingType!;
+                          setPendingType(null); setEinInput("");
+                          autoFillCompany(pt.companyId, pt.type);
+                        }}
+                        className="flex-1 px-5 py-3 rounded-xl bg-[#3d3229] text-white text-sm font-semibold hover:bg-[#5a4a3f] transition-colors">
+                        Prepare Tax Returns
+                      </button>
+                    </div>
+                    <button
+                      onClick={() => { const pt = pendingType!; setPendingType(null); setEinInput(""); autoFillCompany(pt.companyId, pt.type); }}
+                      className="text-xs text-[#a89f97] hover:text-[#6b5e52] transition-colors text-center w-full mt-3">
+                      Skip — I'll enter these in the forms
+                    </button>
+                  </div>
+                );
+              })()}
+
+            </div>
+          </BlurFade>
+        </div>
       </div>
     );
   }

@@ -154,6 +154,9 @@ export default function Home() {
   const [expandedForms, setExpandedForms] = useState<Set<string>>(new Set());
   /** Which company is currently selecting entity type (inline in sidebar) */
   const [choosingTypeFor, setChoosingTypeFor] = useState<string | null>(null);
+  /** Pending entity type — set when user picks type but EIN is missing, needs input first */
+  const [pendingType, setPendingType] = useState<{ companyId: string; type: EntityType } | null>(null);
+  const [einInput, setEinInput] = useState("");
 
   const active = companies.find((c) => c.id === activeId) ?? null;
   const entityLabel = active?.entityType
@@ -353,6 +356,75 @@ export default function Home() {
 
   // ── Entity type chooser (inline overlay) ──────────────────────────────────
 
+  if (pendingType) {
+    const co = companies.find((c) => c.id === pendingType.companyId);
+    const typeLabel = ENTITY_OPTIONS.find((o) => o.value === pendingType.type)?.label ?? "";
+    return (
+      <div className="flex h-screen items-center justify-center bg-(--linen)">
+        <BlurFade delay={0}>
+          <div className="flex flex-col gap-5 max-w-sm w-full px-6">
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <span className="w-2 h-2 rounded-full bg-emerald-400" />
+                <span className="text-xs text-emerald-600 font-medium">{co?.name ?? "Company"} · {typeLabel}</span>
+              </div>
+              <h2 className="text-lg font-semibold text-[#3d3229]">Enter your EIN</h2>
+              <p className="text-[#a89f97] text-sm mt-0.5">
+                Your Employer Identification Number is required on every tax return. QBO didn't have it on file.
+              </p>
+            </div>
+            <div>
+              <input
+                type="text"
+                value={einInput}
+                onChange={(e) => {
+                  const v = e.target.value.replace(/[^0-9-]/g, "");
+                  // Auto-format: XX-XXXXXXX
+                  if (v.length === 2 && !v.includes("-") && einInput.length < v.length) {
+                    setEinInput(v + "-");
+                  } else {
+                    setEinInput(v.slice(0, 10));
+                  }
+                }}
+                placeholder="XX-XXXXXXX"
+                className="w-full px-4 py-3 rounded-xl border border-(--dust-grey) bg-(--parchment) text-[#3d3229] font-mono text-lg tracking-wider placeholder:text-[#c4bab2] focus:border-(--almond-silk) focus:outline-none transition-colors"
+              />
+              <p className="text-[10px] text-[#a89f97] mt-1.5 px-1">9-digit number issued by the IRS (format: XX-XXXXXXX)</p>
+            </div>
+            <div className="flex gap-2">
+              <button onClick={() => { setPendingType(null); setEinInput(""); setChoosingTypeFor(pendingType.companyId); }}
+                className="px-4 py-2.5 rounded-xl border border-(--dust-grey) text-sm text-[#8a7e74] hover:bg-(--parchment) transition-colors">
+                Back
+              </button>
+              <button
+                onClick={() => {
+                  if (co) updateCompany(co.id, { ein: einInput });
+                  const pt = pendingType;
+                  setPendingType(null);
+                  setEinInput("");
+                  autoFillCompany(pt.companyId, pt.type);
+                }}
+                disabled={einInput.replace(/-/g, "").length < 9}
+                className="flex-1 px-4 py-2.5 rounded-xl bg-[#3d3229] text-white text-sm font-semibold disabled:opacity-40 hover:bg-[#5a4a3f] transition-colors">
+                Continue
+              </button>
+            </div>
+            <button
+              onClick={() => {
+                const pt = pendingType;
+                setPendingType(null);
+                setEinInput("");
+                autoFillCompany(pt.companyId, pt.type);
+              }}
+              className="text-xs text-[#a89f97] hover:text-[#6b5e52] transition-colors text-center">
+              Skip — I'll add EIN later in the form
+            </button>
+          </div>
+        </BlurFade>
+      </div>
+    );
+  }
+
   if (choosingTypeFor) {
     const co = companies.find((c) => c.id === choosingTypeFor);
     return (
@@ -369,7 +441,16 @@ export default function Home() {
             </div>
             <div className="space-y-2">
               {ENTITY_OPTIONS.map((opt) => (
-                <button key={opt.value} onClick={() => autoFillCompany(choosingTypeFor, opt.value)}
+                <button key={opt.value} onClick={() => {
+                  const company = companies.find((c) => c.id === choosingTypeFor);
+                  if (!company?.ein) {
+                    // EIN missing — prompt for it before auto-filling
+                    setPendingType({ companyId: choosingTypeFor, type: opt.value });
+                    setChoosingTypeFor(null);
+                  } else {
+                    autoFillCompany(choosingTypeFor, opt.value);
+                  }
+                }}
                   className="w-full flex items-center justify-between px-4 py-3 rounded-xl border border-(--dust-grey) hover:border-(--almond-silk) hover:bg-(--parchment) transition-colors text-left">
                   <div><p className="text-sm font-medium text-[#4a3f35]">{opt.label}</p><p className="text-xs text-[#a89f97]">{opt.sub}</p></div>
                   <ChevronRight size={14} className="text-[#c4bab2]" />
@@ -393,13 +474,13 @@ export default function Home() {
       {errorMsg && <ErrorToast message={errorMsg} onClose={() => setErrorMsg(null)} />}
 
       {/* ── Sidebar ──────────────────────────────────────────────────── */}
-      <aside className="w-56 shrink-0 flex flex-col border-r border-(--powder-petal) bg-(--parchment)">
-        <div className="px-5 py-5 border-b border-(--powder-petal)">
-          <div className="flex items-center gap-2">
-            <FileText size={15} className="text-[#a89f97]" />
+      <aside className="w-60 shrink-0 flex flex-col border-r border-(--dust-grey) bg-(--parchment)">
+        <div className="h-14.25 px-5 flex items-center gap-2 border-b border-(--dust-grey)">
+          <FileText size={15} className="text-[#a89f97]" />
+          <div>
             <span className="font-semibold text-[#4a3f35] tracking-tight text-sm">Tax</span>
+            <p className="text-[#a89f97] text-[10px] leading-none">Internal · {taxYear}</p>
           </div>
-          <p className="text-[#a89f97] text-[10px] mt-0.5">Internal · {taxYear}</p>
         </div>
 
         {/* Company list */}
@@ -443,7 +524,7 @@ export default function Home() {
         </div>
 
         {/* Footer */}
-        <div className="px-3 py-3 border-t border-(--powder-petal) space-y-1">
+        <div className="px-3 py-3 border-t border-(--dust-grey) space-y-1">
           {active && (
             <button onClick={() => disconnectCompany(active.id)}
               className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-[#a89f97] hover:text-red-500 hover:bg-red-50 transition-colors text-xs">
@@ -457,7 +538,7 @@ export default function Home() {
       {/* ── Main ─────────────────────────────────────────────────────── */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Header */}
-        <header className="shrink-0 border-b border-(--powder-petal) bg-(--linen) px-8 py-4 flex items-center justify-between">
+        <header className="shrink-0 h-14.25 border-b border-(--dust-grey) bg-(--linen) px-8 flex items-center justify-between">
           {active ? (
             <div className="space-y-0.5">
               <div className="flex items-center gap-2.5 flex-wrap">

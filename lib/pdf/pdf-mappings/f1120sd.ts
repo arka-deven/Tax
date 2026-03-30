@@ -54,7 +54,7 @@ export const F1120SD_MAPPING: FormPdfMapping = {
     },
     {
       pdfFieldName: `${P1}f1_6[0]`,
-      factName: undefined,
+      factName: "short_term_capital_gain_total",
       format: "currency",
       irsLine: "7",
       description: "Net short-term capital gain or (loss) from Part I",
@@ -94,7 +94,7 @@ export const F1120SD_MAPPING: FormPdfMapping = {
     },
     {
       pdfFieldName: `${P2}f2_5[0]`,
-      factName: undefined,
+      factName: "long_term_capital_gain_total",
       format: "currency",
       irsLine: "15",
       description: "Net long-term capital gain or (loss) from Part II",

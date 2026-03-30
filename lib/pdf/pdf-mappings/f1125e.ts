@@ -29,36 +29,42 @@ export const F1125E_MAPPING: FormPdfMapping = {
     // Row 1 column fields (f1_3 through f1_9) are left as placeholders.
     {
       pdfFieldName: `${PAGE1}f1_3[0]`,
+      compute: () => "",
       format: "string",
       irsLine: "1",
       description: "Officer 1 – name (placeholder)",
     },
     {
       pdfFieldName: `${PAGE1}f1_4[0]`,
+      compute: () => "",
       format: "string",
       irsLine: "1",
       description: "Officer 1 – SSN (placeholder)",
     },
     {
       pdfFieldName: `${PAGE1}f1_5[0]`,
+      compute: () => "",
       format: "percent",
       irsLine: "1",
       description: "Officer 1 – percent of time devoted to business (placeholder)",
     },
     {
       pdfFieldName: `${PAGE1}f1_6[0]`,
+      compute: () => "",
       format: "percent",
       irsLine: "1",
       description: "Officer 1 – percent of stock owned – common (placeholder)",
     },
     {
       pdfFieldName: `${PAGE1}f1_7[0]`,
+      compute: () => "",
       format: "percent",
       irsLine: "1",
       description: "Officer 1 – percent of stock owned – preferred (placeholder)",
     },
     {
       pdfFieldName: `${PAGE1}f1_8[0]`,
+      compute: () => "",
       format: "currency",
       irsLine: "1",
       description: "Officer 1 – amount of compensation (placeholder)",
@@ -76,6 +82,7 @@ export const F1125E_MAPPING: FormPdfMapping = {
     // ── Line 3 – Compensation of officers claimed on Schedule A or elsewhere ──
     {
       pdfFieldName: `${PAGE1}f1_125[0]`,
+      compute: () => "0",
       format: "currency",
       irsLine: "3",
       description: "Compensation of officers claimed on Schedule A or elsewhere (placeholder)",

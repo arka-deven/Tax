@@ -36,58 +36,63 @@ export const F8990_MAPPING: FormPdfMapping = {
     // pass-through data not available from QBO; left as placeholders.
     {
       pdfFieldName: `${PAGE1}f1_4[0]`,
+      compute: () => "0",
       format: "currency",
       irsLine: "2",
       description: "Disallowed business interest expense carryforward (placeholder)",
     },
     {
       pdfFieldName: `${PAGE1}f1_5[0]`,
+      compute: () => "0",
       format: "currency",
       irsLine: "3",
       description: "Floor plan financing interest expense (placeholder)",
     },
     {
       pdfFieldName: `${PAGE1}f1_6[0]`,
+      compute: () => "0",
       format: "currency",
       irsLine: "4",
       description: "Business interest expense from partnerships (placeholder)",
     },
     {
       pdfFieldName: `${PAGE1}f1_7[0]`,
+      factName: "interest_expense_total",
       format: "currency",
       irsLine: "5",
-      description: "Total business interest expense (Lines 1–4) (placeholder)",
+      description: "Total business interest expense (Lines 1–4)",
     },
 
     // ── Part II – ATI (Adjusted Taxable Income) ───────────────────────────────
-    // ATI computation requires detailed income/deduction adjustments beyond
-    // what QBO facts currently provide; left as placeholders.
     {
       pdfFieldName: `${PAGE1}f1_8[0]`,
+      factName: "adjusted_taxable_income_163j",
       format: "currency",
       irsLine: "6",
-      description: "Taxable income before business interest expense deduction (placeholder)",
+      description: "Adjusted taxable income (ATI) for §163(j)",
     },
     {
       pdfFieldName: `${PAGE1}f1_9[0]`,
+      compute: () => "0",
       format: "currency",
       irsLine: "7",
       description: "Business interest income (placeholder)",
     },
     {
       pdfFieldName: `${PAGE1}f1_10[0]`,
+      compute: () => "0",
       format: "currency",
       irsLine: "8",
       description: "Floor plan financing interest expense included on Line 3 (placeholder)",
     },
 
     // ── Part III – Allowable Business Interest Expense ────────────────────────
-    // Computed from Parts I & II; placeholder only.
     {
       pdfFieldName: `${PAGE1}f1_30[0]`,
+      factName: "interest_expense_limitation_30pct",
       format: "currency",
       irsLine: "30",
-      description: "Current year allowable business interest expense (placeholder)",
+      description: "30% ATI limitation on business interest expense",
     },
   ],
 };

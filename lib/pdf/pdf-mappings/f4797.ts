@@ -32,6 +32,7 @@ export const F4797_MAPPING: FormPdfMapping = {
     // Line 18/19 detail rows require asset-level data; left as placeholders.
     {
       pdfFieldName: `${PAGE1}f1_86[0]`,
+      compute: () => "0",
       format: "currency",
       irsLine: "18",
       description: "Ordinary gains/losses not from Part I or III (placeholder)",

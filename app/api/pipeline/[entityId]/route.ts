@@ -353,6 +353,35 @@ export async function POST(
       // Entity profile table may not exist yet — non-fatal
     }
 
+    // ── 6c. Load carryforwards and capital transactions ────────────────────────
+    try {
+      const { getCarryforwards } = await import("@/lib/repositories/carryforward");
+      const { getCapitalTransactions } = await import("@/lib/repositories/capital-transactions");
+
+      // Carryforwards
+      const carryforwards = await getCarryforwards(entityId);
+      const nolCf = carryforwards.filter(c => c.carryforward_type === "nol").reduce((s, c) => s + c.remaining_amount, 0);
+      const capLossCf = carryforwards.filter(c => c.carryforward_type === "capital_loss").reduce((s, c) => s + c.remaining_amount, 0);
+      const charitableCf = carryforwards.filter(c => c.carryforward_type === "charitable").reduce((s, c) => s + c.remaining_amount, 0);
+      const s179Cf = carryforwards.filter(c => c.carryforward_type === "section_179").reduce((s, c) => s + c.remaining_amount, 0);
+
+      if (nolCf > 0) baseFacts.push({ tax_fact_id: `fact_${entityId}_${taxYear}_nol_cf`, entity_id: entityId, tax_year: taxYear, fact_name: "nol_carryforward_available", fact_value_json: nolCf, value_type: "number", confidence_score: 0.9, is_unknown: false, derived_from_mapping_ids: [], derived_from_adjustment_ids: [], explanation: `NOL carryforward from prior years: $${nolCf.toLocaleString()}` });
+      if (capLossCf > 0) baseFacts.push({ tax_fact_id: `fact_${entityId}_${taxYear}_caploss_cf`, entity_id: entityId, tax_year: taxYear, fact_name: "capital_loss_carryforward_available", fact_value_json: capLossCf, value_type: "number", confidence_score: 0.9, is_unknown: false, derived_from_mapping_ids: [], derived_from_adjustment_ids: [], explanation: `Capital loss carryforward: $${capLossCf.toLocaleString()}` });
+      if (charitableCf > 0) baseFacts.push({ tax_fact_id: `fact_${entityId}_${taxYear}_charitable_cf`, entity_id: entityId, tax_year: taxYear, fact_name: "charitable_carryforward_available", fact_value_json: charitableCf, value_type: "number", confidence_score: 0.9, is_unknown: false, derived_from_mapping_ids: [], derived_from_adjustment_ids: [], explanation: `Charitable contribution carryforward: $${charitableCf.toLocaleString()}` });
+      if (s179Cf > 0) baseFacts.push({ tax_fact_id: `fact_${entityId}_${taxYear}_s179_cf`, entity_id: entityId, tax_year: taxYear, fact_name: "section_179_carryover_available", fact_value_json: s179Cf, value_type: "number", confidence_score: 0.9, is_unknown: false, derived_from_mapping_ids: [], derived_from_adjustment_ids: [], explanation: `Section 179 carryover: $${s179Cf.toLocaleString()}` });
+
+      // Capital transactions → Schedule D aggregates
+      const capTxns = await getCapitalTransactions(entityId, taxYear);
+      if (capTxns.length > 0) {
+        const stGain = capTxns.filter(t => t.holding_period === "short_term").reduce((s, t) => s + t.gain_loss, 0);
+        const ltGain = capTxns.filter(t => t.holding_period === "long_term").reduce((s, t) => s + t.gain_loss, 0);
+        baseFacts.push({ tax_fact_id: `fact_${entityId}_${taxYear}_st_cap_gain`, entity_id: entityId, tax_year: taxYear, fact_name: "short_term_capital_gain_total", fact_value_json: stGain, value_type: "number", confidence_score: 1.0, is_unknown: false, derived_from_mapping_ids: [], derived_from_adjustment_ids: [], explanation: `Net short-term capital gain from ${capTxns.filter(t => t.holding_period === "short_term").length} transactions` });
+        baseFacts.push({ tax_fact_id: `fact_${entityId}_${taxYear}_lt_cap_gain`, entity_id: entityId, tax_year: taxYear, fact_name: "long_term_capital_gain_total", fact_value_json: ltGain, value_type: "number", confidence_score: 1.0, is_unknown: false, derived_from_mapping_ids: [], derived_from_adjustment_ids: [], explanation: `Net long-term capital gain from ${capTxns.filter(t => t.holding_period === "long_term").length} transactions` });
+      }
+    } catch {
+      // Tables may not exist yet — non-fatal
+    }
+
     await upsertFacts(baseFacts);
 
     // ── 7. Run rule engine → form requirements ────────────────────────────────

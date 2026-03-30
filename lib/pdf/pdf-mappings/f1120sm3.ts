@@ -51,24 +51,28 @@ export const F1120SM3_MAPPING: FormPdfMapping = {
     // Line 1 – Income (loss) from equity method foreign corporations (placeholder)
     {
       pdfFieldName: `${PAGE1}f1_31[0]`,
+      compute: () => "0",
       format: "currency",
       irsLine: "Pt II, 1",
       description: "Income from equity method foreign corporations – book (placeholder)",
     },
     {
       pdfFieldName: `${PAGE1}f1_32[0]`,
+      compute: () => "0",
       format: "currency",
       irsLine: "Pt II, 1",
       description: "Income from equity method foreign corporations – temp diff (placeholder)",
     },
     {
       pdfFieldName: `${PAGE1}f1_33[0]`,
+      compute: () => "0",
       format: "currency",
       irsLine: "Pt II, 1",
       description: "Income from equity method foreign corporations – perm diff (placeholder)",
     },
     {
       pdfFieldName: `${PAGE1}f1_34[0]`,
+      compute: () => "0",
       format: "currency",
       irsLine: "Pt II, 1",
       description: "Income from equity method foreign corporations – tax (placeholder)",
@@ -81,24 +85,28 @@ export const F1120SM3_MAPPING: FormPdfMapping = {
     // Line 38 – Total expense/deduction items
     {
       pdfFieldName: `${PAGE1}f1_350[0]`,
+      compute: () => "0",
       format: "currency",
       irsLine: "Pt III, 38",
       description: "Total expense/deduction items – book (placeholder)",
     },
     {
       pdfFieldName: `${PAGE1}f1_351[0]`,
+      compute: () => "0",
       format: "currency",
       irsLine: "Pt III, 38",
       description: "Total expense/deduction items – temp diff (placeholder)",
     },
     {
       pdfFieldName: `${PAGE1}f1_352[0]`,
+      compute: () => "0",
       format: "currency",
       irsLine: "Pt III, 38",
       description: "Total expense/deduction items – perm diff (placeholder)",
     },
     {
       pdfFieldName: `${PAGE1}f1_353[0]`,
+      compute: () => "0",
       format: "currency",
       irsLine: "Pt III, 38",
       description: "Total expense/deduction items – tax (placeholder)",

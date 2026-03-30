@@ -29,18 +29,21 @@ export const F7203_MAPPING: FormPdfMapping = {
     // All left as placeholders pending shareholder-level fact collection.
     {
       pdfFieldName: `${PAGE1}f1_03[0]`,
+      compute: () => "0",
       format: "currency",
       irsLine: "1",
       description: "Stock basis at beginning of corporation's tax year (placeholder)",
     },
     {
       pdfFieldName: `${PAGE1}f1_04[0]`,
+      compute: () => "0",
       format: "currency",
       irsLine: "2a",
       description: "Ordinary business income (placeholder)",
     },
     {
       pdfFieldName: `${PAGE1}f1_05[0]`,
+      compute: () => "0",
       format: "currency",
       irsLine: "2b",
       description: "Separately stated income items (placeholder)",

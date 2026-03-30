@@ -28,15 +28,17 @@ export const F8829_MAPPING: FormPdfMapping = {
     // These are left as placeholders pending home-office fact collection.
     {
       pdfFieldName: `${PAGE1}f1_03[0]`,
+      factName: "home_office_sqft",
       format: "integer",
       irsLine: "1",
-      description: "Area used regularly and exclusively for business (sq ft) – placeholder",
+      description: "Area used regularly and exclusively for business (sq ft)",
     },
     {
       pdfFieldName: `${PAGE1}f1_04[0]`,
+      factName: "home_total_sqft",
       format: "integer",
       irsLine: "2",
-      description: "Total area of home (sq ft) – placeholder",
+      description: "Total area of home (sq ft)",
     },
 
     // ── Part II – Figure Your Allowable Deduction ─────────────────────────────

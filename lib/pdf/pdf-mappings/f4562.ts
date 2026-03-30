@@ -20,6 +20,7 @@ export const F4562_MAPPING: FormPdfMapping = {
     {
       pdfFieldName: `${P}f1_2[0]`,
       factName: undefined,
+      compute: (ctx: FillContext) => ctx.facts.principal_business_activity as string ?? "",
       format: "string",
       irsLine: "Header",
       description: "Business or activity to which this form relates",
@@ -44,7 +45,7 @@ export const F4562_MAPPING: FormPdfMapping = {
     },
     {
       pdfFieldName: `${P}f1_5[0]`,
-      factName: "section_179_eligible_cost",
+      factName: "depr_179_eligible_cost",
       format: "currency",
       irsLine: "2",
       description: "Total cost of section 179 property placed in service",
@@ -59,20 +60,21 @@ export const F4562_MAPPING: FormPdfMapping = {
     {
       pdfFieldName: `${P}f1_9[0]`,
       factName: undefined,
+      compute: (ctx: FillContext) => { const max = 1220000; const cost = Number(ctx.facts.depr_179_eligible_cost ?? ctx.facts.section_179_eligible_cost ?? 0); return String(Math.min(max, cost)); },
       format: "currency",
       irsLine: "5",
       description: "Dollar limitation for tax year (line 1 minus line 4, not less than zero)",
     },
     {
       pdfFieldName: `${P}f1_12[0]`,
-      factName: undefined,
+      factName: "taxable_income_before_nol",
       format: "currency",
       irsLine: "11",
       description: "Business income limitation for section 179 deduction",
     },
     {
       pdfFieldName: `${P}f1_13[0]`,
-      factName: "depreciation_total",
+      factName: "depr_section_179_total",
       format: "currency",
       irsLine: "12",
       description: "Section 179 expense deduction (lesser of line 5, 6, or 11)",
@@ -83,7 +85,7 @@ export const F4562_MAPPING: FormPdfMapping = {
     // -------------------------------------------------------------------------
     {
       pdfFieldName: `${P}f1_14[0]`,
-      factName: "bonus_depreciation_amount",
+      factName: "depr_bonus_total",
       format: "currency",
       irsLine: "14",
       description: "Special depreciation allowance (bonus depreciation) for qualified property",
@@ -94,14 +96,14 @@ export const F4562_MAPPING: FormPdfMapping = {
     // -------------------------------------------------------------------------
     {
       pdfFieldName: `${P}f1_17[0]`,
-      factName: undefined,
+      factName: "depr_macrs_prior_year",
       format: "currency",
       irsLine: "17",
       description: "MACRS deductions for assets placed in service in tax years beginning before 2025",
     },
     {
       pdfFieldName: `${P}f1_22[0]`,
-      factName: "depreciation_total",
+      factName: "depr_total_all",
       format: "currency",
       irsLine: "22",
       description: "Total depreciation (add amounts in column (g), lines 15 through 21)",

@@ -31,24 +31,28 @@ export const F1065SB1_MAPPING: FormPdfMapping = {
     // -------------------------------------------------------------------------
     {
       pdfFieldName: `${P}f1_3[0]`,
+      compute: () => "",
       format: "string",
       irsLine: "Part I",
       description: "Entity name — row 1",
     },
     {
       pdfFieldName: `${P}f1_4[0]`,
+      compute: () => "",
       format: "string",
       irsLine: "Part I",
       description: "Entity EIN or SSN — row 1",
     },
     {
       pdfFieldName: `${P}f1_5[0]`,
+      compute: () => "",
       format: "string",
       irsLine: "Part I",
       description: "Country of organization — row 1",
     },
     {
       pdfFieldName: `${P}f1_6[0]`,
+      compute: () => "",
       format: "percent",
       irsLine: "Part I",
       description: "Maximum percentage owned — row 1",

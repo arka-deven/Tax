@@ -488,16 +488,37 @@ export default function Home() {
               <p className="text-sm">{active ? "Choose an entity type to auto-fill forms" : "Select a company from the sidebar"}</p>
             </div>
           ) : (
-            <div className="max-w-4xl space-y-4">
-              {/* Pipeline status */}
+            <div className="space-y-4">
+              {/* Pipeline status + inline diagnostics */}
               {active.result && (
                 <BlurFade delay={0}>
-                  <div className={`flex items-center gap-3 px-4 py-3 rounded-xl border text-sm ${
-                    blocking.length > 0 ? "bg-red-50 border-red-200 text-red-700" : "bg-emerald-50 border-emerald-200 text-emerald-700"
+                  <div className={`rounded-xl border overflow-hidden ${
+                    blocking.length > 0 ? "border-red-200" : "border-emerald-200"
                   }`}>
-                    {blocking.length === 0 ? <CheckCircle2 size={15} /> : <XCircle size={15} />}
-                    <span className="font-medium">{blocking.length === 0 ? "Analysis complete — ready for review" : `${blocking.length} blocking issue${blocking.length > 1 ? "s" : ""}`}</span>
-                    <span className="text-xs opacity-60 ml-auto">{new Date(active.result.ranAt).toLocaleString()}</span>
+                    <div className={`flex items-center gap-3 px-4 py-3 text-sm ${
+                      blocking.length > 0 ? "bg-red-50 text-red-700" : "bg-emerald-50 text-emerald-700"
+                    }`}>
+                      {blocking.length === 0 ? <CheckCircle2 size={15} /> : <XCircle size={15} />}
+                      <span className="font-medium">{blocking.length === 0 ? "Analysis complete — ready for review" : `${blocking.length} blocking issue${blocking.length > 1 ? "s" : ""}`}</span>
+                      {warnings.length > 0 && <span className="text-xs text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full">{warnings.length} warnings</span>}
+                      {infos.length > 0 && <span className="text-xs text-[#8a7e74] bg-(--parchment) px-2 py-0.5 rounded-full">{infos.length} info</span>}
+                      <span className="text-xs opacity-60 ml-auto">{new Date(active.result.ranAt).toLocaleString()}</span>
+                    </div>
+                    {/* Show blocking + warning details inline */}
+                    {(blocking.length > 0 || warnings.length > 0) && (
+                      <div className="px-4 py-2 space-y-1.5 bg-(--linen) border-t border-(--dust-grey)">
+                        {[...blocking, ...warnings].map((d, i) => (
+                          <div key={i} className="flex items-start gap-2 text-xs">
+                            {d.severity === "blocking_error"
+                              ? <XCircle size={11} className="text-red-400 mt-0.5 shrink-0" />
+                              : <AlertTriangle size={11} className="text-amber-400 mt-0.5 shrink-0" />}
+                            <span className={d.severity === "blocking_error" ? "text-red-700" : "text-amber-700"}>
+                              <span className="font-medium">{d.title}</span> — {d.message}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </BlurFade>
               )}

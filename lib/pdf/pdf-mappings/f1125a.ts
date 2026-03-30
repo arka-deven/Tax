@@ -97,19 +97,25 @@ export const F1125A_MAPPING: FormPdfMapping = {
     // -------------------------------------------------------------------------
     {
       pdfFieldName: `${P}c1_1[0]`,
-      staticValue: "X",
+      compute: (ctx: FillContext) => {
+        const method = String(ctx.facts.inventory_method ?? "Cost");
+        return method === "Cost" || method === "N/A" ? "X" : "";
+      },
       irsLine: "9a",
       description: "Checkbox — cost method of inventory valuation",
     },
     {
       pdfFieldName: `${P}c1_2[0]`,
-      factName: undefined,
+      compute: (ctx: FillContext) => String(ctx.facts.inventory_method ?? "") === "LCM" ? "X" : "",
       irsLine: "9b",
       description: "Checkbox — lower of cost or market method",
     },
     {
       pdfFieldName: `${P}c1_3[0]`,
-      factName: undefined,
+      compute: (ctx: FillContext) => {
+        const method = String(ctx.facts.inventory_method ?? "Cost");
+        return method !== "Cost" && method !== "LCM" && method !== "N/A" ? "X" : "";
+      },
       irsLine: "9c",
       description: "Checkbox — other method (attach explanation)",
     },

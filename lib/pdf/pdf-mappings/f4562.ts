@@ -38,10 +38,14 @@ export const F4562_MAPPING: FormPdfMapping = {
     // -------------------------------------------------------------------------
     {
       pdfFieldName: `${P}f1_4[0]`,
-      staticValue: "1220000",
+      compute: (ctx: FillContext) => {
+        const yr = ctx.meta.taxYear;
+        const limits: Record<number, number> = { 2023: 1160000, 2024: 1220000, 2025: 1250000, 2026: 1290000 };
+        return String(limits[yr] ?? 1250000);
+      },
       format: "currency",
       irsLine: "1",
-      description: "Maximum amount (2025 limit: $1,220,000)",
+      description: "Maximum amount (inflation-adjusted annually)",
     },
     {
       pdfFieldName: `${P}f1_5[0]`,
@@ -52,15 +56,24 @@ export const F4562_MAPPING: FormPdfMapping = {
     },
     {
       pdfFieldName: `${P}f1_6[0]`,
-      staticValue: "3050000",
+      compute: (ctx: FillContext) => {
+        const yr = ctx.meta.taxYear;
+        const thresholds: Record<number, number> = { 2023: 2890000, 2024: 3050000, 2025: 3130000, 2026: 3220000 };
+        return String(thresholds[yr] ?? 3130000);
+      },
       format: "currency",
       irsLine: "3",
-      description: "Threshold cost before phase-out begins (2025: $3,050,000)",
+      description: "Threshold cost before phase-out begins (inflation-adjusted)",
     },
     {
       pdfFieldName: `${P}f1_9[0]`,
-      factName: undefined,
-      compute: (ctx: FillContext) => { const max = 1220000; const cost = Number(ctx.facts.depr_179_eligible_cost ?? ctx.facts.section_179_eligible_cost ?? 0); return String(Math.min(max, cost)); },
+      compute: (ctx: FillContext) => {
+        const yr = ctx.meta.taxYear;
+        const limits: Record<number, number> = { 2023: 1160000, 2024: 1220000, 2025: 1250000, 2026: 1290000 };
+        const max = limits[yr] ?? 1250000;
+        const cost = Number(ctx.facts.depr_179_eligible_cost ?? ctx.facts.section_179_eligible_cost ?? 0);
+        return String(Math.min(max, cost));
+      },
       format: "currency",
       irsLine: "5",
       description: "Dollar limitation for tax year (line 1 minus line 4, not less than zero)",

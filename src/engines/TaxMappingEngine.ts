@@ -20,6 +20,12 @@ const SEMANTIC_MAP: Record<
   "Income|OtherPrimaryIncome":          { semantic_category: "gross_receipts",          tax_code: "GROSS_RECEIPTS",          form: "1120",       schedule: null,   line: "1a" },
   "Income|UnappliedCashPaymentIncome":  { semantic_category: "gross_receipts",          tax_code: "GROSS_RECEIPTS",          form: "1120",       schedule: null,   line: "1a" },
 
+  // ── Nonprofit-specific income ───────────────────────────────────────────
+  "Income|ProgramServiceRevenue":           { semantic_category: "gross_receipts",     tax_code: "PROGRAM_SERVICE_REVENUE", form: "990",    schedule: null, line: "9" },
+  "Income|GrantIncome":                     { semantic_category: "gross_receipts",     tax_code: "GRANT_INCOME",           form: "990",    schedule: null, line: "8" },
+  "Income|FundraisingIncome":               { semantic_category: "gross_receipts",     tax_code: "FUNDRAISING_INCOME",     form: "990",    schedule: null, line: "8" },
+  "Income|MembershipDues":                  { semantic_category: "gross_receipts",     tax_code: "GROSS_RECEIPTS",         form: "990",    schedule: null, line: "8" },
+
   // Other income — 1120 lines 4-10; 1120-S lines 4-5; Schedule C line 4
   "Other Income":                       { semantic_category: "other_income",            tax_code: "OTHER_INCOME",            form: "1120",       schedule: null,   line: "10" },
   "Other Income|DividendIncome":        { semantic_category: "dividend_income",         tax_code: "DIVIDEND_INCOME",         form: "1120",       schedule: "C",    line: "4" },
@@ -69,6 +75,31 @@ const SEMANTIC_MAP: Record<
   "Expenses|WorkersCompensation":      { semantic_category: "general_expenses",         tax_code: "EMPLOYEE_BENEFITS",       form: "1120",       schedule: null,   line: "24" },
   "Expenses|ContractLabor":            { semantic_category: "general_expenses",         tax_code: "CONTRACT_LABOR",          form: "Schedule C", schedule: null,   line: "11" },   // 1099-NEC contractors
 
+  // ── COGS sub-components ─────────────────────────────────────────────────
+  "Cost of Goods Sold|Purchases":           { semantic_category: "cost_of_goods_sold", tax_code: "COGS_PURCHASES",    form: "1125-A", schedule: null, line: "2" },
+
+  // ── Additional expense subtypes ─────────────────────────────────────────
+  "Expenses|AutoExpense":                   { semantic_category: "general_expenses",   tax_code: "AUTO_EXPENSE",        form: "Schedule C", schedule: null, line: "9" },
+  "Expenses|GasAndFuelExpense":             { semantic_category: "general_expenses",   tax_code: "AUTO_EXPENSE",        form: "Schedule C", schedule: null, line: "9" },
+  "Expenses|ParkingAndTolls":               { semantic_category: "general_expenses",   tax_code: "AUTO_EXPENSE",        form: "Schedule C", schedule: null, line: "9" },
+  "Expenses|Supplies":                      { semantic_category: "general_expenses",   tax_code: "SUPPLIES",            form: "Schedule C", schedule: null, line: "22" },
+  "Expenses|OfficeSuppliesExpense":         { semantic_category: "general_expenses",   tax_code: "SUPPLIES",            form: "Schedule C", schedule: null, line: "22" },
+  "Expenses|ShippingFreightDelivery":       { semantic_category: "general_expenses",   tax_code: "GENERAL_DEDUCTION",   form: "1120",       schedule: null, line: "26" },
+  "Expenses|GuaranteedPayments":            { semantic_category: "general_expenses",   tax_code: "GUARANTEED_PAYMENTS", form: "1065",       schedule: null, line: "10" },
+  "Expenses|DuesAndSubscriptions":          { semantic_category: "general_expenses",   tax_code: "GENERAL_DEDUCTION",   form: "1120",       schedule: null, line: "26" },
+  "Expenses|Education":                     { semantic_category: "general_expenses",   tax_code: "GENERAL_DEDUCTION",   form: "1120",       schedule: null, line: "26" },
+  "Expenses|Postage":                       { semantic_category: "general_expenses",   tax_code: "GENERAL_DEDUCTION",   form: "1120",       schedule: null, line: "26" },
+  "Expenses|Printing":                      { semantic_category: "general_expenses",   tax_code: "GENERAL_DEDUCTION",   form: "1120",       schedule: null, line: "26" },
+  "Expenses|CleaningAndJanitorial":         { semantic_category: "general_expenses",   tax_code: "GENERAL_DEDUCTION",   form: "1120",       schedule: null, line: "26" },
+  "Expenses|SecurityExpense":               { semantic_category: "general_expenses",   tax_code: "GENERAL_DEDUCTION",   form: "1120",       schedule: null, line: "26" },
+  "Expenses|ToolsAndSmallEquipment":        { semantic_category: "general_expenses",   tax_code: "SUPPLIES",            form: "Schedule C", schedule: null, line: "22" },
+
+  // ── Nonprofit expense mappings ──────────────────────────────────────────
+  "Expenses|GrantsAndDonations":            { semantic_category: "general_expenses",   tax_code: "GRANTS_PAID",            form: "990",    schedule: null, line: "13" },
+  "Expenses|AwardsAndGrants":               { semantic_category: "general_expenses",   tax_code: "GRANTS_PAID",            form: "990",    schedule: null, line: "13" },
+  "Expenses|FundraisingExpense":            { semantic_category: "general_expenses",   tax_code: "FUNDRAISING_EXPENSE",    form: "990",    schedule: null, line: "16a" },
+  "Expenses|MemberBenefits":               { semantic_category: "general_expenses",   tax_code: "MEMBER_BENEFITS",        form: "990",    schedule: null, line: "14" },
+
   // ── Royalty income ────────────────────────────────────────────────────────
   "Other Income|RoyaltyIncome":        { semantic_category: "other_income",             tax_code: "ROYALTY_INCOME",          form: "1120",       schedule: null,   line: "7" },    // Gross royalties
 
@@ -94,6 +125,13 @@ const SEMANTIC_MAP: Record<
   "Equity|OpeningBalanceEquity":       { semantic_category: "equity",                   tax_code: "EQUITY",                  form: "1120",       schedule: "L",    line: "36" },
   "Equity|PartnersEquity":             { semantic_category: "equity",                   tax_code: "EQUITY",                  form: "1065",       schedule: "M-2",  line: "11" },   // 1065 M-2 line 11: balance at end of year
   "Equity|ShareholdersEquity":         { semantic_category: "equity",                   tax_code: "EQUITY",                  form: "1120-S",     schedule: "M-2",  line: "9" },    // 1120-S M-2 (AAA) line 9
+
+  // ── Owner distributions ─────────────────────────────────────────────────
+  "Equity|OwnersEquity":                    { semantic_category: "equity",             tax_code: "OWNER_DISTRIBUTIONS",  form: "1120",      schedule: "M-2", line: "5" },
+  "Equity|PartnerDistributions":            { semantic_category: "equity",             tax_code: "OWNER_DISTRIBUTIONS",  form: "1065",      schedule: "M-2", line: "5" },
+  "Equity|ShareholderDistributions":        { semantic_category: "equity",             tax_code: "OWNER_DISTRIBUTIONS",  form: "1120-S",    schedule: "M-2", line: "5" },
+  "Equity|TreasuryStock":                   { semantic_category: "equity",             tax_code: "TREASURY_STOCK",       form: "1120",      schedule: "L",   line: "26" },
+  "Equity|AccumulatedOtherComprehensiveIncome": { semantic_category: "equity",         tax_code: "EQUITY",               form: "1120",      schedule: "L",   line: "23" },
 
   // ── Bank / Cash ───────────────────────────────────────────────────────────
   // Schedule L line 1

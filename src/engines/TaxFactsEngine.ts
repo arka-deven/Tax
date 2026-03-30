@@ -71,6 +71,16 @@ export function deriveTaxFacts(
     "Sum of all cost_of_goods_sold mappings"
   ));
 
+  const cogsPurchases = sumByTaxCode("COGS_PURCHASES");
+  facts.push(fact("cogs_purchases_total", cogsPurchases.total, "number", cogsPurchases.mappingIds, "Purchases component of COGS (Form 1125-A Line 2)"));
+
+  const cogsLabor = sumByTaxCode("COGS_LABOR");
+  facts.push(fact("cogs_labor_total", cogsLabor.total, "number", cogsLabor.mappingIds, "Cost of labor component of COGS (Form 1125-A Line 3)"));
+
+  // COGS other = total COGS minus purchases minus labor
+  const cogsOther = Math.max(0, cogs.total - cogsPurchases.total - cogsLabor.total);
+  facts.push(fact("cogs_other_total", cogsOther, "number", cogs.mappingIds, "Other costs component of COGS (Form 1125-A Line 4b)"));
+
   const meals = sumCategory("meals_entertainment");
   facts.push(fact(
     "meals_subject_to_limitation_total",
@@ -185,6 +195,14 @@ export function deriveTaxFacts(
     ["other_income_total",        "OTHER_INCOME",        "Sum of other income mappings"],
     ["nondeductible_total",       "NONDEDUCTIBLE",       "Sum of nondeductible expense mappings"],
     ["income_tax_expense_total",  "INCOME_TAX_NONDEDUCTIBLE", "Sum of federal income tax (nondeductible) per books"],
+    ["auto_expense_total",        "AUTO_EXPENSE",        "Sum of car and truck expenses (Schedule C Line 9)"],
+    ["supplies_total",            "SUPPLIES",            "Sum of supplies expense (Schedule C Line 22)"],
+    ["guaranteed_payments_total", "GUARANTEED_PAYMENTS", "Sum of guaranteed payments to partners (Form 1065 Line 10)"],
+    ["program_service_revenue_total", "PROGRAM_SERVICE_REVENUE", "Program service revenue (Form 990 Line 9)"],
+    ["grant_income_total",           "GRANT_INCOME",            "Grant income (Form 990 Line 8 component)"],
+    ["grants_paid_total",            "GRANTS_PAID",             "Grants and similar amounts paid (Form 990 Line 13)"],
+    ["fundraising_expense_total",    "FUNDRAISING_EXPENSE",     "Professional fundraising fees (Form 990 Line 16a)"],
+    ["member_benefits_total",        "MEMBER_BENEFITS",         "Benefits paid to or for members (Form 990 Line 14)"],
   ];
 
   for (const [name, code, explanation] of taxCodeFacts) {
@@ -392,6 +410,15 @@ export function deriveTaxFacts(
     0.85
   ));
 
+  // Form 4562 detail — derive from fixed asset totals
+  const totalPropertyCost = buildingsDepreciableTotal; // already computed above as buildings_depreciable_total
+  facts.push(fact("section_179_eligible_cost", totalPropertyCost, "number", [], "Total cost of §179 property placed in service (Form 4562 Line 2)", 0.6));
+
+  // Bonus depreciation: 40% for 2025 (phasing down from 100% in 2022)
+  const bonusDepreciationRate = taxYear >= 2027 ? 0 : taxYear === 2026 ? 0.20 : taxYear === 2025 ? 0.40 : taxYear === 2024 ? 0.60 : 0.80;
+  const bonusDepreciation = totalPropertyCost * bonusDepreciationRate;
+  facts.push(fact("bonus_depreciation_amount", bonusDepreciation, "number", [], `Bonus depreciation at ${bonusDepreciationRate * 100}% for ${taxYear} (Form 4562 Line 14)`, 0.5));
+
   // Sch L line 9b (will be negative — contra asset)
   const accumDeprecRaw = sumCategoryRaw("accum_depreciation");
   facts.push(fact(
@@ -530,6 +557,9 @@ export function deriveTaxFacts(
     "Retained earnings — Schedule L line 25",
     0.85
   ));
+
+  const distributions = sumByTaxCode("OWNER_DISTRIBUTIONS");
+  facts.push(fact("owner_distributions_total", Math.abs(distributions.total), "number", distributions.mappingIds, "Cash distributions to owners/partners/shareholders (Schedule M-2 Line 5a)"));
 
   // ── Recomputed total_assets (replaces approximate version above) ──────────
   const totalAssetsProper =
@@ -709,6 +739,13 @@ export function deriveTaxFacts(
     charitable.mappingIds,
     "Charitable contributions in excess of 10% of TI — 5-year carryforward (IRC §170(d))"
   ));
+
+  // Schedule M-1 computed items
+  const mealsDisallowance = meals.total * 0.50; // 50% of meals is nondeductible
+  facts.push(fact("m1_meals_disallowance", mealsDisallowance, "number", meals.mappingIds, "Schedule M-1 Line 5c: 50% meals disallowance (IRC §274(n))"));
+
+  // M-1 Line 5b: charitable excess (already computed as charitable_contributions_excess)
+  // M-1 Line 6: sum of lines 1 through 5e
 
   const totalDeductions =
     officerComp.total +

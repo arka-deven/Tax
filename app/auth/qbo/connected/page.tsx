@@ -9,13 +9,14 @@ function QBOConnectedInner() {
   useEffect(() => {
     const entityId = params.get("entityId");
     const companyName = params.get("companyName") ?? "";
+    const ein = params.get("ein") ?? "";
     const error = params.get("error");
 
     if (window.opener) {
       window.opener.postMessage(
         error
           ? { type: "QBO_AUTH_ERROR", error }
-          : { type: "QBO_AUTH_SUCCESS", entityId, companyName },
+          : { type: "QBO_AUTH_SUCCESS", entityId, companyName, ein },
         window.location.origin
       );
     }

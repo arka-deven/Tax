@@ -1,5 +1,5 @@
 import crypto from "crypto";
-import type { QBOAccount, QBOTransaction } from "@/lib/qbo-fetch";
+import type { QBOAccount, QBOCompanyData, QBOTransaction } from "@/lib/qbo-fetch";
 import type {
   CanonicalLedgerAccount,
   CanonicalLedgerEntry,
@@ -19,7 +19,7 @@ const NORMAL_BALANCE_MAP: Record<string, NormalBalance> = {
 export function buildRawSourceRecord(
   entityId: string,
   taxYear: number,
-  payload: { accounts: QBOAccount[]; transactions: QBOTransaction[] }
+  payload: QBOCompanyData
 ): RawSourceRecord {
   const payloadStr = JSON.stringify(payload);
   const checksum = crypto.createHash("sha256").update(payloadStr).digest("hex");

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { tokenStore } from "@/lib/token-store";
-import { fetchGeneralLedger } from "@/lib/qbo-fetch";
+import { fetchAllData } from "@/lib/qbo-fetch";
 import { buildRawSourceRecord, normalizeAccounts, normalizeTransactions } from "@/lib/qbo-normalize";
 import { upsertRawSource } from "@/lib/repositories/raw-source";
 import {
@@ -45,20 +45,18 @@ export async function POST(
   }
 
   try {
-    // ── 1. Fetch from QBO ────────────────────────────────────────────────────
-    const { accounts: qboAccounts, transactions: qboTxns } =
-      await fetchGeneralLedger(entityId, taxYear);
+    // ── 1. Fetch ALL data from QBO ───────────────────────────────────────────
+    const qboData = await fetchAllData(entityId, taxYear);
 
     // ── 2. Build & persist raw source record ─────────────────────────────────
-    const raw = buildRawSourceRecord(entityId, taxYear, {
-      accounts: qboAccounts,
-      transactions: qboTxns,
-    });
+    // Full payload stored as-is so we have a complete audit trail of everything
+    // pulled from QBO — accounts, all transaction types, company info, preferences.
+    const raw = buildRawSourceRecord(entityId, taxYear, qboData);
     await upsertRawSource(raw);
 
     // ── 3. Normalize → canonical ledger ──────────────────────────────────────
-    const canonicalAccounts = normalizeAccounts(raw, qboAccounts);
-    const canonicalEntries = normalizeTransactions(raw, qboTxns);
+    const canonicalAccounts = normalizeAccounts(raw, qboData.accounts);
+    const canonicalEntries = normalizeTransactions(raw, qboData.journalEntries);
     await upsertAccounts(canonicalAccounts);
     await upsertEntries(canonicalEntries);
 
@@ -76,23 +74,97 @@ export async function POST(
     await upsertMappings(mappings);
 
     // ── 6. Derive tax facts ───────────────────────────────────────────────────
-    // Seed entity_type fact from the request so rules can fire
     const baseFacts = deriveTaxFacts(entityId, taxYear, mappings, tbLines);
+
+    // Entity type — provided by user, determines which rules fire
     if (entityType) {
       baseFacts.push({
         tax_fact_id: `fact_${entityId}_${taxYear}_entity_type`,
-        entity_id: entityId,
-        tax_year: taxYear,
+        entity_id: entityId, tax_year: taxYear,
         fact_name: "entity_type",
         fact_value_json: entityType,
-        value_type: "string",
-        confidence_score: 1.0,
-        is_unknown: false,
-        derived_from_mapping_ids: [],
-        derived_from_adjustment_ids: [],
+        value_type: "string", confidence_score: 1.0, is_unknown: false,
+        derived_from_mapping_ids: [], derived_from_adjustment_ids: [],
         explanation: "Entity type provided by the user at pipeline run time",
       });
     }
+
+    // Accounting method (Cash vs Accrual) from QBO Preferences — critical for IRS
+    const accountingMethod = qboData.preferences?.ReportPrefs?.ReportBasis
+      ?? qboData.preferences?.AccountingInfoPrefs?.FirstMonthOfFiscalYear
+        ? "Accrual" // default when preferences available but method unset
+        : "Unknown";
+    baseFacts.push({
+      tax_fact_id: `fact_${entityId}_${taxYear}_accounting_method`,
+      entity_id: entityId, tax_year: taxYear,
+      fact_name: "accounting_method",
+      fact_value_json: qboData.preferences?.ReportPrefs?.ReportBasis ?? accountingMethod,
+      value_type: "string", confidence_score: qboData.preferences ? 0.95 : 0.5, is_unknown: !qboData.preferences,
+      derived_from_mapping_ids: [], derived_from_adjustment_ids: [],
+      explanation: "Accounting method from QBO Preferences (ReportPrefs.ReportBasis)",
+    });
+
+    // Fiscal year start month
+    const fiscalYearStart = qboData.preferences?.AccountingInfoPrefs?.FirstMonthOfFiscalYear
+      ?? qboData.companyInfo?.FiscalYearStartMonth ?? "January";
+    baseFacts.push({
+      tax_fact_id: `fact_${entityId}_${taxYear}_fiscal_year_start`,
+      entity_id: entityId, tax_year: taxYear,
+      fact_name: "fiscal_year_start_month",
+      fact_value_json: fiscalYearStart,
+      value_type: "string", confidence_score: 0.9, is_unknown: false,
+      derived_from_mapping_ids: [], derived_from_adjustment_ids: [],
+      explanation: "Fiscal year start month from QBO Preferences",
+    });
+
+    // EIN from CompanyInfo
+    if (qboData.companyInfo?.FederalEin) {
+      baseFacts.push({
+        tax_fact_id: `fact_${entityId}_${taxYear}_ein`,
+        entity_id: entityId, tax_year: taxYear,
+        fact_name: "ein",
+        fact_value_json: qboData.companyInfo.FederalEin,
+        value_type: "string", confidence_score: 1.0, is_unknown: false,
+        derived_from_mapping_ids: [], derived_from_adjustment_ids: [],
+        explanation: "Employer Identification Number from QBO CompanyInfo",
+      });
+    }
+
+    // Multi-currency flag — relevant for Form 1118 / foreign disclosure
+    const multiCurrency = qboData.preferences?.CurrencyPrefs?.MultiCurrencyEnabled ?? false;
+    if (multiCurrency) {
+      baseFacts.push({
+        tax_fact_id: `fact_${entityId}_${taxYear}_multi_currency`,
+        entity_id: entityId, tax_year: taxYear,
+        fact_name: "multi_currency_enabled",
+        fact_value_json: true,
+        value_type: "boolean", confidence_score: 1.0, is_unknown: false,
+        derived_from_mapping_ids: [], derived_from_adjustment_ids: [],
+        explanation: "Multi-currency is enabled in QBO — may indicate foreign activity",
+      });
+    }
+
+    // Transaction volume facts for IRS thresholds
+    baseFacts.push({
+      tax_fact_id: `fact_${entityId}_${taxYear}_invoice_count`,
+      entity_id: entityId, tax_year: taxYear,
+      fact_name: "invoice_count",
+      fact_value_json: qboData.invoices.length,
+      value_type: "number", confidence_score: 1.0, is_unknown: false,
+      derived_from_mapping_ids: [], derived_from_adjustment_ids: [],
+      explanation: "Count of QBO Invoice transactions for the tax year",
+    });
+
+    baseFacts.push({
+      tax_fact_id: `fact_${entityId}_${taxYear}_bill_count`,
+      entity_id: entityId, tax_year: taxYear,
+      fact_name: "bill_count",
+      fact_value_json: qboData.bills.length,
+      value_type: "number", confidence_score: 1.0, is_unknown: false,
+      derived_from_mapping_ids: [], derived_from_adjustment_ids: [],
+      explanation: "Count of QBO Bill transactions for the tax year",
+    });
+
     await upsertFacts(baseFacts);
 
     // ── 7. Run rule engine → form requirements ────────────────────────────────

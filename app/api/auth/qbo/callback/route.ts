@@ -23,6 +23,7 @@ export async function GET(request: NextRequest) {
 
   // Fetch company name from QBO CompanyInfo
   let companyName = "";
+  let ein = "";
   if (realmId) {
     try {
       const base =
@@ -32,8 +33,9 @@ export async function GET(request: NextRequest) {
 
       const url = `${base}/v3/company/${realmId}/companyinfo/${realmId}?minorversion=65`;
       const response = await client.makeApiCall({ url, method: "GET" });
-      const body = response.getJson() as { CompanyInfo?: { CompanyName?: string; LegalName?: string } };
+      const body = response.getJson() as { CompanyInfo?: { CompanyName?: string; LegalName?: string; FederalEin?: string } };
       companyName = body.CompanyInfo?.LegalName ?? body.CompanyInfo?.CompanyName ?? "";
+      ein = body.CompanyInfo?.FederalEin ?? "";
     } catch {
       // non-fatal — company name stays empty
     }
@@ -41,6 +43,7 @@ export async function GET(request: NextRequest) {
 
   const params = new URLSearchParams({ entityId });
   if (companyName) params.set("companyName", companyName);
+  if (ein) params.set("ein", ein);
 
   return NextResponse.redirect(
     new URL(`/auth/qbo/connected?${params.toString()}`, request.url),

@@ -46,9 +46,9 @@ export default function PDFFormViewerInner({
   const hasFillStats = typeof filledCount === "number" && typeof totalMapped === "number";
 
   return (
-    <div className="flex flex-col h-full bg-[#f8f9fa]">
+    <div className="flex flex-col h-full bg-(--linen)">
       {/* Toolbar */}
-      <div className="sticky top-0 z-10 bg-white border-b border-[#f0f0f0]">
+      <div className="sticky top-0 z-10 bg-(--parchment) border-b border-(--powder-petal)">
         <div className="flex items-center gap-3 px-4 py-2.5">
           <div className="flex items-center gap-2 min-w-0 flex-1">
             <FileText size={15} className="text-[#c4bab2] shrink-0" />
@@ -77,7 +77,7 @@ export default function PDFFormViewerInner({
             </button>
             {pdfBytes && (
               <button onClick={onDownload}
-                className="flex items-center gap-1.5 border border-[#e5e5e5] hover:border-[#c4bab2] hover:bg-[#f8f8f8] text-[#5a4a3f] text-xs font-medium px-3 py-1.5 rounded-lg transition-colors">
+                className="flex items-center gap-1.5 border border-(--dust-grey) hover:border-(--almond-silk) hover:bg-(--linen) text-[#5a4a3f] text-xs font-medium px-3 py-1.5 rounded-lg transition-colors">
                 <Download size={12} /> Download
               </button>
             )}

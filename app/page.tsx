@@ -469,21 +469,15 @@ export default function Home() {
     cat, items: forms.filter((f) => f.category === cat),
   })).filter((g) => g.items.length > 0);
 
-  // Stats derived from facts for the summary cards
-  const factVal = (name: string) => {
-    const v = active?.result?.facts?.[name];
-    return typeof v === "number" ? v : 0;
-  };
-  const fmtK = (n: number) => n >= 1000 ? `$${(n / 1000).toFixed(0)}K` : `$${n.toLocaleString()}`;
   const formsFilled = active ? Object.keys(active.filledPdfs).length : 0;
   const formsTotal = forms.length;
 
   return (
-    <div className="flex h-screen overflow-hidden bg-[#f8f9fa] font-sans">
+    <div className="flex h-screen overflow-hidden bg-(--linen) font-sans">
       {errorMsg && <ErrorToast message={errorMsg} onClose={() => setErrorMsg(null)} />}
 
       {/* ── Sidebar ──────────────────────────────────────────────────── */}
-      <aside className="w-60 shrink-0 flex flex-col bg-white">
+      <aside className="w-60 shrink-0 flex flex-col bg-(--parchment)">
         {/* Logo */}
         <div className="h-16 px-6 flex items-center gap-2.5">
           <div className="w-8 h-8 rounded-lg bg-[#3d3229] flex items-center justify-center">
@@ -500,9 +494,9 @@ export default function Home() {
             const coLabel = co.entityType ? ENTITY_OPTIONS.find((o) => o.value === co.entityType)?.label : null;
             return (
               <button key={co.id} onClick={() => { setActiveId(co.id); setExpandedForms(new Set()); }}
-                className={`w-full text-left px-3 py-2.5 rounded-xl transition-all ${isActive ? "bg-[#f0f0f0] shadow-sm" : "hover:bg-[#f8f8f8]"}`}>
+                className={`w-full text-left px-3 py-2.5 rounded-xl transition-all ${isActive ? "bg-(--powder-petal) shadow-sm" : "hover:bg-(--linen)"}`}>
                 <div className="flex items-center gap-2.5">
-                  <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${isActive ? "bg-[#3d3229] text-white" : "bg-[#f0f0f0] text-[#a89f97]"}`}>
+                  <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${isActive ? "bg-[#3d3229] text-white" : "bg-(--powder-petal) text-[#a89f97]"}`}>
                     <Building2 size={14} />
                   </div>
                   <div className="min-w-0 flex-1">
@@ -523,8 +517,8 @@ export default function Home() {
           })}
 
           <button onClick={connectQBO}
-            className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl hover:bg-[#f8f8f8] transition-colors text-sm text-[#a89f97] hover:text-[#6b5e52]">
-            <div className="w-7 h-7 rounded-lg border-2 border-dashed border-[#d6ccc2] flex items-center justify-center"><Plus size={14} /></div>
+            className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl hover:bg-(--linen) transition-colors text-sm text-[#a89f97] hover:text-[#6b5e52]">
+            <div className="w-7 h-7 rounded-lg border-2 border-dashed border-(--dust-grey) flex items-center justify-center"><Plus size={14} /></div>
             Add Company
           </button>
         </div>
@@ -543,12 +537,12 @@ export default function Home() {
       {/* ── Main ─────────────────────────────────────────────────────── */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Header */}
-        <header className="shrink-0 h-16 bg-white px-8 flex items-center justify-between">
+        <header className="shrink-0 h-16 bg-(--parchment) px-8 flex items-center justify-between">
           {active ? (
             <div>
               <div className="flex items-center gap-3">
                 <h1 className="text-xl font-bold text-[#3d3229]">{active.name}</h1>
-                {entityLabel && <span className="text-xs font-medium text-[#8a7e74] bg-[#f0f0f0] px-2.5 py-1 rounded-full">{entityLabel}</span>}
+                {entityLabel && <span className="text-xs font-medium text-[#8a7e74] bg-(--powder-petal) px-2.5 py-1 rounded-full">{entityLabel}</span>}
               </div>
               <div className="flex items-center gap-2 mt-0.5">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
@@ -560,7 +554,7 @@ export default function Home() {
           ) : (
             <p className="text-[#a89f97] text-sm">Select a company</p>
           )}
-          <select className="text-sm border border-[#e5e5e5] rounded-xl px-4 py-2 text-[#3d3229] bg-white shadow-sm" value={taxYear}
+          <select className="text-sm border border-(--dust-grey) rounded-xl px-4 py-2 text-[#3d3229] bg-(--parchment) shadow-sm" value={taxYear}
             onChange={(e) => setTaxYear(Number(e.target.value))}>
             {[2025, 2024, 2023].map((y) => <option key={y}>{y}</option>)}
           </select>
@@ -570,39 +564,15 @@ export default function Home() {
         <main className="flex-1 overflow-y-auto p-6">
           {!active?.entityType ? (
             <div className="flex flex-col items-center justify-center h-full text-[#a89f97] gap-4">
-              <div className="w-16 h-16 rounded-2xl bg-white shadow-sm flex items-center justify-center"><Building2 size={28} className="text-[#d6ccc2]" /></div>
+              <div className="w-16 h-16 rounded-2xl bg-(--parchment) shadow-sm flex items-center justify-center"><Building2 size={28} className="text-[#d6ccc2]" /></div>
               <p className="text-sm">{active ? "Choose an entity type to auto-fill forms" : "Select a company from the sidebar"}</p>
             </div>
           ) : (
             <div className="space-y-6">
 
-              {/* ── Stats Cards ──────────────────────────────────────── */}
-              <div className="grid grid-cols-4 gap-4">
-                <div className="bg-white rounded-2xl p-5 shadow-sm">
-                  <p className="text-xs text-[#a89f97] font-medium">Gross Receipts</p>
-                  <p className="text-2xl font-bold text-[#3d3229] mt-1">{fmtK(factVal("gross_receipts_total"))}</p>
-                  <p className="text-[10px] text-[#a89f97] mt-1">Line 1a</p>
-                </div>
-                <div className="bg-white rounded-2xl p-5 shadow-sm">
-                  <p className="text-xs text-[#a89f97] font-medium">Total Deductions</p>
-                  <p className="text-2xl font-bold text-[#3d3229] mt-1">{fmtK(factVal("total_deductions"))}</p>
-                  <p className="text-[10px] text-[#a89f97] mt-1">Line 27</p>
-                </div>
-                <div className="bg-white rounded-2xl p-5 shadow-sm">
-                  <p className="text-xs text-[#a89f97] font-medium">Net Income</p>
-                  <p className="text-2xl font-bold text-[#3d3229] mt-1">{fmtK(factVal("net_income_before_tax"))}</p>
-                  <p className="text-[10px] text-[#a89f97] mt-1">Taxable income</p>
-                </div>
-                <div className="bg-white rounded-2xl p-5 shadow-sm">
-                  <p className="text-xs text-[#a89f97] font-medium">Forms Filled</p>
-                  <p className="text-2xl font-bold text-[#3d3229] mt-1">{formsFilled}<span className="text-sm font-normal text-[#a89f97]">/{formsTotal}</span></p>
-                  <p className="text-[10px] text-emerald-500 mt-1">{formsFilled === formsTotal ? "All complete" : `${formsTotal - formsFilled} remaining`}</p>
-                </div>
-              </div>
-
               {/* ── Diagnostics Card ─────────────────────────────────── */}
               {active.result && (blocking.length > 0 || warnings.length > 0) && (
-                <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
+                <div className="bg-(--parchment) rounded-2xl shadow-sm overflow-hidden">
                   <div className={`flex items-center gap-3 px-5 py-3 ${
                     blocking.length > 0 ? "bg-red-50 text-red-700" : "bg-amber-50 text-amber-700"
                   }`}>
@@ -611,7 +581,7 @@ export default function Home() {
                       {blocking.length > 0 ? `${blocking.length} blocking issue${blocking.length > 1 ? "s" : ""}` : `${warnings.length} warning${warnings.length > 1 ? "s" : ""} to review`}
                     </span>
                     {warnings.length > 0 && blocking.length > 0 && <span className="text-xs text-amber-600 bg-amber-100 px-2 py-0.5 rounded-full">{warnings.length} warnings</span>}
-                    {infos.length > 0 && <span className="text-xs text-[#8a7e74] bg-[#f0f0f0] px-2 py-0.5 rounded-full">{infos.length} info</span>}
+                    {infos.length > 0 && <span className="text-xs text-[#8a7e74] bg-(--powder-petal) px-2 py-0.5 rounded-full">{infos.length} info</span>}
                   </div>
                   <div className="px-5 py-3 space-y-2">
                     {[...blocking, ...warnings].map((d, i) => (
@@ -631,11 +601,11 @@ export default function Home() {
 
               {/* Form cards */}
               {groupedForms.map(({ cat, items }) => (
-                <div key={cat} className="bg-white rounded-2xl shadow-sm overflow-hidden">
-                  <div className="px-5 py-3 border-b border-[#f0f0f0]">
+                <div key={cat} className="bg-(--parchment) rounded-2xl shadow-sm overflow-hidden">
+                  <div className="px-5 py-3 border-b border-(--powder-petal)">
                     <p className="text-xs font-semibold text-[#a89f97] uppercase tracking-wider">{CATEGORY_LABELS[cat]}</p>
                   </div>
-                  <div className="divide-y divide-[#f5f5f5]">
+                  <div className="divide-y divide-(--powder-petal)">
                     {items.map((f) => {
                       const isExpanded = expandedForms.has(f.form);
                       const filled = active.filledPdfs[f.form];
@@ -653,7 +623,7 @@ export default function Home() {
                       return (
                         <div key={f.form}>
                           <button onClick={() => toggleForm(f.form)}
-                            className="flex items-center gap-4 w-full px-5 py-3.5 text-left hover:bg-[#fafafa] transition-colors">
+                            className="flex items-center gap-4 w-full px-5 py-3.5 text-left hover:bg-(--linen) transition-colors">
                             <ChevronRight size={14} className={`shrink-0 text-[#c4bab2] transition-transform ${isExpanded ? "rotate-90" : ""}`} />
                             <span className="w-20 text-sm font-bold text-[#3d3229] shrink-0">{f.form}</span>
                             <span className="text-sm text-[#6b5e52] flex-1 truncate">{f.title}</span>
@@ -661,7 +631,7 @@ export default function Home() {
                             <span className="text-xs text-[#c4bab2] shrink-0">{f.due}</span>
                           </button>
                           {isExpanded && (
-                            <div className="mx-5 mb-3 rounded-xl overflow-hidden border border-[#e5e5e5] shadow-sm" style={{ height: "80vh" }}>
+                            <div className="mx-5 mb-3 rounded-xl overflow-hidden border border-(--dust-grey) shadow-sm" style={{ height: "80vh" }}>
                               <PDFFormViewer
                                 pdfBytes={filled?.pdfBytes ?? null}
                                 pdfFileName={PDF_MAPPINGS[f.form]?.pdfFileName}
@@ -684,16 +654,16 @@ export default function Home() {
               {/* Diagnostics */}
               {active.result && active.result.diagnostics.length > 0 && (
                 <BlurFade delay={0.05}>
-                  <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
-                    <div className="flex items-center justify-between px-5 py-3 border-b border-[#f0f0f0]">
+                  <div className="bg-(--parchment) rounded-2xl shadow-sm overflow-hidden">
+                    <div className="flex items-center justify-between px-5 py-3 border-b border-(--powder-petal)">
                       <p className="text-xs font-semibold text-[#a89f97] uppercase tracking-wider">All Diagnostics</p>
                       <div className="flex items-center gap-2 text-xs">
                         {blocking.length > 0 && <span className="text-red-500 bg-red-50 px-2 py-0.5 rounded-full font-medium">{blocking.length} blocking</span>}
                         {warnings.length > 0 && <span className="text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full font-medium">{warnings.length} warnings</span>}
-                        {infos.length > 0 && <span className="text-[#8a7e74] bg-[#f0f0f0] px-2 py-0.5 rounded-full font-medium">{infos.length} info</span>}
+                        {infos.length > 0 && <span className="text-[#8a7e74] bg-(--powder-petal) px-2 py-0.5 rounded-full font-medium">{infos.length} info</span>}
                       </div>
                     </div>
-                    <div className="divide-y divide-[#f5f5f5]">
+                    <div className="divide-y divide-(--powder-petal)">
                       {active.result.diagnostics.map((d, i) => {
                         const isBlock = d.severity === "blocking_error";
                         const isWarn = d.severity === "warning";

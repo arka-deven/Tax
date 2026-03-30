@@ -83,6 +83,66 @@ const SEMANTIC_MAP: Record<
   "Equity|OpeningBalanceEquity":       { semantic_category: "equity",                   tax_code: "EQUITY",                  form: "1120",       schedule: "L",    line: "36" },
   "Equity|PartnersEquity":             { semantic_category: "equity",                   tax_code: "EQUITY",                  form: "1065",       schedule: "M-2",  line: "11" },   // 1065 M-2 line 11: balance at end of year
   "Equity|ShareholdersEquity":         { semantic_category: "equity",                   tax_code: "EQUITY",                  form: "1120-S",     schedule: "M-2",  line: "9" },    // 1120-S M-2 (AAA) line 9
+
+  // ── Bank / Cash ───────────────────────────────────────────────────────────
+  // Schedule L line 1
+  "Bank":                              { semantic_category: "cash",                     tax_code: "CASH",                    form: "1120",       schedule: "L",    line: "1" },
+  "Bank|Checking":                     { semantic_category: "cash",                     tax_code: "CASH",                    form: "1120",       schedule: "L",    line: "1" },
+  "Bank|Savings":                      { semantic_category: "cash",                     tax_code: "CASH",                    form: "1120",       schedule: "L",    line: "1" },
+  "Bank|MoneyMarket":                  { semantic_category: "cash",                     tax_code: "CASH",                    form: "1120",       schedule: "L",    line: "1" },
+  "Bank|CashOnHand":                   { semantic_category: "cash",                     tax_code: "CASH",                    form: "1120",       schedule: "L",    line: "1" },
+  "Bank|TrustAccount":                 { semantic_category: "cash",                     tax_code: "CASH",                    form: "1120",       schedule: "L",    line: "1" },
+
+  // ── Accounts Receivable ───────────────────────────────────────────────────
+  // Schedule L lines 2a / 2b
+  "Accounts Receivable":               { semantic_category: "accounts_receivable",      tax_code: "ACCOUNTS_RECEIVABLE",     form: "1120",       schedule: "L",    line: "2a" },
+
+  // ── Other Current Assets ──────────────────────────────────────────────────
+  // Schedule L lines 3, 6, 7
+  "Other Current Asset":               { semantic_category: "other_current_assets",     tax_code: "OTHER_CURRENT_ASSETS",    form: "1120",       schedule: "L",    line: "6" },
+  "Other Current Asset|Inventory":     { semantic_category: "inventory",                tax_code: "INVENTORY",               form: "1120",       schedule: "L",    line: "3" },
+  "Other Current Asset|PrepaidExpenses": { semantic_category: "prepaid_expenses",       tax_code: "PREPAID_EXPENSES",        form: "1120",       schedule: "L",    line: "6" },
+  "Other Current Asset|UndepositedFunds": { semantic_category: "other_current_assets",  tax_code: "OTHER_CURRENT_ASSETS",    form: "1120",       schedule: "L",    line: "6" },
+  "Other Current Asset|AllowanceForBadDebts": { semantic_category: "allowance_bad_debts", tax_code: "ALLOWANCE_BAD_DEBTS",  form: "1120",       schedule: "L",    line: "2b" },
+  "Other Current Asset|LoansToOfficers": { semantic_category: "loans_to_officers",      tax_code: "LOANS_TO_OFFICERS",       form: "1120",       schedule: "L",    line: "7" },
+  "Other Current Asset|OtherCurrentAssets": { semantic_category: "other_current_assets", tax_code: "OTHER_CURRENT_ASSETS",  form: "1120",       schedule: "L",    line: "6" },
+
+  // ── Other Assets (non-current / intangible) ───────────────────────────────
+  // Schedule L lines 12, 12b, 14
+  "Other Asset":                       { semantic_category: "other_assets",             tax_code: "OTHER_ASSETS",            form: "1120",       schedule: "L",    line: "14" },
+  "Other Asset|Goodwill":              { semantic_category: "intangible_assets",        tax_code: "INTANGIBLE_ASSETS",       form: "1120",       schedule: "L",    line: "12" },
+  "Other Asset|Licenses":              { semantic_category: "intangible_assets",        tax_code: "INTANGIBLE_ASSETS",       form: "1120",       schedule: "L",    line: "12" },
+  "Other Asset|OtherAsset":            { semantic_category: "other_assets",             tax_code: "OTHER_ASSETS",            form: "1120",       schedule: "L",    line: "14" },
+  "Other Asset|SecurityDeposits":      { semantic_category: "other_assets",             tax_code: "OTHER_ASSETS",            form: "1120",       schedule: "L",    line: "14" },
+  "Other Asset|AccumulatedAmortization": { semantic_category: "accum_amortization",     tax_code: "ACCUM_AMORTIZATION",      form: "1120",       schedule: "L",    line: "12b" },
+  "Other Asset|AccumulatedDepletion":  { semantic_category: "accum_amortization",       tax_code: "ACCUM_AMORTIZATION",      form: "1120",       schedule: "L",    line: "12b" },
+
+  // Fixed Asset accumulated depreciation (contra-asset on Schedule L line 9b)
+  "Fixed Asset|AccumulatedDepreciation": { semantic_category: "accum_depreciation",     tax_code: "ACCUM_DEPRECIATION",      form: "1120",       schedule: "L",    line: "9b" },
+
+  // ── Accounts Payable ──────────────────────────────────────────────────────
+  // Schedule L line 16
+  "Accounts Payable":                  { semantic_category: "accounts_payable",         tax_code: "ACCOUNTS_PAYABLE",        form: "1120",       schedule: "L",    line: "16" },
+
+  // ── Credit Card (current liability) ──────────────────────────────────────
+  // Schedule L line 17
+  "Credit Card":                       { semantic_category: "credit_card_liability",    tax_code: "CREDIT_CARD_LIABILITY",   form: "1120",       schedule: "L",    line: "17" },
+
+  // ── Other Current Liabilities ─────────────────────────────────────────────
+  // Schedule L lines 17-18
+  "Other Current Liability":           { semantic_category: "other_current_liabilities", tax_code: "OTHER_CURRENT_LIABS",   form: "1120",       schedule: "L",    line: "18" },
+  "Other Current Liability|PayrollTaxPayable": { semantic_category: "other_current_liabilities", tax_code: "OTHER_CURRENT_LIABS", form: "1120", schedule: "L",    line: "18" },
+  "Other Current Liability|SalesTaxPayable": { semantic_category: "other_current_liabilities", tax_code: "OTHER_CURRENT_LIABS",  form: "1120", schedule: "L",    line: "18" },
+  "Other Current Liability|LineOfCredit": { semantic_category: "other_current_liabilities", tax_code: "OTHER_CURRENT_LIABS",    form: "1120", schedule: "L",    line: "18" },
+  "Other Current Liability|PayrollClearing": { semantic_category: "other_current_liabilities", tax_code: "OTHER_CURRENT_LIABS", form: "1120", schedule: "L",    line: "18" },
+  "Other Current Liability|OtherCurrentLiabilities": { semantic_category: "other_current_liabilities", tax_code: "OTHER_CURRENT_LIABS", form: "1120", schedule: "L", line: "18" },
+
+  // ── Long-Term Liabilities ─────────────────────────────────────────────────
+  // Schedule L lines 19-20
+  "Long Term Liability":               { semantic_category: "long_term_liabilities",    tax_code: "LONG_TERM_LIABILITIES",   form: "1120",       schedule: "L",    line: "20" },
+  "Long Term Liability|NotesPayable":  { semantic_category: "long_term_liabilities",    tax_code: "LONG_TERM_LIABILITIES",   form: "1120",       schedule: "L",    line: "20" },
+  "Long Term Liability|ShareholderNotesPayable": { semantic_category: "shareholder_loans", tax_code: "SHAREHOLDER_LOANS",    form: "1120",       schedule: "L",    line: "19" },
+  "Long Term Liability|OtherLongTermLiabilities": { semantic_category: "long_term_liabilities", tax_code: "LONG_TERM_LIABILITIES", form: "1120", schedule: "L",   line: "20" },
 };
 
 export function mapTrialBalanceLines(

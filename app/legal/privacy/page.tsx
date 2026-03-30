@@ -25,7 +25,7 @@ export default function PrivacyPage() {
             <li>Company name (from QBO CompanyInfo API)</li>
             <li>Chart of accounts (account names, types, and subtypes)</li>
             <li>Journal entries (dates, amounts, account references) for the selected tax year</li>
-            <li>OAuth access and refresh tokens (stored in server memory, not persisted to disk)</li>
+            <li>OAuth access and refresh tokens (stored securely on the server)</li>
           </ul>
           <p className="mt-2">We do not collect personal identifying information about individuals within your company.</p>
         </div>
@@ -49,9 +49,9 @@ export default function PrivacyPage() {
           <h2 className="font-semibold mb-1">4. Data Storage</h2>
           <p>
             Processed data (trial balance lines, tax mappings, facts, diagnostics, and form
-            requirements) is stored in a Supabase Postgres database secured with row-level
-            isolation. OAuth tokens are held in server memory and are cleared when you disconnect
-            or the server restarts.
+            requirements) is stored in a secure database with row-level isolation. OAuth tokens
+            are encrypted and stored server-side. Tokens are cleared when you disconnect your
+            QBO account.
           </p>
         </div>
 

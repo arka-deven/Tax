@@ -12,15 +12,16 @@ import {
   Plug,
   LogOut,
   Play,
-  ExternalLink,
   Building2,
 } from "lucide-react";
 import { BlurFade } from "@/components/magicui/blur-fade";
 import { AnimatedList } from "@/components/magicui/animated-list";
 import { NumberTicker } from "@/components/magicui/number-ticker";
-import { FORM_FIELD_DEFS, FORM_METADATA, computeFormValues, recomputeFields } from "@/lib/form-fields";
-import type { FormFieldDef } from "@/lib/form-fields";
-import IRSFormView from "@/components/IRSFormView";
+import { computeFormValues } from "@/lib/form-fields";
+import PDFFormViewer from "@/components/PDFFormViewer";
+import { PDF_MAPPINGS } from "@/lib/pdf/pdf-mappings";
+import { fillPdf } from "@/lib/pdf/pdf-filler";
+import type { FilledPdfResult, FillContext } from "@/lib/pdf/types";
 
 // ── Error Toast ───────────────────────────────────────────────────────────────
 
@@ -204,8 +205,28 @@ export default function Home() {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [formValues, setFormValues] = useState<Record<string, Record<string, string>>>({});
   const [expandedForms, setExpandedForms] = useState<Set<string>>(new Set());
-  const [editedFields, setEditedFields] = useState<Set<string>>(new Set());
+  // editedFields removed — PDF viewer handles edits natively
   const [generatingForm, setGeneratingForm] = useState<string | null>(null);
+  const [filledPdfs, setFilledPdfs] = useState<Record<string, FilledPdfResult>>({});
+
+  // ── Auto-check existing QBO connection on mount ────────────────────────────
+  useEffect(() => {
+    async function checkExistingConnection() {
+      try {
+        const res = await fetch(`/api/auth/qbo/status?entityId=entity_1`);
+        const json = await res.json();
+        if (json.connected) {
+          // Already connected — skip to entity_select
+          setCompanyName(json.companyName ?? "Your Company");
+          setEin(json.ein ?? null);
+          setStep("entity_select");
+        }
+      } catch {
+        // Not connected, stay on connect step
+      }
+    }
+    checkExistingConnection();
+  }, []);
 
   useEffect(() => {
     function handleMessage(event: MessageEvent) {
@@ -285,12 +306,64 @@ export default function Home() {
       if (!res) { setGeneratingForm(null); return; }
       facts = res.facts;
     }
-    const values = computeFormValues(formCode, facts);
-    setFormValues(prev => ({ ...prev, [formCode]: values }));
+
+    const ctx: FillContext = {
+      facts,
+      meta: {
+        companyName: companyName ?? "",
+        ein: ein ?? "",
+        taxYear,
+        entityType: entityType ?? undefined,
+      },
+    };
+
+    // Generate ALL forms for this entity type at once
+    const allForms = entityType ? FORMS_BY_ENTITY[entityType] : [];
+    const allFormCodes = new Set(allForms.map(f => f.form));
+    // Always include the clicked form
+    allFormCodes.add(formCode);
+
+    // Fill all forms in parallel
+    const pdfPromises: Promise<void>[] = [];
+    const newFormValues: Record<string, Record<string, string>> = {};
+    const newFilledPdfs: Record<string, FilledPdfResult> = {};
+
+    for (const code of allFormCodes) {
+      // Legacy HTML form values
+      const values = computeFormValues(code, facts);
+      newFormValues[code] = values;
+
+      // PDF fill
+      const mapping = PDF_MAPPINGS[code];
+      if (mapping) {
+        pdfPromises.push(
+          fillPdf(mapping, ctx)
+            .then(filled => { newFilledPdfs[code] = filled; })
+            .catch(err => console.error(`PDF fill failed for ${code}:`, err))
+        );
+      }
+    }
+
+    await Promise.all(pdfPromises);
+
+    setFormValues(prev => ({ ...prev, ...newFormValues }));
+    setFilledPdfs(prev => ({ ...prev, ...newFilledPdfs }));
     setExpandedForms(prev => new Set([...prev, formCode]));
     setGeneratingForm(null);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [result, entityType, entityId, taxYear]);
+  }, [result, entityType, entityId, taxYear, companyName, ein]);
+
+  function downloadPdf(formCode: string) {
+    const filled = filledPdfs[formCode];
+    if (!filled) return;
+    const blob = new Blob([new Uint8Array(filled.pdfBytes)], { type: "application/pdf" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${formCode.replace(/\s/g, "_")}_${taxYear}.pdf`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
 
   function toggleForm(formCode: string) {
     setExpandedForms(prev => {
@@ -301,21 +374,7 @@ export default function Home() {
     });
   }
 
-  function handleFieldChange(formCode: string, line: string, value: string) {
-    setFormValues(prev => {
-      const current = { ...prev[formCode], [line]: value };
-      const recomputed = recomputeFields(formCode, current);
-      return { ...prev, [formCode]: recomputed };
-    });
-    setEditedFields(prev => new Set([...prev, `${formCode}:${line}`]));
-  }
-
-  function formatCurrency(val: string | undefined): string {
-    if (!val) return "";
-    const n = parseFloat(val);
-    if (isNaN(n)) return val;
-    return n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-  }
+  // handleFieldChange + formatCurrency removed — PDF viewer handles edits natively
 
   const blocking = result?.diagnostics.filter((d) => d.severity === "blocking_error") ?? [];
   const warnings  = result?.diagnostics.filter((d) => d.severity === "warning") ?? [];
@@ -516,59 +575,48 @@ export default function Home() {
                 </p>
                 <div className="space-y-5">
                   {items.map((f) => {
-                    const fieldDefs = FORM_FIELD_DEFS[f.form];
-                    const meta = FORM_METADATA[f.form];
-                    const hasFields = !!fieldDefs && !!meta;
-                    const fv = formValues[f.form] ?? {};
                     const isGeneratingThis = generatingForm === f.form;
                     const isExpanded = expandedForms.has(f.form);
+                    const filled = filledPdfs[f.form];
 
-                    // If we have field definitions + metadata, render the full IRS form
-                    if (hasFields) {
+                    // 990-N is electronic-only (e-Postcard) — no PDF exists
+                    if (f.form === "990-N") {
                       return (
-                        <div key={f.form}>
-                          {/* Collapse toggle */}
-                          <button
-                            onClick={() => toggleForm(f.form)}
-                            className="flex items-center gap-2 mb-1 text-xs text-stone-500 hover:text-stone-800 transition-colors"
-                          >
-                            <ChevronRight size={12} className={`transition-transform ${isExpanded ? "rotate-90" : ""}`} />
-                            <span className="font-semibold">{f.form}</span>
-                            <span className="text-stone-400">{f.title}</span>
-                            <span className="text-[10px] text-stone-300 ml-auto">{f.due}</span>
-                          </button>
-
-                          {isExpanded && (
-                            <IRSFormView
-                              formCode={f.form}
-                              meta={meta}
-                              year={taxYear}
-                              companyName={companyName ?? ""}
-                              ein={ein ?? ""}
-                              fields={fieldDefs}
-                              values={fv}
-                              editedFields={editedFields}
-                              onFieldChange={(line, val) => handleFieldChange(f.form, line, val)}
-                              onGenerate={() => generateForm(f.form)}
-                              isGenerating={isGeneratingThis || running}
-                            />
-                          )}
+                        <div key={f.form} className="bg-stone-50 border border-stone-200 rounded-xl px-5 py-3 flex items-center gap-3">
+                          <span className="text-xs font-semibold text-stone-500 bg-stone-100 px-2 py-0.5 rounded">{f.form}</span>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm text-stone-700 truncate">{f.title}</p>
+                            <p className="text-[10px] text-stone-400">{f.due} · Electronic filing only — no PDF form</p>
+                          </div>
                         </div>
                       );
                     }
 
-                    // No field defs — compact card
+                    // All other forms use the PDF viewer
                     return (
-                      <div key={f.form} className="bg-white border border-stone-200 rounded-xl px-5 py-3 flex items-center gap-3">
-                        <span className="text-xs font-semibold text-stone-500 bg-stone-100 px-2 py-0.5 rounded">{f.form}</span>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm text-stone-700 truncate">{f.title}</p>
-                          <p className="text-[10px] text-stone-400">{f.due} · {f.description}</p>
-                        </div>
-                        {f.irsUrl && (
-                          <a href={f.irsUrl} target="_blank" rel="noopener noreferrer" className="text-stone-300 hover:text-blue-500">
-                            <ExternalLink size={12} />
-                          </a>
+                      <div key={f.form}>
+                        <button
+                          onClick={() => toggleForm(f.form)}
+                          className="flex items-center gap-2 mb-1 text-xs text-stone-500 hover:text-stone-800 transition-colors"
+                        >
+                          <ChevronRight size={12} className={`transition-transform ${isExpanded ? "rotate-90" : ""}`} />
+                          <span className="font-semibold">{f.form}</span>
+                          <span className="text-stone-400">{f.title}</span>
+                          <span className="text-[10px] text-stone-300 ml-auto">{f.due}</span>
+                        </button>
+
+                        {isExpanded && (
+                          <div className="border border-stone-200 rounded-xl overflow-hidden" style={{ height: filled ? "80vh" : "auto" }}>
+                            <PDFFormViewer
+                              pdfBytes={filled?.pdfBytes ?? null}
+                              formCode={f.form}
+                              onGenerate={() => generateForm(f.form)}
+                              isGenerating={isGeneratingThis || running}
+                              onDownload={() => downloadPdf(f.form)}
+                              filledCount={filled?.filledCount}
+                              totalMapped={filled?.totalMapped}
+                            />
+                          </div>
                         )}
                       </div>
                     );

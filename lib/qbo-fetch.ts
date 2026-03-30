@@ -14,6 +14,14 @@ interface QBOQueryResponse<T> {
   time: string;
 }
 
+/** Extract JSON from intuit-oauth response (handles both old AuthResponse and new plain object) */
+function extractJson(response: any): any {
+  if (typeof response.getJson === "function") return response.getJson();
+  if (response.json !== undefined) return response.json;
+  if (response.body) return typeof response.body === "string" ? JSON.parse(response.body) : response.body;
+  throw new Error("Cannot extract JSON from QBO API response");
+}
+
 async function qboQuery<T>(entityId: string, query: string): Promise<T> {
   const client = await getClientForEntity(entityId);
   const realmId = realmStore.get(entityId);
@@ -21,7 +29,7 @@ async function qboQuery<T>(entityId: string, query: string): Promise<T> {
 
   const url = `${baseUrl()}/v3/company/${realmId}/query?query=${encodeURIComponent(query)}&minorversion=65`;
   const response = await client.makeApiCall({ url, method: "GET" });
-  const body = response.getJson() as QBOQueryResponse<T>;
+  const body = extractJson(response) as QBOQueryResponse<T>;
   return body.QueryResponse;
 }
 
@@ -32,7 +40,7 @@ async function qboGet<T>(entityId: string, path: string): Promise<T> {
 
   const url = `${baseUrl()}/v3/company/${realmId}/${path}`;
   const response = await client.makeApiCall({ url, method: "GET" });
-  return response.getJson() as T;
+  return extractJson(response) as T;
 }
 
 // ── Types ─────────────────────────────────────────────────────────────────────

@@ -1,3 +1,6 @@
+# QBO token persistence (contains OAuth tokens — never commit)
+.qbo-tokens.json
+
 # Environment
 .env
 .env.local

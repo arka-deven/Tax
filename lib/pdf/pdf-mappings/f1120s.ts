@@ -1,0 +1,282 @@
+import type { FormPdfMapping, FillContext } from "../types";
+
+const PAGE1 = "topmostSubform[0].Page1[0].";
+
+export const F1120S_MAPPING: FormPdfMapping = {
+  formCode: "1120-S",
+  pdfFileName: "f1120s.pdf",
+  taxYear: 2024,
+  fields: [
+    // ── Calendar year header ──────────────────────────────────────────────────
+    {
+      pdfFieldName: `${PAGE1}f1_1[0]`,
+      compute: (ctx: FillContext) => String(ctx.meta.taxYear),
+      format: "string",
+      irsLine: "header",
+      description: "Tax year begin",
+    },
+    {
+      pdfFieldName: `${PAGE1}f1_2[0]`,
+      compute: (ctx: FillContext) => String(ctx.meta.taxYear),
+      format: "string",
+      irsLine: "header",
+      description: "Tax year end year",
+    },
+    {
+      pdfFieldName: `${PAGE1}f1_3[0]`,
+      compute: (ctx: FillContext) => String(ctx.meta.taxYear),
+      format: "string",
+      irsLine: "header",
+      description: "Calendar year footer",
+    },
+
+    // ── Entity header ─────────────────────────────────────────────────────────
+    {
+      pdfFieldName: `${PAGE1}f1_4[0]`,
+      compute: (ctx: FillContext) => ctx.meta.companyName,
+      format: "string",
+      irsLine: "header",
+      description: "Company / corporation name",
+    },
+    {
+      pdfFieldName: `${PAGE1}f1_5[0]`,
+      compute: (ctx: FillContext) => ctx.meta.address,
+      format: "string",
+      irsLine: "header",
+      description: "Street address",
+    },
+    {
+      pdfFieldName: `${PAGE1}f1_6[0]`,
+      compute: (ctx: FillContext) => ctx.meta.city,
+      format: "string",
+      irsLine: "header",
+      description: "City",
+    },
+    {
+      pdfFieldName: `${PAGE1}f1_7[0]`,
+      compute: (ctx: FillContext) => ctx.meta.state,
+      format: "string",
+      irsLine: "header",
+      description: "State",
+    },
+    {
+      pdfFieldName: `${PAGE1}f1_8[0]`,
+      compute: (ctx: FillContext) => ctx.meta.zip,
+      format: "string",
+      irsLine: "header",
+      description: "ZIP code",
+    },
+    {
+      pdfFieldName: `${PAGE1}f1_9[0]`,
+      compute: (ctx: FillContext) => ctx.meta.ein,
+      format: "string",
+      irsLine: "B",
+      description: "Employer Identification Number (EIN)",
+    },
+    {
+      pdfFieldName: `${PAGE1}f1_10[0]`,
+      format: "string",
+      irsLine: "header",
+      description: "Date S-corporation election took effect",
+    },
+
+    // ── Income (Lines 1a – 6) ─────────────────────────────────────────────────
+    {
+      pdfFieldName: `${PAGE1}f1_14[0]`,
+      factName: "gross_receipts_total",
+      format: "currency",
+      irsLine: "1a",
+      description: "Gross receipts or sales",
+    },
+    {
+      pdfFieldName: `${PAGE1}f1_15[0]`,
+      format: "currency",
+      irsLine: "1b",
+      description: "Returns and allowances",
+    },
+    {
+      pdfFieldName: `${PAGE1}f1_16[0]`,
+      format: "currency",
+      irsLine: "1c",
+      description: "Balance (Line 1a minus 1b)",
+    },
+    {
+      pdfFieldName: `${PAGE1}f1_17[0]`,
+      factName: "cogs_total",
+      format: "currency",
+      irsLine: "2",
+      description: "Cost of goods sold (Schedule A)",
+    },
+    {
+      pdfFieldName: `${PAGE1}f1_18[0]`,
+      format: "currency",
+      irsLine: "3",
+      description: "Gross profit (Line 1c minus Line 2)",
+    },
+    {
+      pdfFieldName: `${PAGE1}f1_19[0]`,
+      format: "currency",
+      irsLine: "4",
+      description: "Net gain (loss) from Form 4797",
+    },
+    {
+      pdfFieldName: `${PAGE1}f1_20[0]`,
+      factName: "other_income_total",
+      format: "currency",
+      irsLine: "5",
+      description: "Other income (loss)",
+    },
+    {
+      pdfFieldName: `${PAGE1}f1_21[0]`,
+      format: "currency",
+      irsLine: "6",
+      description: "Total income (loss) (Lines 3 through 5)",
+    },
+
+    // ── Deductions (Lines 7 – 20) ─────────────────────────────────────────────
+    {
+      pdfFieldName: `${PAGE1}f1_22[0]`,
+      factName: "officer_compensation_total",
+      format: "currency",
+      irsLine: "7",
+      description: "Compensation of officers",
+    },
+    {
+      pdfFieldName: `${PAGE1}f1_23[0]`,
+      factName: "wages_total",
+      format: "currency",
+      irsLine: "8",
+      description: "Salaries and wages (less employment credits)",
+    },
+    {
+      pdfFieldName: `${PAGE1}f1_24[0]`,
+      factName: "repairs_total",
+      format: "currency",
+      irsLine: "9",
+      description: "Repairs and maintenance",
+    },
+    {
+      pdfFieldName: `${PAGE1}f1_25[0]`,
+      factName: "bad_debt_total",
+      format: "currency",
+      irsLine: "10",
+      description: "Bad debts",
+    },
+    {
+      pdfFieldName: `${PAGE1}f1_26[0]`,
+      factName: "rent_building_total",
+      format: "currency",
+      irsLine: "11",
+      description: "Rents",
+    },
+    {
+      pdfFieldName: `${PAGE1}f1_27[0]`,
+      factName: "taxes_licenses_total",
+      format: "currency",
+      irsLine: "12",
+      description: "Taxes and licenses",
+    },
+    {
+      pdfFieldName: `${PAGE1}f1_28[0]`,
+      factName: "interest_expense_total",
+      format: "currency",
+      irsLine: "13",
+      description: "Interest",
+    },
+    {
+      pdfFieldName: `${PAGE1}f1_29[0]`,
+      factName: "depreciation_total",
+      format: "currency",
+      irsLine: "14",
+      description: "Depreciation not claimed on Schedule A or elsewhere",
+    },
+    {
+      pdfFieldName: `${PAGE1}f1_30[0]`,
+      format: "currency",
+      irsLine: "15",
+      description: "Depletion (do not deduct oil and gas depletion)",
+    },
+    {
+      pdfFieldName: `${PAGE1}f1_31[0]`,
+      factName: "advertising_total",
+      format: "currency",
+      irsLine: "16",
+      description: "Advertising",
+    },
+    {
+      pdfFieldName: `${PAGE1}f1_32[0]`,
+      format: "currency",
+      irsLine: "17",
+      description: "Pension, profit-sharing, etc., plans",
+    },
+    {
+      pdfFieldName: `${PAGE1}f1_33[0]`,
+      format: "currency",
+      irsLine: "18",
+      description: "Employee benefit programs",
+    },
+    {
+      pdfFieldName: `${PAGE1}f1_34[0]`,
+      factName: "general_deduction_total",
+      format: "currency",
+      irsLine: "19",
+      description: "Other deductions (attach statement)",
+    },
+    {
+      pdfFieldName: `${PAGE1}f1_35[0]`,
+      format: "currency",
+      irsLine: "20",
+      description: "Total deductions (add Lines 7 through 19)",
+    },
+
+    // ── Tax and payments (Lines 21 – 26) ─────────────────────────────────────
+    {
+      pdfFieldName: `${PAGE1}f1_36[0]`,
+      format: "currency",
+      irsLine: "21",
+      description: "Ordinary business income (loss) (Line 6 minus Line 20)",
+    },
+    {
+      pdfFieldName: `${PAGE1}f1_37[0]`,
+      format: "currency",
+      irsLine: "22a",
+      description: "Tax: excess net passive income or LIFO recapture",
+    },
+    {
+      pdfFieldName: `${PAGE1}f1_38[0]`,
+      format: "currency",
+      irsLine: "22b",
+      description: "Tax: built-in gains",
+    },
+    {
+      pdfFieldName: `${PAGE1}f1_39[0]`,
+      format: "currency",
+      irsLine: "22c",
+      description: "Total tax (Line 22a plus 22b)",
+    },
+    {
+      pdfFieldName: `${PAGE1}f1_40[0]`,
+      format: "currency",
+      irsLine: "23",
+      description: "Payments (Form 2439, etc.)",
+    },
+    {
+      pdfFieldName: `${PAGE1}f1_41[0]`,
+      format: "currency",
+      irsLine: "24",
+      description: "Estimated tax penalty",
+    },
+    {
+      pdfFieldName: `${PAGE1}f1_42[0]`,
+      format: "currency",
+      irsLine: "25",
+      description: "Amount owed",
+    },
+    {
+      pdfFieldName: `${PAGE1}f1_43[0]`,
+      format: "currency",
+      irsLine: "26",
+      description: "Overpayment",
+    },
+  ],
+};

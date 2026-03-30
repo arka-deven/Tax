@@ -33,7 +33,7 @@ export async function GET(request: NextRequest) {
 
       const url = `${base}/v3/company/${realmId}/companyinfo/${realmId}?minorversion=65`;
       const response = await client.makeApiCall({ url, method: "GET" });
-      const body = response.getJson() as { CompanyInfo?: { CompanyName?: string; LegalName?: string; FederalEin?: string } };
+      const body = (typeof response.getJson === "function" ? response.getJson() : response.json) as { CompanyInfo?: { CompanyName?: string; LegalName?: string; FederalEin?: string } };
       companyName = body.CompanyInfo?.LegalName ?? body.CompanyInfo?.CompanyName ?? "";
       ein = body.CompanyInfo?.FederalEin ?? "";
     } catch {

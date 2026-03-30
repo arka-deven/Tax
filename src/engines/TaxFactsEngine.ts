@@ -242,5 +242,547 @@ export function deriveTaxFacts(
     0.6 // lower confidence — proper total assets require full balance sheet
   ));
 
+  // ── Balance sheet facts (Schedule L) ─────────────────────────────────────
+  // Note: Balance sheet accounts use raw balance (not absolute value) because
+  // contra accounts (allowance, accumulated depreciation) carry opposite signs.
+
+  function sumCategoryRaw(category: string): { total: number; mappingIds: string[] } {
+    const matched = mappings.filter((m) => m.semantic_category === category);
+    const total = matched.reduce((acc, m) => {
+      const balance = balanceByLine.get(m.tb_line_id) ?? 0;
+      return acc + balance; // Keep sign — debit accounts positive, credit accounts negative
+    }, 0);
+    return { total, mappingIds: matched.map((m) => m.mapping_id) };
+  }
+
+  // Sch L line 1
+  const cashRaw = sumCategoryRaw("cash");
+  facts.push(fact(
+    "cash_total",
+    cashRaw.total,
+    "number",
+    cashRaw.mappingIds,
+    "Cash and cash equivalents — Schedule L line 1",
+    0.85
+  ));
+
+  // Sch L line 2a
+  const arRaw = sumCategoryRaw("accounts_receivable");
+  facts.push(fact(
+    "accounts_receivable_total",
+    arRaw.total,
+    "number",
+    arRaw.mappingIds,
+    "Trade accounts receivable — Schedule L line 2a",
+    0.85
+  ));
+
+  // Sch L line 2b
+  const allowanceRaw = sumCategoryRaw("allowance_bad_debts");
+  facts.push(fact(
+    "allowance_bad_debts_total",
+    allowanceRaw.total,
+    "number",
+    allowanceRaw.mappingIds,
+    "Allowance for bad debts (contra asset, will be negative) — Schedule L line 2b",
+    0.85
+  ));
+
+  // Sch L line 3 (also Form 1125-A lines 1/6)
+  const inventoryRaw = sumCategoryRaw("inventory");
+  facts.push(fact(
+    "inventory_total",
+    inventoryRaw.total,
+    "number",
+    inventoryRaw.mappingIds,
+    "Inventory — Schedule L line 3; also Form 1125-A lines 1 and 6",
+    0.85
+  ));
+
+  // Sch L line 6
+  const otherCurrentRaw = sumCategoryRaw("other_current_assets");
+  const prepaidRaw = sumCategoryRaw("prepaid_expenses");
+  facts.push(fact(
+    "other_current_assets_total",
+    otherCurrentRaw.total + prepaidRaw.total,
+    "number",
+    [...otherCurrentRaw.mappingIds, ...prepaidRaw.mappingIds],
+    "Other current assets including prepaid expenses — Schedule L line 6",
+    0.85
+  ));
+
+  // Sch L line 7
+  const loansOfficersRaw = sumCategoryRaw("loans_to_officers");
+  facts.push(fact(
+    "loans_to_officers_total",
+    loansOfficersRaw.total,
+    "number",
+    loansOfficersRaw.mappingIds,
+    "Loans to officers — Schedule L line 7",
+    0.85
+  ));
+
+  // Sch L line 9a — fixed assets (raw balance, keeping sign)
+  const fixedAssetRaw = mappings
+    .filter((m) =>
+      m.tax_code === "FIXED_ASSET" ||
+      m.tax_code === "FIXED_ASSET_VEHICLE" ||
+      m.tax_code === "FIXED_ASSET_BUILDING" ||
+      m.tax_code === "FIXED_ASSET_QIP"
+    );
+  const buildingsDepreciableTotal = fixedAssetRaw.reduce((acc, m) => {
+    const balance = balanceByLine.get(m.tb_line_id) ?? 0;
+    return acc + balance;
+  }, 0);
+  facts.push(fact(
+    "buildings_depreciable_total",
+    buildingsDepreciableTotal,
+    "number",
+    fixedAssetRaw.map((m) => m.mapping_id),
+    "Depreciable buildings and equipment at cost — Schedule L line 9a",
+    0.85
+  ));
+
+  // Sch L line 9b (will be negative — contra asset)
+  const accumDeprecRaw = sumCategoryRaw("accum_depreciation");
+  facts.push(fact(
+    "accum_depreciation_total",
+    accumDeprecRaw.total,
+    "number",
+    accumDeprecRaw.mappingIds,
+    "Accumulated depreciation (contra asset, will be negative) — Schedule L line 9b",
+    0.85
+  ));
+
+  // Sch L line 10 (placeholder — no specific category yet)
+  facts.push(fact(
+    "land_total",
+    0,
+    "number",
+    [],
+    "Land (placeholder — no land semantic category mapped yet) — Schedule L line 10",
+    0.85
+  ));
+
+  // Sch L line 12
+  const intangibleRaw = sumCategoryRaw("intangible_assets");
+  facts.push(fact(
+    "intangible_assets_total",
+    intangibleRaw.total,
+    "number",
+    intangibleRaw.mappingIds,
+    "Intangible assets — Schedule L line 12",
+    0.85
+  ));
+
+  // Sch L line 12b
+  const accumAmortRaw = sumCategoryRaw("accum_amortization");
+  facts.push(fact(
+    "accum_amortization_total",
+    accumAmortRaw.total,
+    "number",
+    accumAmortRaw.mappingIds,
+    "Accumulated amortization (contra asset, will be negative) — Schedule L line 12b",
+    0.85
+  ));
+
+  // Sch L line 14
+  const otherAssetsRaw = sumCategoryRaw("other_assets");
+  facts.push(fact(
+    "other_assets_total",
+    otherAssetsRaw.total,
+    "number",
+    otherAssetsRaw.mappingIds,
+    "Other assets — Schedule L line 14",
+    0.85
+  ));
+
+  // Sch L line 16 (credit balance — will be negative)
+  const apRaw = sumCategoryRaw("accounts_payable");
+  facts.push(fact(
+    "accounts_payable_total",
+    apRaw.total,
+    "number",
+    apRaw.mappingIds,
+    "Accounts payable (credit balance, will be negative) — Schedule L line 16",
+    0.85
+  ));
+
+  // Sch L line 17
+  const creditCardRaw = sumCategoryRaw("credit_card_liability");
+  facts.push(fact(
+    "credit_card_total",
+    creditCardRaw.total,
+    "number",
+    creditCardRaw.mappingIds,
+    "Credit card liabilities — Schedule L line 17",
+    0.85
+  ));
+
+  // Sch L line 18
+  const otherCurrentLiabRaw = sumCategoryRaw("other_current_liabilities");
+  facts.push(fact(
+    "other_current_liabilities_total",
+    otherCurrentLiabRaw.total,
+    "number",
+    otherCurrentLiabRaw.mappingIds,
+    "Other current liabilities — Schedule L line 18",
+    0.85
+  ));
+
+  // Sch L line 19
+  const shareholderLoansRaw = sumCategoryRaw("shareholder_loans");
+  facts.push(fact(
+    "shareholder_loans_total",
+    shareholderLoansRaw.total,
+    "number",
+    shareholderLoansRaw.mappingIds,
+    "Loans from shareholders — Schedule L line 19",
+    0.85
+  ));
+
+  // Sch L line 20
+  const longTermLiabRaw = sumCategoryRaw("long_term_liabilities");
+  facts.push(fact(
+    "long_term_liabilities_total",
+    longTermLiabRaw.total,
+    "number",
+    longTermLiabRaw.mappingIds,
+    "Long-term liabilities — Schedule L line 20",
+    0.85
+  ));
+
+  // Sch L line 22 (raw balance — equity accounts carry credit/negative sign)
+  const capitalStockRaw = mappings.filter((m) => m.tax_code === "EQUITY");
+  const capitalStockTotal = capitalStockRaw.reduce((acc, m) => {
+    const balance = balanceByLine.get(m.tb_line_id) ?? 0;
+    return acc + balance;
+  }, 0);
+  facts.push(fact(
+    "capital_stock_total",
+    capitalStockTotal,
+    "number",
+    capitalStockRaw.map((m) => m.mapping_id),
+    "Capital stock — Schedule L line 22",
+    0.85
+  ));
+
+  // Sch L line 25 (raw balance)
+  const retainedEarningsRaw = mappings.filter((m) => m.tax_code === "RETAINED_EARNINGS");
+  const retainedEarningsTotal = retainedEarningsRaw.reduce((acc, m) => {
+    const balance = balanceByLine.get(m.tb_line_id) ?? 0;
+    return acc + balance;
+  }, 0);
+  facts.push(fact(
+    "retained_earnings_total",
+    retainedEarningsTotal,
+    "number",
+    retainedEarningsRaw.map((m) => m.mapping_id),
+    "Retained earnings — Schedule L line 25",
+    0.85
+  ));
+
+  // ── Recomputed total_assets (replaces approximate version above) ──────────
+  const totalAssetsProper =
+    cashRaw.total +
+    arRaw.total +
+    allowanceRaw.total + // negative (contra)
+    inventoryRaw.total +
+    (otherCurrentRaw.total + prepaidRaw.total) +
+    buildingsDepreciableTotal +
+    accumDeprecRaw.total + // negative (contra)
+    0 + // land placeholder
+    intangibleRaw.total +
+    accumAmortRaw.total + // negative (contra)
+    otherAssetsRaw.total +
+    loansOfficersRaw.total;
+  const totalAssetsMappingIds = [
+    ...cashRaw.mappingIds,
+    ...arRaw.mappingIds,
+    ...allowanceRaw.mappingIds,
+    ...inventoryRaw.mappingIds,
+    ...otherCurrentRaw.mappingIds,
+    ...prepaidRaw.mappingIds,
+    ...fixedAssetRaw.map((m) => m.mapping_id),
+    ...accumDeprecRaw.mappingIds,
+    ...intangibleRaw.mappingIds,
+    ...accumAmortRaw.mappingIds,
+    ...otherAssetsRaw.mappingIds,
+    ...loansOfficersRaw.mappingIds,
+  ];
+  facts.push(fact(
+    "total_assets_bs",
+    totalAssetsProper,
+    "number",
+    totalAssetsMappingIds,
+    "Total assets computed from full Schedule L balance sheet lines",
+    0.85
+  ));
+
+  // ── Total liabilities ─────────────────────────────────────────────────────
+  const totalLiabilities =
+    Math.abs(apRaw.total) +
+    Math.abs(creditCardRaw.total) +
+    Math.abs(otherCurrentLiabRaw.total) +
+    Math.abs(shareholderLoansRaw.total) +
+    Math.abs(longTermLiabRaw.total);
+  facts.push(fact(
+    "total_liabilities",
+    totalLiabilities,
+    "number",
+    [
+      ...apRaw.mappingIds,
+      ...creditCardRaw.mappingIds,
+      ...otherCurrentLiabRaw.mappingIds,
+      ...shareholderLoansRaw.mappingIds,
+      ...longTermLiabRaw.mappingIds,
+    ],
+    "Total liabilities — sum of all liability Schedule L lines",
+    0.85
+  ));
+
+  // ── Computed Income / Deduction Totals (Form 1120 lines) ─────────────────
+
+  // Form 1120 line 1b
+  const returnsAllowances = sumByTaxCode("GROSS_RECEIPTS_REDUCTION");
+  facts.push(fact(
+    "returns_allowances_total",
+    returnsAllowances.total,
+    "number",
+    returnsAllowances.mappingIds,
+    "Returns and allowances — Form 1120 line 1b",
+    0.9
+  ));
+
+  // Form 1120 line 6
+  const rentIncomeCategory = sumCategory("rent_income");
+  facts.push(fact(
+    "rent_income_total",
+    rentIncomeCategory.total,
+    "number",
+    rentIncomeCategory.mappingIds,
+    "Rental income — Form 1120 line 6",
+    0.9
+  ));
+
+  // Form 1120 line 8
+  const capitalGain = sumCategory("capital_gain_loss");
+  facts.push(fact(
+    "capital_gain_total",
+    capitalGain.total,
+    "number",
+    capitalGain.mappingIds,
+    "Net capital gain (loss) — Form 1120 line 8",
+    0.9
+  ));
+
+  // Form 1120 line 3
+  const grossProfit = grossReceipts.total - returnsAllowances.total - cogs.total;
+  facts.push(fact(
+    "gross_profit",
+    grossProfit,
+    "number",
+    [...grossReceipts.mappingIds, ...returnsAllowances.mappingIds, ...cogs.mappingIds],
+    "Gross profit: gross receipts minus returns/allowances minus COGS — Form 1120 line 3",
+    0.9
+  ));
+
+  // Form 1120 line 11
+  const otherIncomeTC = sumByTaxCode("OTHER_INCOME");
+  const totalIncome =
+    grossProfit +
+    dividendIncome.total +
+    interestIncome.total +
+    otherIncomeTC.total +
+    rentIncomeCategory.total +
+    capitalGain.total;
+  facts.push(fact(
+    "total_income",
+    totalIncome,
+    "number",
+    [
+      ...grossReceipts.mappingIds,
+      ...returnsAllowances.mappingIds,
+      ...cogs.mappingIds,
+      ...dividendIncome.mappingIds,
+      ...interestIncome.mappingIds,
+      ...otherIncomeTC.mappingIds,
+      ...rentIncomeCategory.mappingIds,
+      ...capitalGain.mappingIds,
+    ],
+    "Total income — Form 1120 line 11",
+    0.9
+  ));
+
+  // Form 1120 line 27
+  const officerCompTC = sumByTaxCode("OFFICER_COMP");
+  const wagesTC = sumByTaxCode("WAGES");
+  const repairsTC = sumByTaxCode("REPAIRS");
+  const badDebtTC = sumByTaxCode("BAD_DEBT");
+  const rentBuildingTC = sumByTaxCode("RENT_BUILDING");
+  const taxesLicensesTC = sumByTaxCode("TAXES_LICENSES");
+  const interestExpTC = sumByTaxCode("INTEREST_EXPENSE");
+  const charitableTC = sumByTaxCode("CHARITABLE");
+  const depreciationTC = sumByTaxCode("DEPRECIATION");
+  const advertisingTC = sumByTaxCode("ADVERTISING");
+  const generalDeductionTC = sumByTaxCode("GENERAL_DEDUCTION");
+
+  const totalDeductions =
+    officerComp.total +
+    wagesTC.total +
+    repairsTC.total +
+    badDebtTC.total +
+    rentBuildingTC.total +
+    taxesLicensesTC.total +
+    interestExpTC.total +
+    charitable.total +
+    depreciationTC.total +
+    advertisingTC.total +
+    generalDeductionTC.total;
+
+  facts.push(fact(
+    "total_deductions",
+    totalDeductions,
+    "number",
+    [
+      ...officerComp.mappingIds,
+      ...wagesTC.mappingIds,
+      ...repairsTC.mappingIds,
+      ...badDebtTC.mappingIds,
+      ...rentBuildingTC.mappingIds,
+      ...taxesLicensesTC.mappingIds,
+      ...interestExpTC.mappingIds,
+      ...charitable.mappingIds,
+      ...depreciationTC.mappingIds,
+      ...advertisingTC.mappingIds,
+      ...generalDeductionTC.mappingIds,
+    ],
+    "Total deductions — Form 1120 line 27",
+    0.9
+  ));
+
+  // Form 1120 line 28
+  const taxableIncomeBeforeNol = totalIncome - totalDeductions;
+  facts.push(fact(
+    "taxable_income_before_nol",
+    taxableIncomeBeforeNol,
+    "number",
+    [],
+    "Taxable income before NOL deduction — Form 1120 line 28",
+    0.9
+  ));
+
+  // Form 1120 line 30 (NOL = 0 for now)
+  facts.push(fact(
+    "taxable_income",
+    taxableIncomeBeforeNol,
+    "number",
+    [],
+    "Taxable income (NOL assumed zero) — Form 1120 line 30",
+    0.9
+  ));
+
+  // Form 1120 line 31 — C-Corp flat 21% rate
+  const corporateTax = taxableIncomeBeforeNol * 0.21;
+  facts.push(fact(
+    "corporate_tax_21pct",
+    corporateTax,
+    "number",
+    [],
+    "Corporate income tax at 21% flat rate — Form 1120 line 31",
+    0.95
+  ));
+
+  // ── Schedule SE Computation Facts ─────────────────────────────────────────
+
+  const netSeEarnings = netIncome; // same as net_income_before_tax from Sch C
+  facts.push(fact(
+    "net_se_earnings",
+    netSeEarnings,
+    "number",
+    [...grossReceipts.mappingIds, ...cogs.mappingIds],
+    "Net self-employment earnings — Schedule SE",
+    0.9
+  ));
+
+  // SE line 4a
+  const seTaxBase = netSeEarnings * 0.9235;
+  facts.push(fact(
+    "se_tax_base",
+    seTaxBase,
+    "number",
+    [],
+    "Self-employment tax base (net SE earnings × 92.35%) — Schedule SE line 4a",
+    0.95
+  ));
+
+  // SE line 5a — 2025 Social Security wage base $176,100
+  const ssTax = Math.min(seTaxBase, 176100) * 0.124;
+  facts.push(fact(
+    "ss_tax",
+    ssTax,
+    "number",
+    [],
+    "Social Security tax (12.4% on SE base up to $176,100 wage base) — Schedule SE line 5a",
+    0.95
+  ));
+
+  // SE line 5b
+  const medicareTax = seTaxBase * 0.029;
+  facts.push(fact(
+    "medicare_tax",
+    medicareTax,
+    "number",
+    [],
+    "Medicare tax (2.9% on full SE base) — Schedule SE line 5b",
+    0.95
+  ));
+
+  // SE line 6
+  const selfEmploymentTax = ssTax + medicareTax;
+  facts.push(fact(
+    "self_employment_tax",
+    selfEmploymentTax,
+    "number",
+    [],
+    "Total self-employment tax (SS + Medicare) — Schedule SE line 6",
+    0.95
+  ));
+
+  // SE line 7
+  const seTaxDeduction = selfEmploymentTax * 0.5;
+  facts.push(fact(
+    "se_tax_deduction",
+    seTaxDeduction,
+    "number",
+    [],
+    "Deductible portion of self-employment tax (50%) — Schedule SE line 7",
+    0.95
+  ));
+
+  // ── QBI Deduction Facts (Form 8995) ───────────────────────────────────────
+
+  // Form 8995 line 10
+  const qbiComponent = netIncome * 0.20;
+  facts.push(fact(
+    "qbi_component",
+    qbiComponent,
+    "number",
+    [...grossReceipts.mappingIds, ...cogs.mappingIds],
+    "QBI component (20% of net income before tax) — Form 8995 line 10",
+    0.95
+  ));
+
+  // Form 8995 line 15
+  const qbiDeduction = Math.min(qbiComponent, taxableIncomeBeforeNol * 0.20);
+  facts.push(fact(
+    "qbi_deduction",
+    qbiDeduction,
+    "number",
+    [],
+    "QBI deduction — lesser of QBI component and 20% of taxable income — Form 8995 line 15",
+    0.95
+  ));
+
   return facts;
 }

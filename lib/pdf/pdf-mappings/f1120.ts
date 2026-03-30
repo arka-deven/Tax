@@ -141,7 +141,7 @@ export const F1120_MAPPING: FormPdfMapping = {
     },
     {
       pdfFieldName: "topmostSubform[0].Page1[0].f1_22[0]",
-      factName: "gross_royalties_total",
+      factName: "royalty_income_total",
       format: "currency",
       irsLine: "7",
       description: "Gross royalties",
@@ -261,7 +261,7 @@ export const F1120_MAPPING: FormPdfMapping = {
     },
     {
       pdfFieldName: "topmostSubform[0].Page1[0].f1_38[0]",
-      factName: "pension_profit_sharing_total",
+      factName: "pension_profitsharing_total",
       format: "currency",
       irsLine: "23",
       description:
@@ -269,7 +269,7 @@ export const F1120_MAPPING: FormPdfMapping = {
     },
     {
       pdfFieldName: "topmostSubform[0].Page1[0].f1_39[0]",
-      factName: "employee_benefit_programs_total",
+      factName: "employee_benefits_total",
       format: "currency",
       irsLine: "24",
       description: "Employee benefit programs",

@@ -56,7 +56,7 @@ export async function replaceDiagnostics(entityId: string, taxYear: number, diag
     .eq("resolution_status", "open");
 
   if (diagnostics.length === 0) return;
-  const { error } = await db.from("diagnostics").insert(diagnostics as never[]);
+  const { error } = await db.from("diagnostics").upsert(diagnostics as never[], { onConflict: "diagnostic_id" });
   if (error) throw error;
 }
 

@@ -1,13 +1,14 @@
 import type { Diagnostic, TaxCodeMapping, TaxFact } from "../models/index.js";
 
-let _seq = 0;
-function nextId(): string {
-  return `diag_${++_seq}`;
+/** Generate unique diagnostic IDs using entity+year+code to avoid PK collisions across runs */
+function makeDiagId(entityId: string, taxYear: number, code: string, idx: number): string {
+  return `diag_${entityId}_${taxYear}_${code}_${idx}`;
 }
 
 /* ------------------------------------------------------------------ */
 /*  Helper: build a Diagnostic record with sensible defaults          */
 /* ------------------------------------------------------------------ */
+let _diagSeq = 0;
 function makeDiag(
   base: Pick<
     Diagnostic,
@@ -16,8 +17,9 @@ function makeDiag(
     Partial<Diagnostic>,
   now: string
 ): Diagnostic {
+  _diagSeq++;
   return {
-    diagnostic_id: nextId(),
+    diagnostic_id: makeDiagId(base.entity_id, base.tax_year, base.code, _diagSeq),
     affected_forms: [],
     affected_lines: [],
     source_rule_ids: [],

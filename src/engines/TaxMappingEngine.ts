@@ -62,6 +62,16 @@ const SEMANTIC_MAP: Record<
   "Expenses|Travel":                   { semantic_category: "travel",                   tax_code: "TRAVEL",                  form: "Schedule C", schedule: null,   line: "24a" },  // 1120: line 26; Sched C: 24a
   "Expenses|Utilities":                { semantic_category: "general_expenses",         tax_code: "UTILITIES",               form: "1120",       schedule: null,   line: "26" },   // Sched C: line 25
 
+  // ── Additional expense subtypes for Form 1120 completeness ────────────────
+  "Expenses|PensionAndProfitSharing":  { semantic_category: "general_expenses",         tax_code: "PENSION_PROFITSHARING",   form: "1120",       schedule: null,   line: "23" },   // Pension/401k/profit sharing plans
+  "Expenses|EmployeeBenefitPrograms":  { semantic_category: "general_expenses",         tax_code: "EMPLOYEE_BENEFITS",       form: "1120",       schedule: null,   line: "24" },   // Health, life, disability insurance
+  "Expenses|HealthInsurance":          { semantic_category: "general_expenses",         tax_code: "EMPLOYEE_BENEFITS",       form: "1120",       schedule: null,   line: "24" },
+  "Expenses|WorkersCompensation":      { semantic_category: "general_expenses",         tax_code: "EMPLOYEE_BENEFITS",       form: "1120",       schedule: null,   line: "24" },
+  "Expenses|ContractLabor":            { semantic_category: "general_expenses",         tax_code: "CONTRACT_LABOR",          form: "Schedule C", schedule: null,   line: "11" },   // 1099-NEC contractors
+
+  // ── Royalty income ────────────────────────────────────────────────────────
+  "Other Income|RoyaltyIncome":        { semantic_category: "other_income",             tax_code: "ROYALTY_INCOME",          form: "1120",       schedule: null,   line: "7" },    // Gross royalties
+
   // ── Other Expense ─────────────────────────────────────────────────────────
   "Other Expense":                     { semantic_category: "other_expense",            tax_code: "OTHER_EXPENSE",           form: "1120",       schedule: null,   line: "26" },
   "Other Expense|OtherMiscExpense":    { semantic_category: "other_expense",            tax_code: "OTHER_EXPENSE",           form: "1120",       schedule: null,   line: "26" },

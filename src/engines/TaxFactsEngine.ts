@@ -146,6 +146,45 @@ export function deriveTaxFacts(
     "Sum of dividend income mappings"
   ));
 
+  // ── Granular expense facts (keyed by tax_code for per-line form population) ─
+
+  function sumByTaxCode(code: string): { total: number; mappingIds: string[] } {
+    const matched = mappings.filter((m) => m.tax_code === code);
+    const total = matched.reduce((acc, m) => {
+      const balance = balanceByLine.get(m.tb_line_id) ?? 0;
+      return acc + Math.abs(balance);
+    }, 0);
+    return { total, mappingIds: matched.map((m) => m.mapping_id) };
+  }
+
+  const taxCodeFacts: [string, string, string][] = [
+    ["advertising_total",         "ADVERTISING",         "Sum of advertising expense mappings"],
+    ["wages_total",               "WAGES",               "Sum of wages / payroll mappings"],
+    ["rent_building_total",       "RENT_BUILDING",       "Sum of building rent mappings"],
+    ["rent_equipment_total",      "RENT_EQUIPMENT",      "Sum of equipment rent mappings"],
+    ["insurance_total",           "INSURANCE",           "Sum of insurance mappings"],
+    ["professional_fees_total",   "PROFESSIONAL_FEES",   "Sum of legal / professional fee mappings"],
+    ["office_expense_total",      "OFFICE_EXPENSE",      "Sum of office / admin expense mappings"],
+    ["utilities_total",           "UTILITIES",           "Sum of utility mappings"],
+    ["repairs_total",             "REPAIRS",             "Sum of repairs & maintenance mappings"],
+    ["travel_total",              "TRAVEL",              "Sum of travel expense mappings"],
+    ["taxes_licenses_total",      "TAXES_LICENSES",      "Sum of taxes & licenses mappings"],
+    ["interest_expense_total",    "INTEREST_EXPENSE",    "Sum of interest expense mappings"],
+    ["depreciation_total",        "DEPRECIATION",        "Sum of depreciation expense mappings"],
+    ["amortization_total",        "AMORTIZATION",        "Sum of amortization expense mappings"],
+    ["bad_debt_total",            "BAD_DEBT",            "Sum of bad debt expense mappings"],
+    ["commission_total",          "COMMISSION",          "Sum of commissions & fees mappings"],
+    ["general_deduction_total",   "GENERAL_DEDUCTION",   "Sum of other / general deduction mappings"],
+    ["other_income_total",        "OTHER_INCOME",        "Sum of other income mappings"],
+    ["nondeductible_total",       "NONDEDUCTIBLE",       "Sum of nondeductible expense mappings"],
+    ["income_tax_expense_total",  "INCOME_TAX_NONDEDUCTIBLE", "Sum of federal income tax (nondeductible) per books"],
+  ];
+
+  for (const [name, code, explanation] of taxCodeFacts) {
+    const s = sumByTaxCode(code);
+    facts.push(fact(name, s.total, "number", s.mappingIds, explanation));
+  }
+
   // ── Derived facts ─────────────────────────────────────────────────────────
 
   const netIncome = grossReceipts.total - cogs.total;

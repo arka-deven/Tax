@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   FileText,
   RefreshCw,
@@ -18,6 +18,8 @@ import {
 import { BlurFade } from "@/components/magicui/blur-fade";
 import { AnimatedList } from "@/components/magicui/animated-list";
 import { NumberTicker } from "@/components/magicui/number-ticker";
+import { FORM_FIELD_DEFS, computeFormValues, recomputeFields } from "@/lib/form-fields";
+import type { FormFieldDef } from "@/lib/form-fields";
 
 // ── Error Toast ───────────────────────────────────────────────────────────────
 
@@ -199,6 +201,10 @@ export default function Home() {
   const [running, setRunning] = useState(false);
   const [disconnecting, setDisconnecting] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [formValues, setFormValues] = useState<Record<string, Record<string, string>>>({});
+  const [expandedForms, setExpandedForms] = useState<Set<string>>(new Set());
+  const [editedFields, setEditedFields] = useState<Set<string>>(new Set());
+  const [generatingForm, setGeneratingForm] = useState<string | null>(null);
 
   useEffect(() => {
     function handleMessage(event: MessageEvent) {
@@ -245,8 +251,8 @@ export default function Home() {
     setStep("dashboard");
   }
 
-  async function runPipeline() {
-    if (!entityType) return;
+  async function runPipeline(): Promise<PipelineResult | null> {
+    if (!entityType) return null;
     setRunning(true);
     try {
       const res = await fetch(`/api/pipeline/${entityId}`, {
@@ -257,14 +263,57 @@ export default function Home() {
       const json = await res.json() as PipelineResult & { error?: string };
       if (res.ok) {
         setResult(json);
+        return json;
       } else {
         setErrorMsg(json.error ?? "Pipeline failed. Check server logs.");
+        return null;
       }
     } catch (err) {
       setErrorMsg(err instanceof Error ? err.message : "Unexpected error running analysis.");
+      return null;
     } finally {
       setRunning(false);
     }
+  }
+
+  const generateForm = useCallback(async (formCode: string) => {
+    setGeneratingForm(formCode);
+    let facts = result?.facts;
+    if (!facts) {
+      const res = await runPipeline();
+      if (!res) { setGeneratingForm(null); return; }
+      facts = res.facts;
+    }
+    const values = computeFormValues(formCode, facts);
+    setFormValues(prev => ({ ...prev, [formCode]: values }));
+    setExpandedForms(prev => new Set([...prev, formCode]));
+    setGeneratingForm(null);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [result, entityType, entityId, taxYear]);
+
+  function toggleForm(formCode: string) {
+    setExpandedForms(prev => {
+      const next = new Set(prev);
+      if (next.has(formCode)) next.delete(formCode);
+      else next.add(formCode);
+      return next;
+    });
+  }
+
+  function handleFieldChange(formCode: string, line: string, value: string) {
+    setFormValues(prev => {
+      const current = { ...prev[formCode], [line]: value };
+      const recomputed = recomputeFields(formCode, current);
+      return { ...prev, [formCode]: recomputed };
+    });
+    setEditedFields(prev => new Set([...prev, `${formCode}:${line}`]));
+  }
+
+  function formatCurrency(val: string | undefined): string {
+    if (!val) return "";
+    const n = parseFloat(val);
+    if (isNaN(n)) return val;
+    return n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   }
 
   const blocking = result?.diagnostics.filter((d) => d.severity === "blocking_error") ?? [];
@@ -426,30 +475,18 @@ export default function Home() {
               <span className="text-xs text-stone-400">QuickBooks Online connected</span>
             </div>
           </div>
-
-          <div className="flex items-center gap-3">
-            <select
-              className="text-sm border border-stone-200 rounded-lg px-3 py-1.5 text-stone-600 bg-white"
-              value={taxYear}
-              onChange={(e) => { setTaxYear(Number(e.target.value)); setResult(null); }}
-            >
-              {[2025, 2024, 2023].map((y) => <option key={y}>{y}</option>)}
-            </select>
-            <button
-              onClick={runPipeline}
-              disabled={running}
-              className="flex items-center gap-2 bg-stone-900 hover:bg-stone-700 disabled:opacity-50 text-white text-sm font-medium px-4 py-1.5 rounded-lg transition-colors"
-            >
-              {running
-                ? <><RefreshCw size={13} className="animate-spin" /> Analyzing…</>
-                : <><Play size={13} /> Run Analysis</>}
-            </button>
-          </div>
+          <select
+            className="text-sm border border-stone-200 rounded-lg px-3 py-1.5 text-stone-600 bg-white"
+            value={taxYear}
+            onChange={(e) => { setTaxYear(Number(e.target.value)); setResult(null); setFormValues({}); }}
+          >
+            {[2025, 2024, 2023].map((y) => <option key={y}>{y}</option>)}
+          </select>
         </header>
 
         {/* Content */}
         <main className="flex-1 overflow-y-auto px-8 py-7">
-          <div className="max-w-4xl space-y-6">
+          <div className="max-w-4xl space-y-4">
 
             {/* Pipeline status strip — only after run */}
             {result && (
@@ -470,89 +507,176 @@ export default function Home() {
               </BlurFade>
             )}
 
-            {/* Forms Canvas */}
-            <BlurFade delay={0.03}>
-              <div className="bg-white border border-stone-200 rounded-2xl overflow-hidden">
-                <div className="px-6 py-4 border-b border-stone-100 flex items-center justify-between">
-                  <div>
-                    <h2 className="font-semibold text-stone-900 text-sm">
-                      {taxYear} Filing Requirements — {entityLabel}
-                    </h2>
-                    <p className="text-xs text-stone-400 mt-0.5">
-                      {result
-                        ? "Statuses confirmed by pipeline analysis"
-                        : "Run analysis to confirm which forms apply to your books"}
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-3 text-[11px]">
-                    <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-blue-500" />Required</span>
-                    <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-amber-400" />Conditional</span>
-                    <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-stone-300" />Possible</span>
-                  </div>
-                </div>
+            {/* ── Interactive Form Cards ────────────────────────────────────── */}
+            {groupedForms.map(({ cat, items }) => (
+              <div key={cat}>
+                <p className="text-[10px] font-semibold text-stone-400 uppercase tracking-widest mb-2 px-1">
+                  {CATEGORY_LABELS[cat]}
+                </p>
+                <div className="space-y-3">
+                  {items.map((f) => {
+                    const rs = resolvedStatus(f);
+                    const isConfirmedRequired = rs === "confirmed_required";
+                    const statusKey: FormStatus =
+                      isConfirmedRequired ? "required"
+                      : rs === "confirmed_possible" ? "possible"
+                      : (rs as FormStatus);
+                    const style = STATUS_STYLES[statusKey] ?? STATUS_STYLES.possible;
+                    const isExpanded = expandedForms.has(f.form);
+                    const fieldDefs = FORM_FIELD_DEFS[f.form];
+                    const hasFields = !!fieldDefs;
+                    const fv = formValues[f.form] ?? {};
+                    const isGenerating = generatingForm === f.form;
 
-                {groupedForms.map(({ cat, items }) => (
-                  <div key={cat} className="border-b border-stone-100 last:border-b-0">
-                    <div className="px-6 py-2 bg-stone-50 border-b border-stone-100">
-                      <p className="text-[10px] font-semibold text-stone-400 uppercase tracking-widest">
-                        {CATEGORY_LABELS[cat]}
-                      </p>
-                    </div>
-                    <div className="divide-y divide-stone-100">
-                      {items.map((f) => {
-                        const rs = resolvedStatus(f);
-                        const isConfirmedRequired = rs === "confirmed_required";
-                        const isConfirmedPossible = rs === "confirmed_possible";
-                        const statusKey: FormStatus =
-                          isConfirmedRequired ? "required"
-                          : isConfirmedPossible ? "possible"
-                          : (rs as FormStatus);
-                        const style = STATUS_STYLES[statusKey] ?? STATUS_STYLES.possible;
-
-                        return (
-                          <div key={f.form} className="px-6 py-4 flex items-start gap-4 hover:bg-stone-50/50 transition-colors group">
-                            {/* Form badge */}
-                            <div className="shrink-0 mt-0.5">
-                              <span className={`inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-lg border ${style.badge}`}>
-                                <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${style.dot}`} />
-                                {f.form}
-                              </span>
-                            </div>
-
-                            {/* Form info */}
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-start justify-between gap-3">
-                                <p className="text-sm font-medium text-stone-800">{f.title}</p>
-                                <div className="shrink-0 flex items-center gap-2">
-                                  <span className="text-[10px] text-stone-400 whitespace-nowrap">{f.due}</span>
-                                  {f.irsUrl && (
-                                    <a
-                                      href={f.irsUrl}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                      className="opacity-0 group-hover:opacity-100 transition-opacity"
-                                      title="IRS instructions"
-                                    >
-                                      <ExternalLink size={11} className="text-stone-300 hover:text-blue-500" />
-                                    </a>
-                                  )}
-                                </div>
-                              </div>
-                              <p className="text-xs text-stone-400 mt-0.5 leading-relaxed">{f.description}</p>
-                              {isConfirmedRequired && (
-                                <span className="inline-block mt-1.5 text-[10px] font-medium text-blue-600 bg-blue-50 border border-blue-200 px-1.5 py-0.5 rounded">
-                                  ✓ Confirmed by analysis
-                                </span>
-                              )}
-                            </div>
+                    return (
+                      <div key={f.form} className="bg-white border border-stone-200 rounded-2xl overflow-hidden">
+                        {/* Form header */}
+                        <div
+                          className="px-5 py-4 flex items-center gap-4 cursor-pointer hover:bg-stone-50/60 transition-colors"
+                          onClick={() => toggleForm(f.form)}
+                        >
+                          <ChevronRight
+                            size={14}
+                            className={`text-stone-300 transition-transform shrink-0 ${isExpanded ? "rotate-90" : ""}`}
+                          />
+                          <span className={`inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-lg border shrink-0 ${style.badge}`}>
+                            <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${style.dot}`} />
+                            {f.form}
+                          </span>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium text-stone-800 truncate">{f.title}</p>
+                            <p className="text-[10px] text-stone-400 mt-0.5">{f.due} · {f.description}</p>
                           </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                ))}
+                          <div className="shrink-0 flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+                            {f.irsUrl && (
+                              <a
+                                href={f.irsUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                title="IRS instructions"
+                                className="text-stone-300 hover:text-blue-500 transition-colors"
+                              >
+                                <ExternalLink size={13} />
+                              </a>
+                            )}
+                            {hasFields && (
+                              <button
+                                onClick={() => generateForm(f.form)}
+                                disabled={isGenerating || running}
+                                className="flex items-center gap-1.5 bg-stone-900 hover:bg-stone-700 disabled:opacity-50 text-white text-xs font-medium px-3 py-1.5 rounded-lg transition-colors"
+                              >
+                                {isGenerating || (running && generatingForm === f.form)
+                                  ? <><RefreshCw size={11} className="animate-spin" /> Generating…</>
+                                  : <><Play size={11} /> Generate</>}
+                              </button>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Expanded form fields */}
+                        {isExpanded && hasFields && (
+                          <div className="border-t border-stone-100">
+                            <table className="w-full text-xs">
+                              <thead>
+                                <tr className="bg-stone-50 text-left">
+                                  <th className="py-2 px-5 text-[10px] font-semibold text-stone-400 uppercase tracking-widest w-16">Line</th>
+                                  <th className="py-2 px-2 text-[10px] font-semibold text-stone-400 uppercase tracking-widest">Description</th>
+                                  <th className="py-2 px-5 text-[10px] font-semibold text-stone-400 uppercase tracking-widest text-right w-44">Amount</th>
+                                </tr>
+                              </thead>
+                              <tbody className="divide-y divide-stone-100">
+                                {fieldDefs.map((fd: FormFieldDef) => {
+                                  if (fd.section) {
+                                    return (
+                                      <tr key={fd.line} className="bg-stone-50/60">
+                                        <td colSpan={3} className="py-2 px-5 text-[10px] font-bold text-stone-500 uppercase tracking-widest">
+                                          {fd.label}
+                                        </td>
+                                      </tr>
+                                    );
+                                  }
+
+                                  const val = fv[fd.line] ?? "";
+                                  const isEdited = editedFields.has(`${f.form}:${fd.line}`);
+                                  const isComputed = !!fd.compute;
+
+                                  return (
+                                    <tr
+                                      key={fd.line}
+                                      className={`group ${fd.bold ? "bg-stone-50/40" : ""} ${isEdited ? "bg-amber-50/40" : ""}`}
+                                    >
+                                      <td className="py-2 px-5 font-mono text-stone-400 whitespace-nowrap">
+                                        {fd.line}
+                                      </td>
+                                      <td className={`py-2 px-2 text-stone-700 ${fd.bold ? "font-semibold" : ""}`}>
+                                        {fd.label}
+                                        {isEdited && (
+                                          <span className="ml-1.5 text-[9px] font-medium text-amber-500">edited</span>
+                                        )}
+                                      </td>
+                                      <td className="py-1.5 px-5 text-right">
+                                        {fd.type === "currency" ? (
+                                          <div className="flex items-center justify-end gap-1">
+                                            <span className="text-stone-400 text-[10px]">$</span>
+                                            <input
+                                              type="text"
+                                              inputMode="decimal"
+                                              value={val ? formatCurrency(val) : ""}
+                                              placeholder={isComputed ? "auto" : "0.00"}
+                                              onChange={(e) => {
+                                                const raw = e.target.value.replace(/[^0-9.\-]/g, "");
+                                                handleFieldChange(f.form, fd.line, raw);
+                                              }}
+                                              className={`w-32 text-right font-mono text-sm px-2 py-1 rounded border transition-colors outline-none
+                                                ${isComputed && !isEdited
+                                                  ? "border-stone-100 bg-stone-50 text-stone-500"
+                                                  : "border-stone-200 bg-white text-stone-900 focus:border-blue-400 focus:ring-1 focus:ring-blue-100"
+                                                } ${fd.bold ? "font-semibold" : ""}`}
+                                            />
+                                          </div>
+                                        ) : fd.type === "text" ? (
+                                          <input
+                                            type="text"
+                                            value={val}
+                                            placeholder="—"
+                                            onChange={(e) => handleFieldChange(f.form, fd.line, e.target.value)}
+                                            className="w-40 text-right text-sm px-2 py-1 rounded border border-stone-200 bg-white text-stone-900 focus:border-blue-400 focus:ring-1 focus:ring-blue-100 outline-none"
+                                          />
+                                        ) : (
+                                          <span className="text-stone-500">{val || "—"}</span>
+                                        )}
+                                      </td>
+                                    </tr>
+                                  );
+                                })}
+                              </tbody>
+                            </table>
+
+                            {/* No fields generated yet notice */}
+                            {Object.keys(fv).length === 0 && (
+                              <div className="px-5 py-6 text-center">
+                                <p className="text-xs text-stone-400">
+                                  Click <span className="font-semibold text-stone-600">Generate</span> to auto-populate from QuickBooks data
+                                </p>
+                              </div>
+                            )}
+                          </div>
+                        )}
+
+                        {/* Expanded but no field defs */}
+                        {isExpanded && !hasFields && (
+                          <div className="border-t border-stone-100 px-5 py-6 text-center">
+                            <p className="text-xs text-stone-400">
+                              Form fields coming soon. View <a href={f.irsUrl} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">IRS instructions</a> for details.
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
-            </BlurFade>
+            ))}
 
             {/* Diagnostics — after pipeline run */}
             {result && result.diagnostics.length > 0 && (
@@ -587,29 +711,6 @@ export default function Home() {
                       );
                     })}
                   </AnimatedList>
-                </div>
-              </BlurFade>
-            )}
-
-            {/* Key Tax Facts */}
-            {result && Object.keys(result.facts).length > 0 && (
-              <BlurFade delay={0.07}>
-                <div className="bg-white border border-stone-200 rounded-2xl p-5">
-                  <p className="text-[10px] font-semibold text-stone-400 uppercase tracking-widest mb-3">Key Tax Facts</p>
-                  <div className="grid grid-cols-3 gap-3">
-                    {Object.entries(result.facts).map(([k, v]) => (
-                      <div key={k} className="bg-stone-50 rounded-xl p-3 border border-stone-100">
-                        <p className="text-[10px] text-stone-400 capitalize">{k.replace(/_/g, " ")}</p>
-                        <p className="text-stone-800 font-semibold text-base mt-0.5">
-                          {typeof v === "number"
-                            ? <><span>$</span><NumberTicker value={v} className="text-stone-800 font-semibold text-base" /></>
-                            : typeof v === "boolean"
-                            ? <span className={v ? "text-emerald-600" : "text-stone-400"}>{v ? "Yes" : "No"}</span>
-                            : String(v)}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
                 </div>
               </BlurFade>
             )}

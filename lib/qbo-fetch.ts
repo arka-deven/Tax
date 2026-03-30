@@ -29,8 +29,11 @@ async function qboQuery<T>(entityId: string, query: string): Promise<T> {
 
   const url = `${baseUrl()}/v3/company/${realmId}/query?query=${encodeURIComponent(query)}&minorversion=65`;
   const response = await client.makeApiCall({ url, method: "GET" });
-  const body = extractJson(response) as QBOQueryResponse<T>;
-  return body.QueryResponse;
+  const body = extractJson(response);
+  // QBO wraps query results in { QueryResponse: { ... } } but some SDK versions unwrap it
+  if (body?.QueryResponse !== undefined) return body.QueryResponse as T;
+  // Already unwrapped — body IS the query response
+  return body as T;
 }
 
 async function qboGet<T>(entityId: string, path: string): Promise<T> {
@@ -215,7 +218,7 @@ export async function fetchAccounts(entityId: string): Promise<QBOAccount[]> {
       entityId,
       `SELECT * FROM Account STARTPOSITION ${offset} MAXRESULTS ${pageSize}`
     );
-    const page = result.Account ?? [];
+    const page = result?.Account ?? [];
     all.push(...page);
     if (page.length < pageSize) break;
     offset += pageSize;
@@ -238,7 +241,7 @@ export async function fetchJournalEntries(
       entityId,
       `SELECT * FROM JournalEntry WHERE TxnDate >= '${start}' AND TxnDate <= '${end}' STARTPOSITION ${offset} MAXRESULTS ${pageSize}`
     );
-    const page = result.JournalEntry ?? [];
+    const page = result?.JournalEntry ?? [];
     all.push(...page);
     if (page.length < pageSize) break;
     offset += pageSize;
@@ -285,7 +288,7 @@ async function fetchTxnType(
         entityId,
         `SELECT * FROM ${txnType} WHERE TxnDate >= '${start}' AND TxnDate <= '${end}' STARTPOSITION ${offset} MAXRESULTS ${pageSize}`
       );
-      const page = (result[txnType] as GenericRow[] | undefined) ?? [];
+      const page = (result?.[txnType] as GenericRow[] | undefined) ?? [];
       all.push(...page);
       if (page.length < pageSize) break;
       offset += pageSize;
@@ -411,14 +414,14 @@ export interface QBOCustomer {
 export async function fetchVendors(entityId: string): Promise<QBOVendor[]> {
   try {
     const data = await qboQuery<{ Vendor?: QBOVendor[] }>(entityId, "SELECT * FROM Vendor");
-    return data.Vendor ?? [];
+    return data?.Vendor ?? [];
   } catch { return []; }
 }
 
 export async function fetchCustomers(entityId: string): Promise<QBOCustomer[]> {
   try {
     const data = await qboQuery<{ Customer?: QBOCustomer[] }>(entityId, "SELECT * FROM Customer");
-    return data.Customer ?? [];
+    return data?.Customer ?? [];
   } catch { return []; }
 }
 

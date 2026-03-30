@@ -443,6 +443,41 @@ export async function POST(
       []
     );
 
+    // ── 9b. Build XML documents for forms with unified schemas ──────────────
+    try {
+      const { UNIFIED_SCHEMAS } = await import("@/src/schemas");
+      const { buildXmlDocument } = await import("@/src/xml/XmlDocumentBuilder");
+      const { upsertXmlDocument, getXmlDocument } = await import("@/lib/repositories/xml-documents");
+      const factsDict = Object.fromEntries(baseFacts.map((f) => [f.fact_name, f.fact_value_json]));
+      const buildMeta = {
+        companyName: qboData.companyInfo?.LegalName ?? qboData.companyInfo?.CompanyName ?? "",
+        ein: qboData.companyInfo?.FederalEin ?? "",
+        address: qboData.companyInfo?.CompanyAddr?.Line1 ?? "",
+        city: qboData.companyInfo?.CompanyAddr?.City ?? "",
+        state: qboData.companyInfo?.CompanyAddr?.CountrySubDivisionCode ?? "",
+        zip: qboData.companyInfo?.CompanyAddr?.PostalCode ?? "",
+        taxYear,
+        entityType: entityType ?? "",
+      };
+      for (const [formCode, schema] of Object.entries(UNIFIED_SCHEMAS)) {
+        // Preserve user edits from existing document
+        const existing = await getXmlDocument(entityId, taxYear, formCode).catch(() => null);
+        const overrides: Record<string, any> = {};
+        if (existing) {
+          for (const [id, field] of Object.entries(existing.fields)) {
+            if ((field as any).source === "user_edit") overrides[id] = field;
+          }
+        }
+        const xmlDoc = buildXmlDocument(schema, { facts: factsDict, meta: buildMeta }, overrides);
+        xmlDoc.entityId = entityId;
+        await upsertXmlDocument(xmlDoc).catch((e: unknown) =>
+          console.warn(`XML doc ${formCode} save failed:`, e instanceof Error ? e.message : e)
+        );
+      }
+    } catch (e) {
+      console.warn("XML document generation skipped:", e instanceof Error ? e.message : e);
+    }
+
     // ── 10. Return summary ────────────────────────────────────────────────────
     return NextResponse.json({
       requiredForms: reviewPackage.required_forms.map((f) => f.form_code),

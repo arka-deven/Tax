@@ -11,6 +11,31 @@ import PDFFormViewer from "@/components/PDFFormViewer";
 import { PDF_MAPPINGS } from "@/lib/pdf/pdf-mappings";
 import { fillPdf } from "@/lib/pdf/pdf-filler";
 import type { FilledPdfResult, FillContext } from "@/lib/pdf/types";
+import { UNIFIED_SCHEMAS } from "@/src/schemas";
+import XmlFormViewer from "@/components/XmlFormViewer/XmlFormViewer";
+import { useXmlForm } from "@/components/XmlFormViewer/useXmlForm";
+
+// ── XML Form Wrapper (uses hook, can't be inline in the main component) ─────
+
+function XmlFormWrapper({ entityId, formCode, taxYear, facts, meta }: {
+  entityId: string; formCode: string; taxYear: number;
+  facts: Record<string, unknown>; meta: Record<string, unknown>;
+}) {
+  const schema = UNIFIED_SCHEMAS[formCode];
+  const { doc, loading, updateField, regenerate, downloadXml, editedFields } = useXmlForm(entityId, formCode, taxYear, schema);
+
+  return (
+    <XmlFormViewer
+      schema={schema}
+      doc={doc}
+      loading={loading}
+      onFieldChange={updateField}
+      onRegenerate={() => regenerate(facts, meta)}
+      onDownloadXml={downloadXml}
+      editedFields={editedFields}
+    />
+  );
+}
 
 // ── Error Toast ──────────────────────────────────────────────────────────────
 
@@ -727,16 +752,26 @@ export default function Home() {
                           </button>
                           {isExpanded && (
                             <div className="mx-5 mb-3 rounded-xl overflow-hidden border border-(--dust-grey) shadow-sm" style={{ height: "80vh" }}>
-                              <PDFFormViewer
-                                pdfBytes={filled?.pdfBytes ?? null}
-                                pdfFileName={PDF_MAPPINGS[f.form]?.pdfFileName}
-                                formCode={f.form}
-                                onGenerate={() => regenerateForm(f.form)}
-                                isGenerating={active.loading}
-                                onDownload={() => downloadPdf(f.form)}
-                                filledCount={filled?.filledCount}
-                                totalMapped={filled?.totalMapped}
-                              />
+                              {UNIFIED_SCHEMAS[f.form] ? (
+                                <XmlFormWrapper
+                                  entityId={active.id}
+                                  formCode={f.form}
+                                  taxYear={taxYear}
+                                  facts={active.result?.facts ?? {}}
+                                  meta={{ companyName: active.name, ein: active.ein, taxYear, entityType: active.entityType }}
+                                />
+                              ) : (
+                                <PDFFormViewer
+                                  pdfBytes={filled?.pdfBytes ?? null}
+                                  pdfFileName={PDF_MAPPINGS[f.form]?.pdfFileName}
+                                  formCode={f.form}
+                                  onGenerate={() => regenerateForm(f.form)}
+                                  isGenerating={active.loading}
+                                  onDownload={() => downloadPdf(f.form)}
+                                  filledCount={filled?.filledCount}
+                                  totalMapped={filled?.totalMapped}
+                                />
+                              )}
                             </div>
                           )}
                         </div>

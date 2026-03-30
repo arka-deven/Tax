@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import {
   FileText, RefreshCw, XCircle, AlertTriangle, Info, CheckCircle2,
-  ChevronRight, Plug, LogOut, Play, Building2, Plus,
+  ChevronRight, Plug, LogOut, Play, Building2, Plus, Send,
 } from "lucide-react";
 import { BlurFade } from "@/components/magicui/blur-fade";
 import { AnimatedList } from "@/components/magicui/animated-list";
@@ -625,10 +625,34 @@ export default function Home() {
           ) : (
             <p className="text-[#a89f97] text-sm">Select a company</p>
           )}
-          <select className="text-sm border border-(--dust-grey) rounded-xl px-4 py-2 text-[#3d3229] bg-(--parchment) shadow-sm" value={taxYear}
-            onChange={(e) => setTaxYear(Number(e.target.value))}>
-            {[2025, 2024, 2023].map((y) => <option key={y}>{y}</option>)}
-          </select>
+          <div className="flex items-center gap-3">
+            {active?.result && blocking.length === 0 && (
+              <button onClick={async () => {
+                if (!active?.result?.facts || !active.entityType) return;
+                const primaryForm = active.entityType === "c_corp" ? "1120" : active.entityType === "s_corp" ? "1120-S" : active.entityType === "llc_partnership" ? "1065" : active.entityType === "nonprofit" ? "990" : "Sch C";
+                try {
+                  const res = await fetch(`/api/efile/${active.id}`, {
+                    method: "POST", headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ formCode: primaryForm, facts: active.result.facts, meta: { companyName: active.name, ein: active.ein, taxYear, entityType: active.entityType } }),
+                  });
+                  const data = await res.json();
+                  if (data.errors?.length > 0) { setErrorMsg(`E-file validation: ${data.errors[0]}`); return; }
+                  const blob = new Blob([data.xml], { type: "application/xml" });
+                  const url = URL.createObjectURL(blob);
+                  const a = document.createElement("a"); a.href = url;
+                  a.download = `${primaryForm}_${active.name.replace(/\s/g, "_")}_${taxYear}_MeF.xml`; a.click();
+                  URL.revokeObjectURL(url);
+                } catch (err) { setErrorMsg("E-file XML generation failed"); }
+              }}
+                className="flex items-center gap-2 bg-[#3d3229] hover:bg-[#5a4a3f] text-white text-sm font-semibold px-4 py-2 rounded-xl transition-colors shadow-sm">
+                <Send size={14} /> E-File XML
+              </button>
+            )}
+            <select className="text-sm border border-(--dust-grey) rounded-xl px-4 py-2 text-[#3d3229] bg-(--parchment) shadow-sm" value={taxYear}
+              onChange={(e) => setTaxYear(Number(e.target.value))}>
+              {[2025, 2024, 2023].map((y) => <option key={y}>{y}</option>)}
+            </select>
+          </div>
         </header>
 
         {/* Content */}

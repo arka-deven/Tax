@@ -192,6 +192,36 @@ const SEMANTIC_MAP: Record<
   "Long Term Liability|NotesPayable":  { semantic_category: "long_term_liabilities",    tax_code: "LONG_TERM_LIABILITIES",   form: "1120",       schedule: "L",    line: "20" },
   "Long Term Liability|ShareholderNotesPayable": { semantic_category: "shareholder_loans", tax_code: "SHAREHOLDER_LOANS",    form: "1120",       schedule: "L",    line: "19" },
   "Long Term Liability|OtherLongTermLiabilities": { semantic_category: "long_term_liabilities", tax_code: "LONG_TERM_LIABILITIES", form: "1120", schedule: "L",   line: "20" },
+
+  // ── Additional common QBO subtypes (catch-all fallbacks) ──────────────────
+  // These catch subtypes that don't have a specific mapping above
+  "Expenses|SalariesAndWages":           { semantic_category: "wages",                    tax_code: "WAGES",                   form: "1120",       schedule: null,   line: "13" },
+  "Expenses|ContractorExpense":          { semantic_category: "general_expenses",         tax_code: "CONTRACT_LABOR",          form: "Schedule C", schedule: null,   line: "11" },
+  "Expenses|SubcontractorExpense":       { semantic_category: "general_expenses",         tax_code: "CONTRACT_LABOR",          form: "Schedule C", schedule: null,   line: "11" },
+  "Expenses|FreelancerExpense":          { semantic_category: "general_expenses",         tax_code: "CONTRACT_LABOR",          form: "Schedule C", schedule: null,   line: "11" },
+  "Expenses|CellPhoneExpense":           { semantic_category: "general_expenses",         tax_code: "GENERAL_DEDUCTION",       form: "1120",       schedule: null,   line: "26" },
+  "Expenses|ComputerAndInternet":        { semantic_category: "general_expenses",         tax_code: "GENERAL_DEDUCTION",       form: "1120",       schedule: null,   line: "26" },
+  "Expenses|SoftwareExpense":            { semantic_category: "general_expenses",         tax_code: "GENERAL_DEDUCTION",       form: "1120",       schedule: null,   line: "26" },
+  "Expenses|TrainingExpense":            { semantic_category: "general_expenses",         tax_code: "GENERAL_DEDUCTION",       form: "1120",       schedule: null,   line: "26" },
+  "Expenses|FinancialCharges":           { semantic_category: "general_expenses",         tax_code: "GENERAL_DEDUCTION",       form: "1120",       schedule: null,   line: "26" },
+  "Expenses|MovingExpense":              { semantic_category: "general_expenses",         tax_code: "GENERAL_DEDUCTION",       form: "1120",       schedule: null,   line: "26" },
+  "Expenses|TaxesPaid":                  { semantic_category: "taxes_and_licenses",       tax_code: "TAXES_LICENSES",          form: "1120",       schedule: null,   line: "17" },
+  "Expenses|PayrollTaxExpense":          { semantic_category: "taxes_and_licenses",       tax_code: "TAXES_LICENSES",          form: "1120",       schedule: null,   line: "17" },
+  "Expenses|InsuranceWorkersComp":       { semantic_category: "general_expenses",         tax_code: "INSURANCE",               form: "1120",       schedule: null,   line: "26" },
+  "Expenses|InsuranceDisability":        { semantic_category: "general_expenses",         tax_code: "EMPLOYEE_BENEFITS",       form: "1120",       schedule: null,   line: "24" },
+  "Expenses|InsuranceHealth":            { semantic_category: "general_expenses",         tax_code: "EMPLOYEE_BENEFITS",       form: "1120",       schedule: null,   line: "24" },
+  "Expenses|Promotional":               { semantic_category: "general_expenses",         tax_code: "ADVERTISING",             form: "1120",       schedule: null,   line: "22" },
+  "Expenses|Marketing":                  { semantic_category: "general_expenses",         tax_code: "ADVERTISING",             form: "1120",       schedule: null,   line: "22" },
+  "Income|SubcontractorIncome":          { semantic_category: "gross_receipts",           tax_code: "GROSS_RECEIPTS",          form: "1120",       schedule: null,   line: "1a" },
+  "Income|ConsultingIncome":             { semantic_category: "gross_receipts",           tax_code: "GROSS_RECEIPTS",          form: "1120",       schedule: null,   line: "1a" },
+  "Other Current Asset|RetainageReceivable": { semantic_category: "other_current_assets", tax_code: "OTHER_CURRENT_ASSETS",  form: "1120",       schedule: "L",    line: "6" },
+  "Other Current Asset|InvestmentMortgageRealEstateLoans": { semantic_category: "other_current_assets", tax_code: "OTHER_CURRENT_ASSETS", form: "1120", schedule: "L", line: "6" },
+  "Fixed Asset|Land":                    { semantic_category: "fixed_assets",             tax_code: "FIXED_ASSET",             form: "4562",       schedule: null,   line: "19c" },
+  "Fixed Asset|OtherFixedAssets":        { semantic_category: "fixed_assets",             tax_code: "FIXED_ASSET",             form: "4562",       schedule: null,   line: "19c" },
+  "Fixed Asset|Computers":               { semantic_category: "fixed_assets",             tax_code: "FIXED_ASSET",             form: "4562",       schedule: null,   line: "19c" },
+  "Equity|PaidInCapitalOrSurplus":       { semantic_category: "equity",                   tax_code: "EQUITY",                  form: "1120",       schedule: "L",    line: "36" },
+  "Equity|CommonStock":                  { semantic_category: "equity",                   tax_code: "EQUITY",                  form: "1120",       schedule: "L",    line: "36" },
+  "Equity|PreferredStock":               { semantic_category: "equity",                   tax_code: "EQUITY",                  form: "1120",       schedule: "L",    line: "36" },
 };
 
 export function mapTrialBalanceLines(
@@ -232,23 +262,48 @@ export function mapTrialBalanceLines(
         source_refs: line.source_refs,
       });
     } else {
-      mappings.push({
-        mapping_id: `map_${line.tb_line_id}`,
-        entity_id: line.entity_id,
-        tax_year: line.tax_year,
-        tb_line_id: line.tb_line_id,
-        semantic_category: "unmapped",
-        tax_code: "UNMAPPED",
-        target_form: "UNKNOWN",
-        target_schedule: null,
-        target_line: "UNKNOWN",
-        mapping_method: "heuristic",
-        confidence_score: 0.0,
-        requires_review: true,
-        review_reason_code: "NO_MAPPING_FOUND",
-        explanation: `No mapping found for account ${line.account_id} (type: ${accountType ?? "unknown"})`,
-        source_refs: line.source_refs,
-      });
+      // Smart fallback: classify by account type keyword before giving up
+      const typeLower = (accountType ?? "").toLowerCase();
+      const fallback =
+        typeLower.includes("income") || typeLower.includes("revenue")
+          ? { cat: "other_income", code: "OTHER_INCOME", form: "1120", line: "10" }
+        : typeLower.includes("expense") || typeLower.includes("cost")
+          ? { cat: "general_expenses", code: "GENERAL_DEDUCTION", form: "1120", line: "26" }
+        : typeLower.includes("asset") || typeLower.includes("bank")
+          ? { cat: "other_current_assets", code: "OTHER_CURRENT_ASSETS", form: "1120", line: "6" }
+        : typeLower.includes("liability") || typeLower.includes("payable") || typeLower.includes("credit card")
+          ? { cat: "other_current_liabilities", code: "OTHER_CURRENT_LIABS", form: "1120", line: "18" }
+        : typeLower.includes("equity")
+          ? { cat: "equity", code: "EQUITY", form: "1120", line: "36" }
+        : null;
+
+      if (fallback) {
+        mappings.push({
+          mapping_id: `map_${line.tb_line_id}`,
+          entity_id: line.entity_id, tax_year: line.tax_year, tb_line_id: line.tb_line_id,
+          semantic_category: fallback.cat, tax_code: fallback.code,
+          target_form: fallback.form, target_schedule: null, target_line: fallback.line,
+          mapping_method: "heuristic",
+          confidence_score: 0.5,
+          requires_review: true,
+          review_reason_code: "HEURISTIC_FALLBACK",
+          explanation: `Auto-classified "${accountType}${accountSubtype ? `|${accountSubtype}` : ""}" as ${fallback.cat} (review recommended)`,
+          source_refs: line.source_refs,
+        });
+      } else {
+        mappings.push({
+          mapping_id: `map_${line.tb_line_id}`,
+          entity_id: line.entity_id, tax_year: line.tax_year, tb_line_id: line.tb_line_id,
+          semantic_category: "unmapped", tax_code: "UNMAPPED",
+          target_form: "UNKNOWN", target_schedule: null, target_line: "UNKNOWN",
+          mapping_method: "heuristic",
+          confidence_score: 0.0,
+          requires_review: true,
+          review_reason_code: "NO_MAPPING_FOUND",
+          explanation: `No mapping found for account ${line.account_id} (type: ${accountType ?? "unknown"}${accountSubtype ? `|${accountSubtype}` : ""})`,
+          source_refs: line.source_refs,
+        });
+      }
     }
   }
 

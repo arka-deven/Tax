@@ -150,18 +150,20 @@ export async function POST(
     }
 
     // Accounting method (Cash vs Accrual) from QBO Preferences — critical for IRS
-    const accountingMethod = qboData.preferences?.ReportPrefs?.ReportBasis
-      ?? qboData.preferences?.AccountingInfoPrefs?.FirstMonthOfFiscalYear
-        ? "Accrual" // default when preferences available but method unset
-        : "Unknown";
+    const reportBasis = qboData.preferences?.ReportPrefs?.ReportBasis;
+    const accountingMethod = reportBasis === "Accrual" ? "Accrual"
+      : reportBasis === "Cash" ? "Cash"
+      : "Cash"; // Default to Cash for small businesses — most common
     baseFacts.push({
       tax_fact_id: `fact_${entityId}_${taxYear}_accounting_method`,
       entity_id: entityId, tax_year: taxYear,
       fact_name: "accounting_method",
-      fact_value_json: qboData.preferences?.ReportPrefs?.ReportBasis ?? accountingMethod,
-      value_type: "string", confidence_score: qboData.preferences ? 0.95 : 0.5, is_unknown: !qboData.preferences,
+      fact_value_json: accountingMethod,
+      value_type: "string", confidence_score: reportBasis ? 1.0 : 0.7, is_unknown: false,
       derived_from_mapping_ids: [], derived_from_adjustment_ids: [],
-      explanation: "Accounting method from QBO Preferences (ReportPrefs.ReportBasis)",
+      explanation: reportBasis
+        ? `Accounting method "${reportBasis}" from QBO Preferences`
+        : "Defaulted to Cash (QBO Preferences unavailable — most SMBs use cash basis)",
     });
 
     // Fiscal year start month

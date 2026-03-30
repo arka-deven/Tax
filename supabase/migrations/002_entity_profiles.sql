@@ -1,0 +1,47 @@
+-- Entity profiles: one-time business metadata for tax preparation
+CREATE TABLE IF NOT EXISTS entity_profiles (
+  entity_id                    TEXT PRIMARY KEY,
+  legal_name                   TEXT,
+  dba_name                     TEXT,
+  entity_type                  TEXT,
+  ein                          TEXT,
+  state_of_incorporation       TEXT,
+  date_incorporated            DATE,
+  business_start_date          DATE,
+  s_election_date              DATE,
+  naics_code                   TEXT,
+  principal_business_activity  TEXT,
+  principal_product_service    TEXT,
+  accounting_method            TEXT DEFAULT 'Cash',
+  fiscal_year_end_month        INTEGER DEFAULT 12,
+  inventory_method             TEXT DEFAULT 'N/A',
+  number_of_shareholders       INTEGER,
+  number_of_partners           INTEGER,
+  tax_exempt_status            TEXT,
+  website_url                  TEXT,
+  home_office_sqft             INTEGER,
+  home_total_sqft              INTEGER,
+  prior_year_nol_carryforward  NUMERIC(18,2) DEFAULT 0,
+  prior_year_capital_loss_cf   NUMERIC(18,2) DEFAULT 0,
+  prior_year_charitable_cf     NUMERIC(18,2) DEFAULT 0,
+  prior_year_179_carryover     NUMERIC(18,2) DEFAULT 0,
+  created_at                   TIMESTAMPTZ DEFAULT now(),
+  updated_at                   TIMESTAMPTZ DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS entity_owners (
+  owner_id          TEXT PRIMARY KEY,
+  entity_id         TEXT NOT NULL,
+  owner_name        TEXT NOT NULL,
+  owner_tin         TEXT,
+  owner_type        TEXT DEFAULT 'individual',
+  ownership_pct     NUMERIC(6,3) NOT NULL,
+  profit_share_pct  NUMERIC(6,3),
+  loss_share_pct    NUMERIC(6,3),
+  is_managing       BOOLEAN DEFAULT FALSE,
+  address_line1     TEXT,
+  address_city      TEXT,
+  address_state     TEXT,
+  address_zip       TEXT,
+  created_at        TIMESTAMPTZ DEFAULT now()
+);

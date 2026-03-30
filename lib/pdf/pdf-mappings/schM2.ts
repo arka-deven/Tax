@@ -27,12 +27,14 @@ export const SCH_M2_MAPPING: FormPdfMapping = {
     },
     {
       pdfFieldName: `${LEFT}f6_158[0]`,
+      compute: () => "",
       format: "string",
       irsLine: "3",
       description: "Other increases (itemize)",
     },
     {
       pdfFieldName: `${LEFT}f6_159[0]`,
+      compute: () => "0",
       format: "currency",
       irsLine: "3",
       description: "Other increases — amount",
@@ -46,12 +48,14 @@ export const SCH_M2_MAPPING: FormPdfMapping = {
     },
     {
       pdfFieldName: `${LEFT}f6_161[0]`,
+      compute: () => "",
       format: "currency",
       irsLine: "4-cont",
       description: "Line 4 continuation (left)",
     },
     {
       pdfFieldName: `${LEFT}f6_162[0]`,
+      compute: () => "",
       format: "currency",
       irsLine: "4-cont2",
       description: "Line 4 continuation (left)",
@@ -69,24 +73,28 @@ export const SCH_M2_MAPPING: FormPdfMapping = {
     },
     {
       pdfFieldName: `${RIGHT}f6_164[0]`,
+      compute: () => "0",
       format: "currency",
       irsLine: "5b",
       description: "Distributions — stock",
     },
     {
       pdfFieldName: `${RIGHT}f6_165[0]`,
+      compute: () => "0",
       format: "currency",
       irsLine: "5c",
       description: "Distributions — property",
     },
     {
       pdfFieldName: `${RIGHT}f6_166[0]`,
+      compute: () => "",
       format: "string",
       irsLine: "6",
       description: "Other decreases (itemize)",
     },
     {
       pdfFieldName: `${RIGHT}f6_167[0]`,
+      compute: () => "0",
       format: "currency",
       irsLine: "6",
       description: "Other decreases — amount",

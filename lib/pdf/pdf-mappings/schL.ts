@@ -13,6 +13,7 @@ export const SCH_L_MAPPING: FormPdfMapping = {
     // -------------------------------------------------------------------------
     {
       pdfFieldName: `${ASSETS}Line1[0].f6_1[0]`,
+      factName: "boy_cash_total",
       format: "currency",
       irsLine: "1a",
       description: "Cash — beginning of year (column a)",
@@ -26,6 +27,7 @@ export const SCH_L_MAPPING: FormPdfMapping = {
     },
     {
       pdfFieldName: `${ASSETS}Line1[0].f6_3[0]`,
+      factName: "cash_total",
       format: "currency",
       irsLine: "1c",
       description: "Cash — end of year (column a)",
@@ -43,6 +45,7 @@ export const SCH_L_MAPPING: FormPdfMapping = {
     // -------------------------------------------------------------------------
     {
       pdfFieldName: `${ASSETS}Line2a[0].f6_5[0]`,
+      factName: "boy_accounts_receivable_total",
       format: "currency",
       irsLine: "2a-a",
       description: "Trade notes and accounts receivable — beginning of year (column a)",
@@ -56,6 +59,7 @@ export const SCH_L_MAPPING: FormPdfMapping = {
     },
     {
       pdfFieldName: `${ASSETS}Line2a[0].f6_7[0]`,
+      factName: "accounts_receivable_total",
       format: "currency",
       irsLine: "2a-c",
       description: "Trade notes and accounts receivable — end of year (column a)",
@@ -73,6 +77,7 @@ export const SCH_L_MAPPING: FormPdfMapping = {
     // -------------------------------------------------------------------------
     {
       pdfFieldName: `${ASSETS}Line2b[0].f6_9[0]`,
+      factName: "boy_allowance_bad_debts_total",
       format: "currency",
       irsLine: "2b-a",
       description: "Less allowance for bad debts — beginning of year (column a)",
@@ -86,6 +91,7 @@ export const SCH_L_MAPPING: FormPdfMapping = {
     },
     {
       pdfFieldName: `${ASSETS}Line2b[0].f6_11[0]`,
+      factName: "allowance_bad_debts_total",
       format: "currency",
       irsLine: "2b-c",
       description: "Less allowance for bad debts — end of year (column a)",
@@ -103,6 +109,7 @@ export const SCH_L_MAPPING: FormPdfMapping = {
     // -------------------------------------------------------------------------
     {
       pdfFieldName: `${ASSETS}Line3[0].f6_13[0]`,
+      factName: "boy_inventory_total",
       format: "currency",
       irsLine: "3a",
       description: "Inventories — beginning of year (column a)",
@@ -116,6 +123,7 @@ export const SCH_L_MAPPING: FormPdfMapping = {
     },
     {
       pdfFieldName: `${ASSETS}Line3[0].f6_15[0]`,
+      factName: "inventory_total",
       format: "currency",
       irsLine: "3c",
       description: "Inventories — end of year (column a)",
@@ -133,24 +141,28 @@ export const SCH_L_MAPPING: FormPdfMapping = {
     // -------------------------------------------------------------------------
     {
       pdfFieldName: `${ASSETS}Line4[0].f6_17[0]`,
+      factName: "boy_us_govt_obligations_total",
       format: "currency",
       irsLine: "4a",
       description: "U.S. government obligations — beginning of year (column a)",
     },
     {
       pdfFieldName: `${ASSETS}Line4[0].f6_18[0]`,
+      factName: "boy_us_govt_obligations_total",
       format: "currency",
       irsLine: "4b",
       description: "U.S. government obligations — beginning of year (column b)",
     },
     {
       pdfFieldName: `${ASSETS}Line4[0].f6_19[0]`,
+      factName: "us_govt_obligations_total",
       format: "currency",
       irsLine: "4c",
       description: "U.S. government obligations — end of year (column a)",
     },
     {
       pdfFieldName: `${ASSETS}Line4[0].f6_20[0]`,
+      factName: "us_govt_obligations_total",
       format: "currency",
       irsLine: "4d",
       description: "U.S. government obligations — end of year (column b)",
@@ -161,24 +173,28 @@ export const SCH_L_MAPPING: FormPdfMapping = {
     // -------------------------------------------------------------------------
     {
       pdfFieldName: `${ASSETS}Line5[0].f6_21[0]`,
+      factName: "boy_tax_exempt_securities_total",
       format: "currency",
       irsLine: "5a",
       description: "Tax-exempt securities — beginning of year (column a)",
     },
     {
       pdfFieldName: `${ASSETS}Line5[0].f6_22[0]`,
+      factName: "boy_tax_exempt_securities_total",
       format: "currency",
       irsLine: "5b",
       description: "Tax-exempt securities — beginning of year (column b)",
     },
     {
       pdfFieldName: `${ASSETS}Line5[0].f6_23[0]`,
+      factName: "tax_exempt_securities_total",
       format: "currency",
       irsLine: "5c",
       description: "Tax-exempt securities — end of year (column a)",
     },
     {
       pdfFieldName: `${ASSETS}Line5[0].f6_24[0]`,
+      factName: "tax_exempt_securities_total",
       format: "currency",
       irsLine: "5d",
       description: "Tax-exempt securities — end of year (column b)",
@@ -189,6 +205,7 @@ export const SCH_L_MAPPING: FormPdfMapping = {
     // -------------------------------------------------------------------------
     {
       pdfFieldName: `${ASSETS}Line6[0].f6_25[0]`,
+      factName: "boy_other_current_assets_total",
       format: "currency",
       irsLine: "6a",
       description: "Other current assets — beginning of year (column a)",
@@ -202,6 +219,7 @@ export const SCH_L_MAPPING: FormPdfMapping = {
     },
     {
       pdfFieldName: `${ASSETS}Line6[0].f6_27[0]`,
+      factName: "other_current_assets_total",
       format: "currency",
       irsLine: "6c",
       description: "Other current assets — end of year (column a)",
@@ -219,6 +237,7 @@ export const SCH_L_MAPPING: FormPdfMapping = {
     // -------------------------------------------------------------------------
     {
       pdfFieldName: `${ASSETS}Line7[0].f6_29[0]`,
+      factName: "boy_loans_to_officers_total",
       format: "currency",
       irsLine: "7a",
       description: "Loans to shareholders — beginning of year (column a)",
@@ -232,6 +251,7 @@ export const SCH_L_MAPPING: FormPdfMapping = {
     },
     {
       pdfFieldName: `${ASSETS}Line7[0].f6_31[0]`,
+      factName: "loans_to_officers_total",
       format: "currency",
       irsLine: "7c",
       description: "Loans to shareholders — end of year (column a)",
@@ -249,24 +269,28 @@ export const SCH_L_MAPPING: FormPdfMapping = {
     // -------------------------------------------------------------------------
     {
       pdfFieldName: `${ASSETS}Line8[0].f6_33[0]`,
+      factName: "boy_mortgage_real_estate_loans_total",
       format: "currency",
       irsLine: "8a",
       description: "Mortgage and real estate loans — beginning of year (column a)",
     },
     {
       pdfFieldName: `${ASSETS}Line8[0].f6_34[0]`,
+      factName: "boy_mortgage_real_estate_loans_total",
       format: "currency",
       irsLine: "8b",
       description: "Mortgage and real estate loans — beginning of year (column b)",
     },
     {
       pdfFieldName: `${ASSETS}Line8[0].f6_35[0]`,
+      factName: "mortgage_real_estate_loans_total",
       format: "currency",
       irsLine: "8c",
       description: "Mortgage and real estate loans — end of year (column a)",
     },
     {
       pdfFieldName: `${ASSETS}Line8[0].f6_36[0]`,
+      factName: "mortgage_real_estate_loans_total",
       format: "currency",
       irsLine: "8d",
       description: "Mortgage and real estate loans — end of year (column b)",
@@ -277,24 +301,28 @@ export const SCH_L_MAPPING: FormPdfMapping = {
     // -------------------------------------------------------------------------
     {
       pdfFieldName: `${ASSETS}Line9[0].f6_37[0]`,
+      factName: "boy_other_investments_total",
       format: "currency",
       irsLine: "9a",
       description: "Other investments — beginning of year (column a)",
     },
     {
       pdfFieldName: `${ASSETS}Line9[0].f6_38[0]`,
+      factName: "boy_other_investments_total",
       format: "currency",
       irsLine: "9b",
       description: "Other investments — beginning of year (column b)",
     },
     {
       pdfFieldName: `${ASSETS}Line9[0].f6_39[0]`,
+      factName: "other_investments_total",
       format: "currency",
       irsLine: "9c",
       description: "Other investments — end of year (column a)",
     },
     {
       pdfFieldName: `${ASSETS}Line9[0].f6_40[0]`,
+      factName: "other_investments_total",
       format: "currency",
       irsLine: "9d",
       description: "Other investments — end of year (column b)",
@@ -305,6 +333,7 @@ export const SCH_L_MAPPING: FormPdfMapping = {
     // -------------------------------------------------------------------------
     {
       pdfFieldName: `${ASSETS}Line10a[0].f6_41[0]`,
+      factName: "boy_buildings_depreciable_total",
       format: "currency",
       irsLine: "10a-a",
       description: "Buildings and other depreciable assets — beginning of year (column a)",
@@ -318,6 +347,7 @@ export const SCH_L_MAPPING: FormPdfMapping = {
     },
     {
       pdfFieldName: `${ASSETS}Line10a[0].f6_43[0]`,
+      factName: "buildings_depreciable_total",
       format: "currency",
       irsLine: "10a-c",
       description: "Buildings and other depreciable assets — end of year (column a)",
@@ -335,6 +365,7 @@ export const SCH_L_MAPPING: FormPdfMapping = {
     // -------------------------------------------------------------------------
     {
       pdfFieldName: `${ASSETS}Line10b[0].f6_45[0]`,
+      factName: "boy_accum_depreciation_total",
       format: "currency",
       irsLine: "10b-a",
       description: "Less accumulated depreciation — beginning of year (column a)",
@@ -348,6 +379,7 @@ export const SCH_L_MAPPING: FormPdfMapping = {
     },
     {
       pdfFieldName: `${ASSETS}Line10b[0].f6_47[0]`,
+      factName: "accum_depreciation_total",
       format: "currency",
       irsLine: "10b-c",
       description: "Less accumulated depreciation — end of year (column a)",
@@ -421,6 +453,7 @@ export const SCH_L_MAPPING: FormPdfMapping = {
     // -------------------------------------------------------------------------
     {
       pdfFieldName: `${ASSETS}Line12[0].f6_57[0]`,
+      factName: "boy_land_total",
       format: "currency",
       irsLine: "12a",
       description: "Land — beginning of year (column a)",
@@ -434,6 +467,7 @@ export const SCH_L_MAPPING: FormPdfMapping = {
     },
     {
       pdfFieldName: `${ASSETS}Line12[0].f6_59[0]`,
+      factName: "land_total",
       format: "currency",
       irsLine: "12c",
       description: "Land — end of year (column a)",
@@ -451,18 +485,21 @@ export const SCH_L_MAPPING: FormPdfMapping = {
     // -------------------------------------------------------------------------
     {
       pdfFieldName: `${ASSETS}Line13a[0].f6_61[0]`,
+      factName: "boy_intangible_assets_total",
       format: "currency",
       irsLine: "13a-a",
       description: "Intangible assets (amortizable only) — beginning of year (column a)",
     },
     {
       pdfFieldName: `${ASSETS}Line13a[0].f6_62[0]`,
+      factName: "boy_intangible_assets_total",
       format: "currency",
       irsLine: "13a-b",
       description: "Intangible assets (amortizable only) — beginning of year (column b)",
     },
     {
       pdfFieldName: `${ASSETS}Line13a[0].f6_63[0]`,
+      factName: "intangible_assets_total",
       format: "currency",
       irsLine: "13a-c",
       description: "Intangible assets (amortizable only) — end of year (column a)",
@@ -480,18 +517,21 @@ export const SCH_L_MAPPING: FormPdfMapping = {
     // -------------------------------------------------------------------------
     {
       pdfFieldName: `${ASSETS}Line13b[0].f6_65[0]`,
+      factName: "boy_accum_amortization_total",
       format: "currency",
       irsLine: "13b-a",
       description: "Less accumulated amortization — beginning of year (column a)",
     },
     {
       pdfFieldName: `${ASSETS}Line13b[0].f6_66[0]`,
+      factName: "boy_accum_amortization_total",
       format: "currency",
       irsLine: "13b-b",
       description: "Less accumulated amortization — beginning of year (column b)",
     },
     {
       pdfFieldName: `${ASSETS}Line13b[0].f6_67[0]`,
+      factName: "accum_amortization_total",
       format: "currency",
       irsLine: "13b-c",
       description: "Less accumulated amortization — end of year (column a)",
@@ -509,6 +549,7 @@ export const SCH_L_MAPPING: FormPdfMapping = {
     // -------------------------------------------------------------------------
     {
       pdfFieldName: `${ASSETS}Line14[0].f6_69[0]`,
+      factName: "boy_other_assets_total",
       format: "currency",
       irsLine: "14a",
       description: "Other assets — beginning of year (column a)",
@@ -522,6 +563,7 @@ export const SCH_L_MAPPING: FormPdfMapping = {
     },
     {
       pdfFieldName: `${ASSETS}Line14[0].f6_71[0]`,
+      factName: "other_assets_total",
       format: "currency",
       irsLine: "14c",
       description: "Other assets — end of year (column a)",
@@ -539,6 +581,7 @@ export const SCH_L_MAPPING: FormPdfMapping = {
     // -------------------------------------------------------------------------
     {
       pdfFieldName: `${ASSETS}Line15[0].f6_73[0]`,
+      factName: "boy_total_assets",
       format: "currency",
       irsLine: "15a",
       description: "Total assets — beginning of year (column a)",
@@ -552,6 +595,7 @@ export const SCH_L_MAPPING: FormPdfMapping = {
     },
     {
       pdfFieldName: `${ASSETS}Line15[0].f6_75[0]`,
+      factName: "total_assets",
       format: "currency",
       irsLine: "15c",
       description: "Total assets — end of year (column a)",
@@ -569,6 +613,7 @@ export const SCH_L_MAPPING: FormPdfMapping = {
     // -------------------------------------------------------------------------
     {
       pdfFieldName: `${LIAB}Line16[0].f6_77[0]`,
+      factName: "boy_accounts_payable_total",
       format: "currency",
       irsLine: "16a",
       description: "Accounts payable — beginning of year (column a)",
@@ -582,6 +627,7 @@ export const SCH_L_MAPPING: FormPdfMapping = {
     },
     {
       pdfFieldName: `${LIAB}Line16[0].f6_79[0]`,
+      factName: "accounts_payable_total",
       format: "currency",
       irsLine: "16c",
       description: "Accounts payable — end of year (column a)",
@@ -599,24 +645,28 @@ export const SCH_L_MAPPING: FormPdfMapping = {
     // -------------------------------------------------------------------------
     {
       pdfFieldName: `${LIAB}Line17[0].f6_81[0]`,
+      factName: "boy_short_term_notes_payable_total",
       format: "currency",
       irsLine: "17a",
       description: "Mortgages, notes, bonds payable in less than 1 year — beginning of year (column a)",
     },
     {
       pdfFieldName: `${LIAB}Line17[0].f6_82[0]`,
+      factName: "boy_short_term_notes_payable_total",
       format: "currency",
       irsLine: "17b",
       description: "Mortgages, notes, bonds payable in less than 1 year — beginning of year (column b)",
     },
     {
       pdfFieldName: `${LIAB}Line17[0].f6_83[0]`,
+      factName: "short_term_notes_payable_total",
       format: "currency",
       irsLine: "17c",
       description: "Mortgages, notes, bonds payable in less than 1 year — end of year (column a)",
     },
     {
       pdfFieldName: `${LIAB}Line17[0].f6_84[0]`,
+      factName: "short_term_notes_payable_total",
       format: "currency",
       irsLine: "17d",
       description: "Mortgages, notes, bonds payable in less than 1 year — end of year (column b)",
@@ -627,6 +677,7 @@ export const SCH_L_MAPPING: FormPdfMapping = {
     // -------------------------------------------------------------------------
     {
       pdfFieldName: `${LIAB}Line18[0].f6_85[0]`,
+      factName: "boy_other_current_liabilities_total",
       format: "currency",
       irsLine: "18a",
       description: "Other current liabilities — beginning of year (column a)",
@@ -640,6 +691,7 @@ export const SCH_L_MAPPING: FormPdfMapping = {
     },
     {
       pdfFieldName: `${LIAB}Line18[0].f6_87[0]`,
+      factName: "other_current_liabilities_total",
       format: "currency",
       irsLine: "18c",
       description: "Other current liabilities — end of year (column a)",
@@ -657,6 +709,7 @@ export const SCH_L_MAPPING: FormPdfMapping = {
     // -------------------------------------------------------------------------
     {
       pdfFieldName: `${LIAB}Line19[0].f6_89[0]`,
+      factName: "boy_shareholder_loans_total",
       format: "currency",
       irsLine: "19a",
       description: "Loans from shareholders — beginning of year (column a)",
@@ -670,6 +723,7 @@ export const SCH_L_MAPPING: FormPdfMapping = {
     },
     {
       pdfFieldName: `${LIAB}Line19[0].f6_91[0]`,
+      factName: "shareholder_loans_total",
       format: "currency",
       irsLine: "19c",
       description: "Loans from shareholders — end of year (column a)",
@@ -687,6 +741,7 @@ export const SCH_L_MAPPING: FormPdfMapping = {
     // -------------------------------------------------------------------------
     {
       pdfFieldName: `${LIAB}Line20[0].f6_93[0]`,
+      factName: "boy_long_term_liabilities_total",
       format: "currency",
       irsLine: "20a",
       description: "Mortgages, notes, bonds payable in 1 year or more — beginning of year (column a)",
@@ -700,6 +755,7 @@ export const SCH_L_MAPPING: FormPdfMapping = {
     },
     {
       pdfFieldName: `${LIAB}Line20[0].f6_95[0]`,
+      factName: "long_term_liabilities_total",
       format: "currency",
       irsLine: "20c",
       description: "Mortgages, notes, bonds payable in 1 year or more — end of year (column a)",
@@ -717,24 +773,28 @@ export const SCH_L_MAPPING: FormPdfMapping = {
     // -------------------------------------------------------------------------
     {
       pdfFieldName: `${LIAB}Line21[0].f6_97[0]`,
+      factName: "boy_other_liabilities_total",
       format: "currency",
       irsLine: "21a",
       description: "Other liabilities — beginning of year (column a)",
     },
     {
       pdfFieldName: `${LIAB}Line21[0].f6_98[0]`,
+      factName: "boy_other_liabilities_total",
       format: "currency",
       irsLine: "21b",
       description: "Other liabilities — beginning of year (column b)",
     },
     {
       pdfFieldName: `${LIAB}Line21[0].f6_99[0]`,
+      factName: "other_liabilities_total",
       format: "currency",
       irsLine: "21c",
       description: "Other liabilities — end of year (column a)",
     },
     {
       pdfFieldName: `${LIAB}Line21[0].f6_100[0]`,
+      factName: "other_liabilities_total",
       format: "currency",
       irsLine: "21d",
       description: "Other liabilities — end of year (column b)",
@@ -745,6 +805,7 @@ export const SCH_L_MAPPING: FormPdfMapping = {
     // -------------------------------------------------------------------------
     {
       pdfFieldName: `${LIAB}Line22a[0].f6_101[0]`,
+      factName: "boy_capital_stock_total",
       format: "currency",
       irsLine: "22a-a",
       description: "Capital stock — beginning of year (column a)",
@@ -758,6 +819,7 @@ export const SCH_L_MAPPING: FormPdfMapping = {
     },
     {
       pdfFieldName: `${LIAB}Line22a[0].f6_103[0]`,
+      factName: "capital_stock_total",
       format: "currency",
       irsLine: "22a-c",
       description: "Capital stock — end of year (column a)",
@@ -775,24 +837,28 @@ export const SCH_L_MAPPING: FormPdfMapping = {
     // -------------------------------------------------------------------------
     {
       pdfFieldName: `${LIAB}Line22b[0].f6_105[0]`,
+      factName: "boy_additional_paid_in_capital_total",
       format: "currency",
       irsLine: "22b-a",
       description: "Additional paid-in capital — beginning of year (column a)",
     },
     {
       pdfFieldName: `${LIAB}Line22b[0].f6_106[0]`,
+      factName: "boy_additional_paid_in_capital_total",
       format: "currency",
       irsLine: "22b-b",
       description: "Additional paid-in capital — beginning of year (column b)",
     },
     {
       pdfFieldName: `${LIAB}Line22b[0].f6_107[0]`,
+      factName: "additional_paid_in_capital_total",
       format: "currency",
       irsLine: "22b-c",
       description: "Additional paid-in capital — end of year (column a)",
     },
     {
       pdfFieldName: `${LIAB}Line22b[0].f6_108[0]`,
+      factName: "additional_paid_in_capital_total",
       format: "currency",
       irsLine: "22b-d",
       description: "Additional paid-in capital — end of year (column b)",
@@ -803,24 +869,28 @@ export const SCH_L_MAPPING: FormPdfMapping = {
     // -------------------------------------------------------------------------
     {
       pdfFieldName: `${LIAB}Line23[0].f6_109[0]`,
+      factName: "boy_retained_earnings_appropriated_total",
       format: "currency",
       irsLine: "23a",
       description: "Retained earnings — appropriated — beginning of year (column a)",
     },
     {
       pdfFieldName: `${LIAB}Line23[0].f6_110[0]`,
+      factName: "boy_retained_earnings_appropriated_total",
       format: "currency",
       irsLine: "23b",
       description: "Retained earnings — appropriated — beginning of year (column b)",
     },
     {
       pdfFieldName: `${LIAB}Line23[0].f6_111[0]`,
+      factName: "retained_earnings_appropriated_total",
       format: "currency",
       irsLine: "23c",
       description: "Retained earnings — appropriated — end of year (column a)",
     },
     {
       pdfFieldName: `${LIAB}Line23[0].f6_112[0]`,
+      factName: "retained_earnings_appropriated_total",
       format: "currency",
       irsLine: "23d",
       description: "Retained earnings — appropriated — end of year (column b)",
@@ -831,24 +901,28 @@ export const SCH_L_MAPPING: FormPdfMapping = {
     // -------------------------------------------------------------------------
     {
       pdfFieldName: `${LIAB}Line24[0].f6_113[0]`,
+      factName: "boy_retained_earnings_unappropriated_total",
       format: "currency",
       irsLine: "24a",
       description: "Retained earnings — unappropriated — beginning of year (column a)",
     },
     {
       pdfFieldName: `${LIAB}Line24[0].f6_114[0]`,
+      factName: "boy_retained_earnings_unappropriated_total",
       format: "currency",
       irsLine: "24b",
       description: "Retained earnings — unappropriated — beginning of year (column b)",
     },
     {
       pdfFieldName: `${LIAB}Line24[0].f6_115[0]`,
+      factName: "retained_earnings_unappropriated_total",
       format: "currency",
       irsLine: "24c",
       description: "Retained earnings — unappropriated — end of year (column a)",
     },
     {
       pdfFieldName: `${LIAB}Line24[0].f6_116[0]`,
+      factName: "retained_earnings_unappropriated_total",
       format: "currency",
       irsLine: "24d",
       description: "Retained earnings — unappropriated — end of year (column b)",
@@ -859,6 +933,7 @@ export const SCH_L_MAPPING: FormPdfMapping = {
     // -------------------------------------------------------------------------
     {
       pdfFieldName: `${LIAB}Line25[0].f6_117[0]`,
+      factName: "boy_retained_earnings_total",
       format: "currency",
       irsLine: "25a",
       description: "Adjustments to shareholders' equity — beginning of year (column a)",
@@ -872,6 +947,7 @@ export const SCH_L_MAPPING: FormPdfMapping = {
     },
     {
       pdfFieldName: `${LIAB}Line25[0].f6_119[0]`,
+      factName: "retained_earnings_total",
       format: "currency",
       irsLine: "25c",
       description: "Adjustments to shareholders' equity — end of year (column a)",
@@ -889,24 +965,28 @@ export const SCH_L_MAPPING: FormPdfMapping = {
     // -------------------------------------------------------------------------
     {
       pdfFieldName: `${LIAB}Line26[0].f6_121[0]`,
+      factName: "boy_treasury_stock_total",
       format: "currency",
       irsLine: "26a",
       description: "Less cost of treasury stock — beginning of year (column a)",
     },
     {
       pdfFieldName: `${LIAB}Line26[0].f6_122[0]`,
+      factName: "boy_treasury_stock_total",
       format: "currency",
       irsLine: "26b",
       description: "Less cost of treasury stock — beginning of year (column b)",
     },
     {
       pdfFieldName: `${LIAB}Line26[0].f6_123[0]`,
+      factName: "treasury_stock_total",
       format: "currency",
       irsLine: "26c",
       description: "Less cost of treasury stock — end of year (column a)",
     },
     {
       pdfFieldName: `${LIAB}Line26[0].f6_124[0]`,
+      factName: "treasury_stock_total",
       format: "currency",
       irsLine: "26d",
       description: "Less cost of treasury stock — end of year (column b)",
@@ -917,18 +997,39 @@ export const SCH_L_MAPPING: FormPdfMapping = {
     // -------------------------------------------------------------------------
     {
       pdfFieldName: `${LIAB}Line27[0].f6_125[0]`,
+      compute: (ctx: FillContext) => {
+        const tl = Number(ctx.facts.boy_total_liabilities ?? 0);
+        const cs = Number(ctx.facts.boy_capital_stock_total ?? 0);
+        const re = Number(ctx.facts.boy_retained_earnings_total ?? 0);
+        const sum = tl + Math.abs(cs) + Math.abs(re);
+        return sum !== 0 ? String(sum) : undefined;
+      },
       format: "currency",
       irsLine: "27a",
       description: "Total liabilities and shareholders' equity — beginning of year (column a)",
     },
     {
       pdfFieldName: `${LIAB}Line27[0].f6_126[0]`,
+      compute: (ctx: FillContext) => {
+        const tl = Number(ctx.facts.boy_total_liabilities ?? 0);
+        const cs = Number(ctx.facts.boy_capital_stock_total ?? 0);
+        const re = Number(ctx.facts.boy_retained_earnings_total ?? 0);
+        const sum = tl + Math.abs(cs) + Math.abs(re);
+        return sum !== 0 ? String(sum) : undefined;
+      },
       format: "currency",
       irsLine: "27b",
       description: "Total liabilities and shareholders' equity — beginning of year (column b)",
     },
     {
       pdfFieldName: `${LIAB}Line27[0].f6_127[0]`,
+      compute: (ctx: FillContext) => {
+        const tl = Number(ctx.facts.total_liabilities ?? 0);
+        const cs = Number(ctx.facts.capital_stock_total ?? 0);
+        const re = Number(ctx.facts.retained_earnings_total ?? 0);
+        const sum = tl + Math.abs(cs) + Math.abs(re);
+        return sum !== 0 ? String(sum) : undefined;
+      },
       format: "currency",
       irsLine: "27c",
       description: "Total liabilities and shareholders' equity — end of year (column a)",
@@ -946,18 +1047,21 @@ export const SCH_L_MAPPING: FormPdfMapping = {
     // -------------------------------------------------------------------------
     {
       pdfFieldName: `${LIAB}Line28[0].f6_129[0]`,
+      factName: "boy_total_assets",
       format: "currency",
       irsLine: "28a",
       description: "Memo line — beginning of year (column a)",
     },
     {
       pdfFieldName: `${LIAB}Line28[0].f6_130[0]`,
+      factName: "boy_total_assets",
       format: "currency",
       irsLine: "28b",
       description: "Memo line — beginning of year (column b)",
     },
     {
       pdfFieldName: `${LIAB}Line28[0].f6_131[0]`,
+      factName: "total_assets",
       format: "currency",
       irsLine: "28c",
       description: "Memo line — end of year (column a)",

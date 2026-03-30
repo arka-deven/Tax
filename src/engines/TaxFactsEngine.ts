@@ -744,6 +744,10 @@ export function deriveTaxFacts(
   const mealsDisallowance = meals.total * 0.50; // 50% of meals is nondeductible
   facts.push(fact("m1_meals_disallowance", mealsDisallowance, "number", meals.mappingIds, "Schedule M-1 Line 5c: 50% meals disallowance (IRC §274(n))"));
 
+  // M-1 Line 7a: tax-exempt interest
+  const taxExemptInterest = sumByTaxCode("TAX_EXEMPT_INTEREST");
+  facts.push(fact("tax_exempt_interest_total", taxExemptInterest.total, "number", taxExemptInterest.mappingIds, "Tax-exempt interest income (Schedule M-1 Line 7a)"));
+
   // M-1 Line 5b: charitable excess (already computed as charitable_contributions_excess)
   // M-1 Line 6: sum of lines 1 through 5e
 

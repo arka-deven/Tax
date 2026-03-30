@@ -300,6 +300,59 @@ export async function POST(
       explanation: "Count of vendors flagged as 1099 in QBO",
     });
 
+    // ── 6b. Load entity profile and inject profile-derived facts ──────────────
+    try {
+      const { getEntityProfile, getEntityOwners } = await import("@/lib/repositories/entity-profile");
+      const profile = await getEntityProfile(entityId);
+      if (profile) {
+        const profileFacts: [string, unknown, string][] = [
+          ["naics_code", profile.naics_code, "NAICS business code from entity profile"],
+          ["principal_business_activity", profile.principal_business_activity, "Principal business activity from entity profile"],
+          ["principal_product_service", profile.principal_product_service, "Principal product/service from entity profile"],
+          ["date_incorporated", profile.date_incorporated, "Date of incorporation from entity profile"],
+          ["business_start_date", profile.business_start_date, "Date business started from entity profile"],
+          ["s_election_date", profile.s_election_date, "S-election effective date from entity profile"],
+          ["state_of_incorporation", profile.state_of_incorporation, "State of incorporation from entity profile"],
+          ["inventory_method", profile.inventory_method, "Inventory valuation method from entity profile"],
+          ["home_office_sqft", profile.home_office_sqft, "Home office square footage from entity profile"],
+          ["home_total_sqft", profile.home_total_sqft, "Total home square footage from entity profile"],
+          ["nol_carryforward", profile.prior_year_nol_carryforward, "NOL carryforward from entity profile"],
+          ["capital_loss_carryforward", profile.prior_year_capital_loss_cf, "Capital loss carryforward from entity profile"],
+          ["charitable_carryforward", profile.prior_year_charitable_cf, "Charitable contribution carryforward from entity profile"],
+          ["section_179_carryover", profile.prior_year_179_carryover, "Section 179 carryover from entity profile"],
+        ];
+        for (const [name, value, explanation] of profileFacts) {
+          if (value != null && value !== "" && value !== 0) {
+            baseFacts.push({
+              tax_fact_id: `fact_${entityId}_${taxYear}_profile_${name}`,
+              entity_id: entityId, tax_year: taxYear,
+              fact_name: name,
+              fact_value_json: value,
+              value_type: typeof value === "number" ? "number" : "string",
+              confidence_score: 1.0, is_unknown: false,
+              derived_from_mapping_ids: [], derived_from_adjustment_ids: [],
+              explanation,
+            });
+          }
+        }
+        // Owner count
+        const owners = await getEntityOwners(entityId);
+        if (owners.length > 0) {
+          baseFacts.push({
+            tax_fact_id: `fact_${entityId}_${taxYear}_owner_count`,
+            entity_id: entityId, tax_year: taxYear,
+            fact_name: "owner_count",
+            fact_value_json: owners.length,
+            value_type: "number", confidence_score: 1.0, is_unknown: false,
+            derived_from_mapping_ids: [], derived_from_adjustment_ids: [],
+            explanation: `Number of partners/shareholders from entity profile (${owners.length})`,
+          });
+        }
+      }
+    } catch {
+      // Entity profile table may not exist yet — non-fatal
+    }
+
     await upsertFacts(baseFacts);
 
     // ── 7. Run rule engine → form requirements ────────────────────────────────

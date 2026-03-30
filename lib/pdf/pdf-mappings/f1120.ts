@@ -155,7 +155,7 @@ export const F1120_MAPPING: FormPdfMapping = {
     },
     {
       pdfFieldName: "topmostSubform[0].Page1[0].f1_24[0]",
-      factName: "form4797_gain_loss_total",
+      factName: "capital_gain_total",
       format: "currency",
       irsLine: "9",
       description: "Net gain or loss from Form 4797 (Part II, line 17)",
@@ -276,10 +276,9 @@ export const F1120_MAPPING: FormPdfMapping = {
     },
     {
       pdfFieldName: "topmostSubform[0].Page1[0].f1_40[0]",
-      factName: "reserved_deduction_total",
       format: "currency",
       irsLine: "25",
-      description: "Reserved for future use",
+      description: "Reserved for future use (intentionally blank)",
     },
     {
       pdfFieldName: "topmostSubform[0].Page1[0].f1_41[0]",

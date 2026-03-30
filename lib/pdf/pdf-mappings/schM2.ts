@@ -13,6 +13,7 @@ export const SCH_M2_MAPPING: FormPdfMapping = {
     // -------------------------------------------------------------------------
     {
       pdfFieldName: `${LEFT}f6_156[0]`,
+      factName: "boy_retained_earnings_total",
       format: "currency",
       irsLine: "1",
       description: "Balance at beginning of year",

@@ -45,17 +45,35 @@ export async function POST(
   }
 
   try {
+    // ── 0. Fetch PRIOR year from QBO for beginning-of-year balances ──────────
+    // Schedule L, M-2 need BOY figures. We run a lightweight pipeline on (taxYear-1).
+    const priorYear = taxYear - 1;
+    let priorYearFacts: Record<string, unknown> = {};
+    try {
+      const pyData = await fetchAllData(entityId, priorYear);
+      const pyRaw = buildRawSourceRecord(entityId, priorYear, pyData);
+      const pyAccounts = normalizeAccounts(pyRaw, pyData.accounts);
+      const pyEntries = normalizeAllTransactions(pyRaw, pyData);
+      const pyTbLines = buildTrialBalance(entityId, priorYear, pyEntries, []);
+      const [pyTypeMap, pySubtypeMap] = await Promise.all([
+        getAccountTypeMap(entityId),
+        getAccountSubtypeMap(entityId),
+      ]);
+      const pyMappings = mapTrialBalanceLines(pyTbLines, pyTypeMap, pySubtypeMap);
+      const pyFacts = deriveTaxFacts(entityId, priorYear, pyMappings, pyTbLines);
+      priorYearFacts = Object.fromEntries(pyFacts.map((f) => [f.fact_name, f.fact_value_json]));
+    } catch (err) {
+      console.warn(`Prior year (${priorYear}) pipeline failed — BOY balances will be empty:`, err instanceof Error ? err.message : err);
+    }
+
     // ── 1. Fetch ALL data from QBO ───────────────────────────────────────────
     const qboData = await fetchAllData(entityId, taxYear);
 
     // ── 2. Build & persist raw source record ─────────────────────────────────
-    // Full payload stored as-is so we have a complete audit trail of everything
-    // pulled from QBO — accounts, all transaction types, company info, preferences.
     const raw = buildRawSourceRecord(entityId, taxYear, qboData);
     await upsertRawSource(raw);
 
     // ── 3. Normalize → canonical ledger ──────────────────────────────────────
-    // Normalize ALL transaction types (Invoice, Bill, Expense, etc.) — not just JournalEntries
     const canonicalAccounts = normalizeAccounts(raw, qboData.accounts);
     const canonicalEntries = normalizeAllTransactions(raw, qboData);
     await upsertAccounts(canonicalAccounts);
@@ -76,6 +94,33 @@ export async function POST(
 
     // ── 6. Derive tax facts ───────────────────────────────────────────────────
     const baseFacts = deriveTaxFacts(entityId, taxYear, mappings, tbLines);
+
+    // Inject prior year balance sheet facts as "boy_" prefixed facts for Schedule L
+    const boyFactNames = [
+      "cash_total", "accounts_receivable_total", "allowance_bad_debts_total",
+      "inventory_total", "other_current_assets_total", "loans_to_officers_total",
+      "buildings_depreciable_total", "accum_depreciation_total", "land_total",
+      "intangible_assets_total", "accum_amortization_total", "other_assets_total",
+      "total_assets", "total_assets_bs",
+      "accounts_payable_total", "credit_card_total", "other_current_liabilities_total",
+      "shareholder_loans_total", "long_term_liabilities_total", "total_liabilities",
+      "capital_stock_total", "retained_earnings_total",
+      "net_income_before_tax",
+    ];
+    for (const name of boyFactNames) {
+      if (priorYearFacts[name] != null) {
+        baseFacts.push({
+          tax_fact_id: `fact_${entityId}_${taxYear}_boy_${name}`,
+          entity_id: entityId, tax_year: taxYear,
+          fact_name: `boy_${name}`,
+          fact_value_json: priorYearFacts[name],
+          value_type: typeof priorYearFacts[name] === "number" ? "number" : "string",
+          confidence_score: 0.85, is_unknown: false,
+          derived_from_mapping_ids: [], derived_from_adjustment_ids: [],
+          explanation: `Beginning-of-year balance from prior year (${priorYear}) pipeline run`,
+        });
+      }
+    }
 
     // Entity type — provided by user, determines which rules fire
     if (entityType) {

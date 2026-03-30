@@ -96,26 +96,26 @@ export async function POST(
 
     // ── 2. Build & persist raw source record ─────────────────────────────────
     const raw = buildRawSourceRecord(entityId, taxYear, qboData);
-    await upsertRawSource(raw);
+    await upsertRawSource(raw).catch((e: unknown) => console.warn("DB upsertRawSource skipped:", e instanceof Error ? e.message : e));
 
     // ── 3. Normalize → canonical ledger ──────────────────────────────────────
     const canonicalAccounts = normalizeAccounts(raw, qboData.accounts);
     const canonicalEntries = normalizeAllTransactions(raw, qboData);
-    await upsertAccounts(canonicalAccounts);
-    await upsertEntries(canonicalEntries);
+    await upsertAccounts(canonicalAccounts).catch((e: unknown) => console.warn("DB upsertAccounts skipped:", e instanceof Error ? e.message : e));
+    await upsertEntries(canonicalEntries).catch((e: unknown) => console.warn("DB upsertEntries skipped:", e instanceof Error ? e.message : e));
 
     // ── 4. Build trial balance ────────────────────────────────────────────────
-    const adjustments = await getAdjustments(entityId, taxYear);
+    const adjustments = await getAdjustments(entityId, taxYear).catch(() => [] as never[]);
     const tbLines = buildTrialBalance(entityId, taxYear, canonicalEntries, adjustments);
-    await upsertTrialBalanceLines(tbLines);
+    await upsertTrialBalanceLines(tbLines).catch((e: unknown) => console.warn("DB upsertTBLines skipped:", e instanceof Error ? e.message : e));
 
     // ── 5. Map trial balance lines ────────────────────────────────────────────
     const [accountTypeMap, accountSubtypeMap] = await Promise.all([
-      getAccountTypeMap(entityId),
-      getAccountSubtypeMap(entityId),
+      getAccountTypeMap(entityId).catch(() => new Map<string, string>()),
+      getAccountSubtypeMap(entityId).catch(() => new Map<string, string>()),
     ]);
     const mappings = mapTrialBalanceLines(tbLines, accountTypeMap, accountSubtypeMap);
-    await upsertMappings(mappings);
+    await upsertMappings(mappings).catch((e: unknown) => console.warn("DB upsertMappings skipped:", e instanceof Error ? e.message : e));
 
     // ── 6. Derive tax facts ───────────────────────────────────────────────────
     const baseFacts = deriveTaxFacts(entityId, taxYear, mappings, tbLines);
@@ -382,7 +382,7 @@ export async function POST(
       // Tables may not exist yet — non-fatal
     }
 
-    await upsertFacts(baseFacts);
+    await upsertFacts(baseFacts).catch((e: unknown) => console.warn("DB upsertFacts skipped:", e instanceof Error ? e.message : e));
 
     // ── 7. Run rule engine → form requirements ────────────────────────────────
     const { formRequirements, diagnostics: ruleDiagnostics } = runRules(
@@ -391,7 +391,7 @@ export async function POST(
       STARTER_RULES,
       baseFacts
     );
-    await upsertFormRequirements(formRequirements);
+    await upsertFormRequirements(formRequirements).catch((e: unknown) => console.warn("DB upsertFormReqs skipped:", e instanceof Error ? e.message : e));
 
     // ── 8. Run diagnostics engine ─────────────────────────────────────────────
     const mappingDiagnostics = runDiagnostics(entityId, taxYear, mappings, baseFacts);
@@ -428,7 +428,7 @@ export async function POST(
       }
     }
 
-    await replaceDiagnostics(entityId, taxYear, allDiagnostics);
+    await replaceDiagnostics(entityId, taxYear, allDiagnostics).catch((e: unknown) => console.warn("DB replaceDiagnostics skipped:", e instanceof Error ? e.message : e));
 
     // ── 9. Build review package ───────────────────────────────────────────────
     const reviewPackage = buildReviewPackage(

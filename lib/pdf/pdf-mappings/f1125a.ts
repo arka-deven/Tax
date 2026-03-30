@@ -30,21 +30,21 @@ export const F1125A_MAPPING: FormPdfMapping = {
     // -------------------------------------------------------------------------
     {
       pdfFieldName: `${P}f1_3[0]`,
-      factName: undefined,
+      factName: "boy_inventory_total",
       format: "currency",
       irsLine: "1",
       description: "Inventory at beginning of year",
     },
     {
       pdfFieldName: `${P}f1_4[0]`,
-      factName: undefined,
+      factName: "cogs_purchases_total",
       format: "currency",
       irsLine: "2",
       description: "Purchases",
     },
     {
       pdfFieldName: `${P}f1_5[0]`,
-      factName: undefined,
+      factName: "cogs_labor_total",
       format: "currency",
       irsLine: "3",
       description: "Cost of labor",
@@ -58,14 +58,14 @@ export const F1125A_MAPPING: FormPdfMapping = {
     },
     {
       pdfFieldName: `${P}f1_7[0]`,
-      factName: undefined,
+      factName: "cogs_other_total",
       format: "currency",
       irsLine: "4b",
       description: "Other costs (attach statement)",
     },
     {
       pdfFieldName: `${P}f1_8[0]`,
-      factName: undefined,
+      compute: (ctx: FillContext) => { const p = Number(ctx.facts.cogs_purchases_total ?? 0); const l = Number(ctx.facts.cogs_labor_total ?? 0); const o = Number(ctx.facts.cogs_other_total ?? 0); const inv = Number(ctx.facts.boy_inventory_total ?? 0); return String(inv + p + l + o); },
       format: "currency",
       irsLine: "5",
       description: "Total (add lines 1 through 4b)",

@@ -1,4 +1,4 @@
-import type { FormPdfMapping } from "../types";
+import type { FormPdfMapping, FillContext } from "../types";
 
 const LEFT = "topmostSubform[0].Page6[0].SchM-1_Left[0].";
 const RIGHT = "topmostSubform[0].Page6[0].SchM-1_Right[0].";
@@ -45,6 +45,7 @@ export const SCH_M1_MAPPING: FormPdfMapping = {
     },
     {
       pdfFieldName: `${LEFT}f6_138[0]`,
+      factName: "charitable_contributions_excess",
       format: "currency",
       irsLine: "5b",
       description: "Expenses on books not on return — charitable contributions",
@@ -71,12 +72,14 @@ export const SCH_M1_MAPPING: FormPdfMapping = {
     },
     {
       pdfFieldName: `${LEFT}f6_142[0]`,
+      compute: (ctx: FillContext) => { const a = Number(ctx.facts.depreciation_total ?? 0) * 0; const b = Number(ctx.facts.charitable_contributions_excess ?? 0); const c = Number(ctx.facts.m1_meals_disallowance ?? 0); const d = Number(ctx.facts.nondeductible_total ?? 0); return String(a + b + c + d); },
       format: "currency",
       irsLine: "5e",
       description: "Total of lines 5a through 5d",
     },
     {
       pdfFieldName: `${LEFT}f6_143[0]`,
+      compute: (ctx: FillContext) => { const l1 = Number(ctx.facts.net_income_before_tax ?? 0); const l2 = Number(ctx.facts.income_tax_expense_total ?? 0); const l5e = Number(ctx.facts.charitable_contributions_excess ?? 0) + Number(ctx.facts.m1_meals_disallowance ?? 0) + Number(ctx.facts.nondeductible_total ?? 0); return String(l1 + l2 + l5e); },
       format: "currency",
       irsLine: "6",
       description: "Total of lines 1 through 5e (add lines 1 through 5e)",
@@ -153,6 +156,7 @@ export const SCH_M1_MAPPING: FormPdfMapping = {
     },
     {
       pdfFieldName: `${RIGHT}f6_155[0]`,
+      compute: (ctx: FillContext) => { const l1 = Number(ctx.facts.net_income_before_tax ?? 0); const l2 = Number(ctx.facts.income_tax_expense_total ?? 0); const l5e = Number(ctx.facts.charitable_contributions_excess ?? 0) + Number(ctx.facts.m1_meals_disallowance ?? 0) + Number(ctx.facts.nondeductible_total ?? 0); return String(l1 + l2 + l5e); },
       format: "currency",
       irsLine: "10",
       description: "Income (line 28, Form 1120) — line 6 minus line 9d",

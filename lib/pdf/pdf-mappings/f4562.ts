@@ -44,7 +44,7 @@ export const F4562_MAPPING: FormPdfMapping = {
     },
     {
       pdfFieldName: `${P}f1_5[0]`,
-      factName: undefined,
+      factName: "section_179_eligible_cost",
       format: "currency",
       irsLine: "2",
       description: "Total cost of section 179 property placed in service",
@@ -83,7 +83,7 @@ export const F4562_MAPPING: FormPdfMapping = {
     // -------------------------------------------------------------------------
     {
       pdfFieldName: `${P}f1_14[0]`,
-      factName: undefined,
+      factName: "bonus_depreciation_amount",
       format: "currency",
       irsLine: "14",
       description: "Special depreciation allowance (bonus depreciation) for qualified property",

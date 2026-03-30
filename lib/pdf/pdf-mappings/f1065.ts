@@ -198,6 +198,7 @@ export const F1065_MAPPING: FormPdfMapping = {
     },
     {
       pdfFieldName: `${PAGE1}f1_30[0]`,
+      factName: "guaranteed_payments_total",
       format: "currency",
       irsLine: "10",
       description: "Guaranteed payments to partners",

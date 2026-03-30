@@ -7,7 +7,6 @@ import {
 } from "lucide-react";
 import { BlurFade } from "@/components/magicui/blur-fade";
 import { AnimatedList } from "@/components/magicui/animated-list";
-import { computeFormValues } from "@/lib/form-fields";
 import PDFFormViewer from "@/components/PDFFormViewer";
 import { PDF_MAPPINGS } from "@/lib/pdf/pdf-mappings";
 import { fillPdf } from "@/lib/pdf/pdf-filler";

@@ -259,12 +259,14 @@ export const F1120S_MAPPING: FormPdfMapping = {
     },
     {
       pdfFieldName: `${PAGE1}f1_39[0]`,
+      compute: (_ctx: FillContext) => "0",
       format: "currency",
       irsLine: "22c",
       description: "Total tax (Line 22a plus 22b)",
     },
     {
       pdfFieldName: `${PAGE1}f1_40[0]`,
+      factName: "estimated_tax_payments_total",
       format: "currency",
       irsLine: "23",
       description: "Payments (Form 2439, etc.)",
@@ -277,12 +279,14 @@ export const F1120S_MAPPING: FormPdfMapping = {
     },
     {
       pdfFieldName: `${PAGE1}f1_42[0]`,
+      compute: (ctx: FillContext) => { const tax = 0; const payments = Number(ctx.facts.estimated_tax_payments_total ?? 0); return String(Math.max(0, tax - payments)); },
       format: "currency",
       irsLine: "25",
       description: "Amount owed",
     },
     {
       pdfFieldName: `${PAGE1}f1_43[0]`,
+      compute: (ctx: FillContext) => { const payments = Number(ctx.facts.estimated_tax_payments_total ?? 0); return payments > 0 ? String(payments) : ""; },
       format: "currency",
       irsLine: "26",
       description: "Overpayment",

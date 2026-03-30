@@ -1,3 +1,4 @@
+// @deprecated — replaced by PDFFormViewer (native browser PDF viewer)
 "use client";
 
 import { RefreshCw, Play } from "lucide-react";

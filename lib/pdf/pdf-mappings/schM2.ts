@@ -1,4 +1,4 @@
-import type { FormPdfMapping } from "../types";
+import type { FormPdfMapping, FillContext } from "../types";
 
 const LEFT = "topmostSubform[0].Page6[0].SchM-2_Left[0].";
 const RIGHT = "topmostSubform[0].Page6[0].SchM-2_Right[0].";
@@ -39,6 +39,7 @@ export const SCH_M2_MAPPING: FormPdfMapping = {
     },
     {
       pdfFieldName: `${LEFT}f6_160[0]`,
+      compute: (ctx: FillContext) => { const boy = Number(ctx.facts.boy_retained_earnings_total ?? 0); const ni = Number(ctx.facts.net_income_before_tax ?? 0); return String(boy + ni); },
       format: "currency",
       irsLine: "4",
       description: "Total (add lines 1, 2, and 3)",
@@ -61,6 +62,7 @@ export const SCH_M2_MAPPING: FormPdfMapping = {
     // -------------------------------------------------------------------------
     {
       pdfFieldName: `${RIGHT}f6_163[0]`,
+      factName: "owner_distributions_total",
       format: "currency",
       irsLine: "5a",
       description: "Distributions — cash",
@@ -91,13 +93,14 @@ export const SCH_M2_MAPPING: FormPdfMapping = {
     },
     {
       pdfFieldName: `${RIGHT}f6_168[0]`,
+      factName: "owner_distributions_total",
       format: "currency",
       irsLine: "7",
       description: "Total of lines 5 and 6",
     },
     {
       pdfFieldName: `${RIGHT}f6_169[0]`,
-      factName: "retained_earnings_total",
+      compute: (ctx: FillContext) => { const boy = Number(ctx.facts.boy_retained_earnings_total ?? 0); const ni = Number(ctx.facts.net_income_before_tax ?? 0); const dist = Number(ctx.facts.owner_distributions_total ?? 0); return String(boy + ni - dist); },
       format: "currency",
       irsLine: "8",
       description: "Balance at end of year (line 4 minus line 7)",

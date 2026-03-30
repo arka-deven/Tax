@@ -100,7 +100,7 @@ export const F990_MAPPING: FormPdfMapping = {
     },
     {
       pdfFieldName: `${P}f1_23[0]`,
-      factName: undefined,
+      factName: "program_service_revenue_total",
       format: "currency",
       irsLine: "9",
       description: "Program service revenue",
@@ -138,14 +138,14 @@ export const F990_MAPPING: FormPdfMapping = {
     // -------------------------------------------------------------------------
     {
       pdfFieldName: `${P}f1_27[0]`,
-      factName: undefined,
+      factName: "grants_paid_total",
       format: "currency",
       irsLine: "13",
       description: "Grants and similar amounts paid",
     },
     {
       pdfFieldName: `${P}f1_28[0]`,
-      factName: undefined,
+      factName: "member_benefits_total",
       format: "currency",
       irsLine: "14",
       description: "Benefits paid to or for members",
@@ -159,7 +159,7 @@ export const F990_MAPPING: FormPdfMapping = {
     },
     {
       pdfFieldName: `${P}f1_30[0]`,
-      factName: undefined,
+      factName: "fundraising_expense_total",
       format: "currency",
       irsLine: "16a",
       description: "Professional fundraising fees",

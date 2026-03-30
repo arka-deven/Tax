@@ -16,6 +16,7 @@ import {
 import {
   upsertMappings,
   upsertFacts,
+  getFacts,
   replaceDiagnostics,
   upsertFormRequirements,
 } from "@/lib/repositories/pipeline-output";
@@ -25,6 +26,7 @@ import { deriveTaxFacts } from "@/src/engines/TaxFactsEngine";
 import { runRules } from "@/src/engines/RuleEngine";
 import { runDiagnostics } from "@/src/engines/DiagnosticsEngine";
 import { buildReviewPackage } from "@/src/engines/ReviewPackageBuilder";
+import { validateAgainstReports } from "@/src/engines/ReportValidationEngine";
 import { STARTER_RULES } from "@/src/rules/starterRules";
 
 export async function POST(
@@ -45,23 +47,46 @@ export async function POST(
   }
 
   try {
-    // ── 0. Fetch PRIOR year from QBO for beginning-of-year balances ──────────
-    // Schedule L, M-2 need BOY figures. We run a lightweight pipeline on (taxYear-1).
+    // ── 0. Get prior year balance sheet facts (cached or fresh) ──────────────
+    // Schedule L, M-2 need BOY figures. Check DB cache before hitting QBO.
     const priorYear = taxYear - 1;
     let priorYearFacts: Record<string, unknown> = {};
+    const boyFactNames = [
+      "cash_total", "accounts_receivable_total", "allowance_bad_debts_total",
+      "inventory_total", "other_current_assets_total", "loans_to_officers_total",
+      "buildings_depreciable_total", "accum_depreciation_total", "land_total",
+      "intangible_assets_total", "accum_amortization_total", "other_assets_total",
+      "total_assets", "total_assets_bs",
+      "accounts_payable_total", "credit_card_total", "other_current_liabilities_total",
+      "shareholder_loans_total", "long_term_liabilities_total", "total_liabilities",
+      "capital_stock_total", "retained_earnings_total", "net_income_before_tax",
+    ];
     try {
-      const pyData = await fetchAllData(entityId, priorYear);
-      const pyRaw = buildRawSourceRecord(entityId, priorYear, pyData);
-      const pyAccounts = normalizeAccounts(pyRaw, pyData.accounts);
-      const pyEntries = normalizeAllTransactions(pyRaw, pyData);
-      const pyTbLines = buildTrialBalance(entityId, priorYear, pyEntries, []);
-      const [pyTypeMap, pySubtypeMap] = await Promise.all([
-        getAccountTypeMap(entityId),
-        getAccountSubtypeMap(entityId),
-      ]);
-      const pyMappings = mapTrialBalanceLines(pyTbLines, pyTypeMap, pySubtypeMap);
-      const pyFacts = deriveTaxFacts(entityId, priorYear, pyMappings, pyTbLines);
-      priorYearFacts = Object.fromEntries(pyFacts.map((f) => [f.fact_name, f.fact_value_json]));
+      const cachedPyFacts = await getFacts(entityId, priorYear);
+      const relevantCached = cachedPyFacts.filter((f) => boyFactNames.includes(f.fact_name));
+      if (relevantCached.length > 5) {
+        // Use cached prior year facts — skip QBO fetch
+        priorYearFacts = Object.fromEntries(relevantCached.map((f) => [f.fact_name, f.fact_value_json]));
+        console.log(`Prior year (${priorYear}) facts loaded from cache (${relevantCached.length} facts)`);
+      } else {
+        // No sufficient cache — run prior year pipeline and persist the results
+        const pyData = await fetchAllData(entityId, priorYear);
+        const pyRaw = buildRawSourceRecord(entityId, priorYear, pyData);
+        normalizeAccounts(pyRaw, pyData.accounts);
+        const pyEntries = normalizeAllTransactions(pyRaw, pyData);
+        const pyTbLines = buildTrialBalance(entityId, priorYear, pyEntries, []);
+        const [pyTypeMap, pySubtypeMap] = await Promise.all([
+          getAccountTypeMap(entityId),
+          getAccountSubtypeMap(entityId),
+        ]);
+        const pyMappings = mapTrialBalanceLines(pyTbLines, pyTypeMap, pySubtypeMap);
+        const pyFacts = deriveTaxFacts(entityId, priorYear, pyMappings, pyTbLines);
+        priorYearFacts = Object.fromEntries(pyFacts.map((f) => [f.fact_name, f.fact_value_json]));
+        // Persist so the next run can use the cache
+        await upsertFacts(pyFacts).catch((e: unknown) =>
+          console.warn(`Failed to cache prior year (${priorYear}) facts:`, e instanceof Error ? e.message : e)
+        );
+      }
     } catch (err) {
       console.warn(`Prior year (${priorYear}) pipeline failed — BOY balances will be empty:`, err instanceof Error ? err.message : err);
     }
@@ -96,17 +121,6 @@ export async function POST(
     const baseFacts = deriveTaxFacts(entityId, taxYear, mappings, tbLines);
 
     // Inject prior year balance sheet facts as "boy_" prefixed facts for Schedule L
-    const boyFactNames = [
-      "cash_total", "accounts_receivable_total", "allowance_bad_debts_total",
-      "inventory_total", "other_current_assets_total", "loans_to_officers_total",
-      "buildings_depreciable_total", "accum_depreciation_total", "land_total",
-      "intangible_assets_total", "accum_amortization_total", "other_assets_total",
-      "total_assets", "total_assets_bs",
-      "accounts_payable_total", "credit_card_total", "other_current_liabilities_total",
-      "shareholder_loans_total", "long_term_liabilities_total", "total_liabilities",
-      "capital_stock_total", "retained_earnings_total",
-      "net_income_before_tax",
-    ];
     for (const name of boyFactNames) {
       if (priorYearFacts[name] != null) {
         baseFacts.push({
@@ -300,6 +314,38 @@ export async function POST(
     // ── 8. Run diagnostics engine ─────────────────────────────────────────────
     const mappingDiagnostics = runDiagnostics(entityId, taxYear, mappings, baseFacts);
     const allDiagnostics = [...mappingDiagnostics, ...ruleDiagnostics];
+
+    // ── 8b. Cross-validate against QBO reports ─────────────────────────────
+    const validationResults = validateAgainstReports(
+      baseFacts,
+      qboData.profitAndLossReport,
+      qboData.balanceSheetReport
+    );
+    for (const v of validationResults) {
+      if (!v.withinTolerance) {
+        allDiagnostics.push({
+          diagnostic_id: `diag_${entityId}_${taxYear}_REPORT_MISMATCH_${v.source.replace(/\s/g, "_").substring(0, 30)}`,
+          entity_id: entityId,
+          tax_year: taxYear,
+          severity: v.difference > 1000 ? "warning" : "info",
+          category: "validation",
+          code: "REPORT_CROSS_CHECK_MISMATCH",
+          title: `QBO Report Mismatch: ${v.source}`,
+          message: `Our computed value ($${v.computedValue.toLocaleString()}) differs from QBO report ($${v.reportValue.toLocaleString()}) by $${v.difference.toLocaleString()}. Review transaction normalization.`,
+          affected_forms: [],
+          affected_lines: [],
+          source_rule_ids: [],
+          source_mapping_ids: [],
+          source_tb_line_ids: [],
+          resolution_status: "open",
+          resolution_note: null,
+          created_at: new Date().toISOString(),
+          resolved_at: null,
+          resolved_by: null,
+        } as any);
+      }
+    }
+
     await replaceDiagnostics(entityId, taxYear, allDiagnostics);
 
     // ── 9. Build review package ───────────────────────────────────────────────

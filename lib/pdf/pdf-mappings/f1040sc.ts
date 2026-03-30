@@ -127,6 +127,7 @@ export const F1040SC_MAPPING: FormPdfMapping = {
     },
     {
       pdfFieldName: `${L8_17}f1_18[0]`,
+      factName: "auto_expense_total",
       format: "currency",
       irsLine: "9",
       description: "Car and truck expenses (see instructions)",
@@ -231,6 +232,7 @@ export const F1040SC_MAPPING: FormPdfMapping = {
     },
     {
       pdfFieldName: `${L18_27}f1_33[0]`,
+      factName: "supplies_total",
       format: "currency",
       irsLine: "22",
       description: "Supplies (not included in Part III)",

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { tokenStore } from "@/lib/token-store";
 import { fetchAllData } from "@/lib/qbo-fetch";
-import { buildRawSourceRecord, normalizeAccounts, normalizeTransactions } from "@/lib/qbo-normalize";
+import { buildRawSourceRecord, normalizeAccounts, normalizeTransactions, normalizeAllTransactions } from "@/lib/qbo-normalize";
 import { upsertRawSource } from "@/lib/repositories/raw-source";
 import {
   upsertAccounts,
@@ -55,8 +55,9 @@ export async function POST(
     await upsertRawSource(raw);
 
     // ── 3. Normalize → canonical ledger ──────────────────────────────────────
+    // Normalize ALL transaction types (Invoice, Bill, Expense, etc.) — not just JournalEntries
     const canonicalAccounts = normalizeAccounts(raw, qboData.accounts);
-    const canonicalEntries = normalizeTransactions(raw, qboData.journalEntries);
+    const canonicalEntries = normalizeAllTransactions(raw, qboData);
     await upsertAccounts(canonicalAccounts);
     await upsertEntries(canonicalEntries);
 
@@ -144,7 +145,62 @@ export async function POST(
       });
     }
 
-    // Transaction volume facts for IRS thresholds
+    // Company address from CompanyInfo (for form headers)
+    const addr = qboData.companyInfo?.CompanyAddr;
+    if (addr) {
+      baseFacts.push({
+        tax_fact_id: `fact_${entityId}_${taxYear}_company_address`,
+        entity_id: entityId, tax_year: taxYear,
+        fact_name: "company_address",
+        fact_value_json: addr.Line1 ?? "",
+        value_type: "string", confidence_score: 1.0, is_unknown: false,
+        derived_from_mapping_ids: [], derived_from_adjustment_ids: [],
+        explanation: "Company street address from QBO CompanyInfo",
+      });
+      baseFacts.push({
+        tax_fact_id: `fact_${entityId}_${taxYear}_company_city`,
+        entity_id: entityId, tax_year: taxYear,
+        fact_name: "company_city",
+        fact_value_json: addr.City ?? "",
+        value_type: "string", confidence_score: 1.0, is_unknown: false,
+        derived_from_mapping_ids: [], derived_from_adjustment_ids: [],
+        explanation: "Company city from QBO CompanyInfo",
+      });
+      baseFacts.push({
+        tax_fact_id: `fact_${entityId}_${taxYear}_company_state`,
+        entity_id: entityId, tax_year: taxYear,
+        fact_name: "company_state",
+        fact_value_json: addr.CountrySubDivisionCode ?? "",
+        value_type: "string", confidence_score: 1.0, is_unknown: false,
+        derived_from_mapping_ids: [], derived_from_adjustment_ids: [],
+        explanation: "Company state from QBO CompanyInfo",
+      });
+      baseFacts.push({
+        tax_fact_id: `fact_${entityId}_${taxYear}_company_zip`,
+        entity_id: entityId, tax_year: taxYear,
+        fact_name: "company_zip",
+        fact_value_json: addr.PostalCode ?? "",
+        value_type: "string", confidence_score: 1.0, is_unknown: false,
+        derived_from_mapping_ids: [], derived_from_adjustment_ids: [],
+        explanation: "Company ZIP code from QBO CompanyInfo",
+      });
+    }
+
+    // Company name from CompanyInfo
+    const companyLegalName = qboData.companyInfo?.LegalName ?? qboData.companyInfo?.CompanyName ?? "";
+    if (companyLegalName) {
+      baseFacts.push({
+        tax_fact_id: `fact_${entityId}_${taxYear}_company_name`,
+        entity_id: entityId, tax_year: taxYear,
+        fact_name: "company_name",
+        fact_value_json: companyLegalName,
+        value_type: "string", confidence_score: 1.0, is_unknown: false,
+        derived_from_mapping_ids: [], derived_from_adjustment_ids: [],
+        explanation: "Legal name from QBO CompanyInfo",
+      });
+    }
+
+    // Transaction volume facts
     baseFacts.push({
       tax_fact_id: `fact_${entityId}_${taxYear}_invoice_count`,
       entity_id: entityId, tax_year: taxYear,
@@ -154,7 +210,6 @@ export async function POST(
       derived_from_mapping_ids: [], derived_from_adjustment_ids: [],
       explanation: "Count of QBO Invoice transactions for the tax year",
     });
-
     baseFacts.push({
       tax_fact_id: `fact_${entityId}_${taxYear}_bill_count`,
       entity_id: entityId, tax_year: taxYear,
@@ -163,6 +218,27 @@ export async function POST(
       value_type: "number", confidence_score: 1.0, is_unknown: false,
       derived_from_mapping_ids: [], derived_from_adjustment_ids: [],
       explanation: "Count of QBO Bill transactions for the tax year",
+    });
+
+    // Vendor count + 1099 vendor count
+    const vendor1099Count = qboData.vendors.filter((v) => v.Vendor1099).length;
+    baseFacts.push({
+      tax_fact_id: `fact_${entityId}_${taxYear}_vendor_count`,
+      entity_id: entityId, tax_year: taxYear,
+      fact_name: "vendor_count",
+      fact_value_json: qboData.vendors.length,
+      value_type: "number", confidence_score: 1.0, is_unknown: false,
+      derived_from_mapping_ids: [], derived_from_adjustment_ids: [],
+      explanation: "Total vendor count from QBO",
+    });
+    baseFacts.push({
+      tax_fact_id: `fact_${entityId}_${taxYear}_vendor_1099_count`,
+      entity_id: entityId, tax_year: taxYear,
+      fact_name: "vendor_1099_count",
+      fact_value_json: vendor1099Count,
+      value_type: "number", confidence_score: 1.0, is_unknown: false,
+      derived_from_mapping_ids: [], derived_from_adjustment_ids: [],
+      explanation: "Count of vendors flagged as 1099 in QBO",
     });
 
     await upsertFacts(baseFacts);

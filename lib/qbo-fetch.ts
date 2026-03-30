@@ -314,6 +314,11 @@ export interface QBOCompanyData {
   refundReceipts: Record<string, unknown>[];
   companyInfo: QBOCompanyInfo | null;
   preferences: QBOPreferences | null;
+  vendors: QBOVendor[];
+  customers: QBOCustomer[];
+  trialBalanceReport: QBOReport | null;
+  profitAndLossReport: QBOReport | null;
+  balanceSheetReport: QBOReport | null;
 }
 
 export async function fetchCompanyInfo(entityId: string): Promise<QBOCompanyInfo | null> {
@@ -342,6 +347,81 @@ export async function fetchPreferences(entityId: string): Promise<QBOPreferences
   }
 }
 
+// ── QBO Report Types ──────────────────────────────────────────────────────────
+
+export interface QBOReportRow {
+  ColData: { value: string; id?: string }[];
+  Rows?: { Row: QBOReportRow[] };
+  type?: string;
+  group?: string;
+  Summary?: { ColData: { value: string }[] };
+  Header?: { ColData: { value: string }[] };
+}
+
+export interface QBOReport {
+  Header: { ReportName: string; DateMacro: string; StartPeriod: string; EndPeriod: string; ReportBasis: string; Currency: string; Option?: { Name: string; Value: string }[] };
+  Columns: { Column: { ColTitle: string; ColType: string }[] };
+  Rows: { Row: QBOReportRow[] };
+}
+
+export async function fetchTrialBalanceReport(entityId: string, taxYear: number): Promise<QBOReport | null> {
+  try {
+    return await qboGet<QBOReport>(entityId, `reports/TrialBalance?start_date=${taxYear}-01-01&end_date=${taxYear}-12-31&minorversion=65`);
+  } catch { return null; }
+}
+
+export async function fetchProfitAndLossReport(entityId: string, taxYear: number): Promise<QBOReport | null> {
+  try {
+    return await qboGet<QBOReport>(entityId, `reports/ProfitAndLoss?start_date=${taxYear}-01-01&end_date=${taxYear}-12-31&minorversion=65`);
+  } catch { return null; }
+}
+
+export async function fetchBalanceSheetReport(entityId: string, taxYear: number): Promise<QBOReport | null> {
+  try {
+    return await qboGet<QBOReport>(entityId, `reports/BalanceSheet?as_of_date=${taxYear}-12-31&minorversion=65`);
+  } catch { return null; }
+}
+
+// ── Vendor & Customer Types ──────────────────────────────────────────────────
+
+export interface QBOVendor {
+  Id: string;
+  DisplayName: string;
+  CompanyName?: string;
+  PrimaryEmailAddr?: { Address: string };
+  PrimaryPhone?: { FreeFormNumber: string };
+  BillAddr?: { Line1?: string; City?: string; CountrySubDivisionCode?: string; PostalCode?: string };
+  TaxIdentifier?: string;
+  Vendor1099?: boolean;
+  Balance?: number;
+  Active?: boolean;
+}
+
+export interface QBOCustomer {
+  Id: string;
+  DisplayName: string;
+  CompanyName?: string;
+  PrimaryEmailAddr?: { Address: string };
+  PrimaryPhone?: { FreeFormNumber: string };
+  BillAddr?: { Line1?: string; City?: string; CountrySubDivisionCode?: string; PostalCode?: string };
+  Balance?: number;
+  Active?: boolean;
+}
+
+export async function fetchVendors(entityId: string): Promise<QBOVendor[]> {
+  try {
+    const data = await qboQuery<{ Vendor?: QBOVendor[] }>(entityId, "SELECT * FROM Vendor");
+    return data.Vendor ?? [];
+  } catch { return []; }
+}
+
+export async function fetchCustomers(entityId: string): Promise<QBOCustomer[]> {
+  try {
+    const data = await qboQuery<{ Customer?: QBOCustomer[] }>(entityId, "SELECT * FROM Customer");
+    return data.Customer ?? [];
+  } catch { return []; }
+}
+
 export async function fetchAllData(
   entityId: string,
   taxYear: number
@@ -364,6 +444,11 @@ export async function fetchAllData(
     transfers,
     deposits,
     refundReceipts,
+    vendors,
+    customers,
+    trialBalanceReport,
+    profitAndLossReport,
+    balanceSheetReport,
   ] = await Promise.all([
     fetchAccounts(entityId),
     fetchJournalEntries(entityId, taxYear),
@@ -381,6 +466,11 @@ export async function fetchAllData(
     fetchTxnType(entityId, "Transfer", taxYear),
     fetchTxnType(entityId, "Deposit", taxYear),
     fetchTxnType(entityId, "RefundReceipt", taxYear),
+    fetchVendors(entityId),
+    fetchCustomers(entityId),
+    fetchTrialBalanceReport(entityId, taxYear),
+    fetchProfitAndLossReport(entityId, taxYear),
+    fetchBalanceSheetReport(entityId, taxYear),
   ]);
 
   return {
@@ -400,6 +490,11 @@ export async function fetchAllData(
     transfers,
     deposits,
     refundReceipts,
+    vendors,
+    customers,
+    trialBalanceReport,
+    profitAndLossReport,
+    balanceSheetReport,
   };
 }
 

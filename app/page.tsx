@@ -505,17 +505,18 @@ export default function Home() {
               {/* Form cards */}
               {groupedForms.map(({ cat, items }) => (
                 <div key={cat}>
-                  <p className="text-[10px] font-semibold text-[#a89f97] uppercase tracking-widest mb-2 px-1">{CATEGORY_LABELS[cat]}</p>
-                  <div className="space-y-5">
+                  <p className="text-[10px] font-semibold text-[#a89f97] uppercase tracking-widest mb-3 pl-7">{CATEGORY_LABELS[cat]}</p>
+                  <div className="space-y-1">
                     {items.map((f) => {
                       const isExpanded = expandedForms.has(f.form);
                       const filled = active.filledPdfs[f.form];
 
                       if (f.form === "990-N") {
                         return (
-                          <div key={f.form} className="bg-(--parchment) border border-(--dust-grey) rounded-xl px-5 py-3 flex items-center gap-3">
-                            <span className="text-xs font-semibold text-[#8a7e74] bg-(--powder-petal) px-2 py-0.5 rounded">{f.form}</span>
-                            <div className="flex-1"><p className="text-sm text-[#5a4a3f]">{f.title}</p><p className="text-[10px] text-[#a89f97]">Electronic filing only</p></div>
+                          <div key={f.form} className="flex items-center gap-3 py-2 pl-7 pr-4">
+                            <span className="w-16 text-xs font-semibold text-[#8a7e74] shrink-0">{f.form}</span>
+                            <span className="text-sm text-[#5a4a3f] flex-1">{f.title}</span>
+                            <span className="text-[10px] text-[#c4bab2]">Electronic only</span>
                           </div>
                         );
                       }
@@ -523,12 +524,12 @@ export default function Home() {
                       return (
                         <div key={f.form}>
                           <button onClick={() => toggleForm(f.form)}
-                            className="flex items-center gap-2 mb-1 text-xs text-[#8a7e74] hover:text-[#4a3f35] transition-colors">
-                            <ChevronRight size={12} className={`transition-transform ${isExpanded ? "rotate-90" : ""}`} />
-                            <span className="font-semibold">{f.form}</span>
-                            <span className="text-[#a89f97]">{f.title}</span>
-                            {filled && <span className="text-[10px] text-emerald-500 ml-1">filled</span>}
-                            <span className="text-[10px] text-[#c4bab2] ml-auto">{f.due}</span>
+                            className="flex items-center gap-3 w-full py-2 pl-2 pr-4 rounded-lg text-left hover:bg-(--parchment) transition-colors">
+                            <ChevronRight size={12} className={`shrink-0 text-[#c4bab2] transition-transform ${isExpanded ? "rotate-90" : ""}`} />
+                            <span className="w-16 text-xs font-semibold text-[#5a4a3f] shrink-0">{f.form}</span>
+                            <span className="text-sm text-[#8a7e74] flex-1 truncate">{f.title}</span>
+                            {filled && <span className="text-[10px] text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded shrink-0">filled</span>}
+                            <span className="text-[10px] text-[#c4bab2] shrink-0">{f.due}</span>
                           </button>
                           {isExpanded && (
                             <div className="border border-(--dust-grey) rounded-xl overflow-hidden" style={{ height: "80vh" }}>

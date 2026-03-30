@@ -469,156 +469,183 @@ export default function Home() {
     cat, items: forms.filter((f) => f.category === cat),
   })).filter((g) => g.items.length > 0);
 
+  // Stats derived from facts for the summary cards
+  const factVal = (name: string) => {
+    const v = active?.result?.facts?.[name];
+    return typeof v === "number" ? v : 0;
+  };
+  const fmtK = (n: number) => n >= 1000 ? `$${(n / 1000).toFixed(0)}K` : `$${n.toLocaleString()}`;
+  const formsFilled = active ? Object.keys(active.filledPdfs).length : 0;
+  const formsTotal = forms.length;
+
   return (
-    <div className="flex h-screen overflow-hidden bg-(--linen) font-sans">
+    <div className="flex h-screen overflow-hidden bg-[#f8f9fa] font-sans">
       {errorMsg && <ErrorToast message={errorMsg} onClose={() => setErrorMsg(null)} />}
 
       {/* ── Sidebar ──────────────────────────────────────────────────── */}
-      <aside className="w-60 shrink-0 flex flex-col border-r border-(--dust-grey) bg-(--parchment)">
-        <div className="h-14.25 px-5 flex items-center gap-2 border-b border-(--dust-grey)">
-          <FileText size={15} className="text-[#a89f97]" />
-          <div>
-            <span className="font-semibold text-[#4a3f35] tracking-tight text-sm">Tax</span>
-            <p className="text-[#a89f97] text-[10px] leading-none">Internal · {taxYear}</p>
+      <aside className="w-60 shrink-0 flex flex-col bg-white">
+        {/* Logo */}
+        <div className="h-16 px-6 flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-lg bg-[#3d3229] flex items-center justify-center">
+            <FileText size={16} className="text-white" />
           </div>
+          <span className="font-bold text-[#3d3229] text-base tracking-tight">Tax</span>
         </div>
 
-        {/* Company list */}
-        <div className="flex-1 px-3 py-3 space-y-2 overflow-y-auto">
-          <p className="text-[#a89f97] text-[10px] font-semibold uppercase tracking-widest px-2 mb-1">Companies</p>
+        {/* Nav / Company list */}
+        <div className="flex-1 px-4 py-2 space-y-1 overflow-y-auto">
+          <p className="text-[10px] font-semibold text-[#a89f97] uppercase tracking-widest px-3 pt-2 pb-1">Companies</p>
           {companies.map((co) => {
             const isActive = co.id === activeId;
             const coLabel = co.entityType ? ENTITY_OPTIONS.find((o) => o.value === co.entityType)?.label : null;
             return (
               <button key={co.id} onClick={() => { setActiveId(co.id); setExpandedForms(new Set()); }}
-                className={`w-full text-left px-3 py-2.5 rounded-lg border transition-colors ${isActive ? "bg-(--linen) border-(--dust-grey) shadow-xs" : "border-transparent hover:bg-(--linen)/60"}`}>
-                <div className="flex items-start gap-2">
-                  <Building2 size={13} className={`mt-0.5 shrink-0 ${isActive ? "text-[#8a7e74]" : "text-[#c4bab2]"}`} />
+                className={`w-full text-left px-3 py-2.5 rounded-xl transition-all ${isActive ? "bg-[#f0f0f0] shadow-sm" : "hover:bg-[#f8f8f8]"}`}>
+                <div className="flex items-center gap-2.5">
+                  <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${isActive ? "bg-[#3d3229] text-white" : "bg-[#f0f0f0] text-[#a89f97]"}`}>
+                    <Building2 size={14} />
+                  </div>
                   <div className="min-w-0 flex-1">
-                    <p className="text-xs font-semibold text-[#4a3f35] truncate">{co.name}</p>
+                    <p className={`text-sm truncate ${isActive ? "font-semibold text-[#3d3229]" : "text-[#6b5e52]"}`}>{co.name}</p>
                     {coLabel ? (
-                      <p className="text-[10px] text-[#a89f97] mt-0.5">{coLabel}</p>
+                      <p className="text-[10px] text-[#a89f97]">{coLabel}</p>
                     ) : (
                       <button onClick={(e) => { e.stopPropagation(); setChoosingTypeFor(co.id); }}
-                        className="text-[10px] text-blue-600 hover:text-blue-800 font-medium mt-0.5">
+                        className="text-[10px] text-blue-500 hover:text-blue-700 font-medium">
                         Choose Type
                       </button>
                     )}
-                    {co.loading && (
-                      <div className="flex items-center gap-1 mt-1">
-                        <RefreshCw size={9} className="animate-spin text-[#a89f97]" />
-                        <span className="text-[10px] text-[#a89f97]">Auto-filling…</span>
-                      </div>
-                    )}
                   </div>
+                  {co.loading && <RefreshCw size={12} className="animate-spin text-[#a89f97] shrink-0" />}
                 </div>
               </button>
             );
           })}
 
-          {/* Add another company */}
           <button onClick={connectQBO}
-            className="w-full flex items-center gap-2 px-3 py-2 rounded-lg border border-dashed border-(--dust-grey) hover:border-(--almond-silk) hover:bg-(--linen)/60 transition-colors text-xs text-[#a89f97] hover:text-[#6b5e52]">
-            <Plus size={12} /> Add Company
+            className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl hover:bg-[#f8f8f8] transition-colors text-sm text-[#a89f97] hover:text-[#6b5e52]">
+            <div className="w-7 h-7 rounded-lg border-2 border-dashed border-[#d6ccc2] flex items-center justify-center"><Plus size={14} /></div>
+            Add Company
           </button>
         </div>
 
         {/* Footer */}
-        <div className="px-3 py-3 border-t border-(--dust-grey) space-y-1">
+        <div className="px-4 py-4 space-y-1">
           {active && (
             <button onClick={() => disconnectCompany(active.id)}
-              className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-[#a89f97] hover:text-red-500 hover:bg-red-50 transition-colors text-xs">
-              <LogOut size={12} /> Disconnect {active.name.split(" ")[0]}
+              className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-[#a89f97] hover:text-red-500 hover:bg-red-50 transition-colors text-sm">
+              <LogOut size={14} /> Disconnect
             </button>
           )}
-          <p className="text-[#c4bab2] text-[10px] px-3">v0.2.0</p>
         </div>
       </aside>
 
       {/* ── Main ─────────────────────────────────────────────────────── */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Header */}
-        <header className="shrink-0 h-14.25 border-b border-(--dust-grey) bg-(--linen) px-8 flex items-center justify-between">
+        <header className="shrink-0 h-16 bg-white px-8 flex items-center justify-between">
           {active ? (
-            <div className="space-y-0.5">
-              <div className="flex items-center gap-2.5 flex-wrap">
-                <h1 className="font-semibold text-[#3d3229]">{active.name}</h1>
-                {active.ein && <span className="text-[11px] font-mono text-[#a89f97] bg-(--parchment) border border-(--dust-grey) px-2 py-0.5 rounded">EIN {active.ein}</span>}
-                {entityLabel && <span className="text-xs border border-(--dust-grey) text-[#8a7e74] px-2 py-0.5 rounded-full bg-(--parchment)">{entityLabel}</span>}
+            <div>
+              <div className="flex items-center gap-3">
+                <h1 className="text-xl font-bold text-[#3d3229]">{active.name}</h1>
+                {entityLabel && <span className="text-xs font-medium text-[#8a7e74] bg-[#f0f0f0] px-2.5 py-1 rounded-full">{entityLabel}</span>}
               </div>
-              <div className="flex items-center gap-1.5">
+              <div className="flex items-center gap-2 mt-0.5">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
                 <span className="text-xs text-[#a89f97]">QuickBooks Online connected</span>
-                {active.loading && <><RefreshCw size={10} className="animate-spin text-[#a89f97] ml-2" /><span className="text-xs text-[#a89f97]">Auto-filling forms…</span></>}
+                {active.ein && <span className="text-xs text-[#a89f97]">· EIN {active.ein}</span>}
+                {active.loading && <><RefreshCw size={10} className="animate-spin text-[#a89f97] ml-1" /><span className="text-xs text-[#a89f97]">Filling…</span></>}
               </div>
             </div>
           ) : (
-            <p className="text-[#a89f97] text-sm">Select a company from the sidebar</p>
+            <p className="text-[#a89f97] text-sm">Select a company</p>
           )}
-          <select className="text-sm border border-(--dust-grey) rounded-lg px-3 py-1.5 text-[#6b5e52] bg-(--linen)" value={taxYear}
+          <select className="text-sm border border-[#e5e5e5] rounded-xl px-4 py-2 text-[#3d3229] bg-white shadow-sm" value={taxYear}
             onChange={(e) => setTaxYear(Number(e.target.value))}>
             {[2025, 2024, 2023].map((y) => <option key={y}>{y}</option>)}
           </select>
         </header>
 
         {/* Content */}
-        <main className="flex-1 overflow-y-auto px-8 py-7">
+        <main className="flex-1 overflow-y-auto p-6">
           {!active?.entityType ? (
             <div className="flex flex-col items-center justify-center h-full text-[#a89f97] gap-4">
-              <Building2 size={40} className="text-stone-200" />
+              <div className="w-16 h-16 rounded-2xl bg-white shadow-sm flex items-center justify-center"><Building2 size={28} className="text-[#d6ccc2]" /></div>
               <p className="text-sm">{active ? "Choose an entity type to auto-fill forms" : "Select a company from the sidebar"}</p>
             </div>
           ) : (
-            <div className="space-y-4">
-              {/* Pipeline status + inline diagnostics */}
-              {active.result && (
-                <BlurFade delay={0}>
-                  <div className={`rounded-xl border overflow-hidden ${
-                    blocking.length > 0 ? "border-red-200" : "border-emerald-200"
+            <div className="space-y-6">
+
+              {/* ── Stats Cards ──────────────────────────────────────── */}
+              <div className="grid grid-cols-4 gap-4">
+                <div className="bg-white rounded-2xl p-5 shadow-sm">
+                  <p className="text-xs text-[#a89f97] font-medium">Gross Receipts</p>
+                  <p className="text-2xl font-bold text-[#3d3229] mt-1">{fmtK(factVal("gross_receipts_total"))}</p>
+                  <p className="text-[10px] text-[#a89f97] mt-1">Line 1a</p>
+                </div>
+                <div className="bg-white rounded-2xl p-5 shadow-sm">
+                  <p className="text-xs text-[#a89f97] font-medium">Total Deductions</p>
+                  <p className="text-2xl font-bold text-[#3d3229] mt-1">{fmtK(factVal("total_deductions"))}</p>
+                  <p className="text-[10px] text-[#a89f97] mt-1">Line 27</p>
+                </div>
+                <div className="bg-white rounded-2xl p-5 shadow-sm">
+                  <p className="text-xs text-[#a89f97] font-medium">Net Income</p>
+                  <p className="text-2xl font-bold text-[#3d3229] mt-1">{fmtK(factVal("net_income_before_tax"))}</p>
+                  <p className="text-[10px] text-[#a89f97] mt-1">Taxable income</p>
+                </div>
+                <div className="bg-white rounded-2xl p-5 shadow-sm">
+                  <p className="text-xs text-[#a89f97] font-medium">Forms Filled</p>
+                  <p className="text-2xl font-bold text-[#3d3229] mt-1">{formsFilled}<span className="text-sm font-normal text-[#a89f97]">/{formsTotal}</span></p>
+                  <p className="text-[10px] text-emerald-500 mt-1">{formsFilled === formsTotal ? "All complete" : `${formsTotal - formsFilled} remaining`}</p>
+                </div>
+              </div>
+
+              {/* ── Diagnostics Card ─────────────────────────────────── */}
+              {active.result && (blocking.length > 0 || warnings.length > 0) && (
+                <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
+                  <div className={`flex items-center gap-3 px-5 py-3 ${
+                    blocking.length > 0 ? "bg-red-50 text-red-700" : "bg-amber-50 text-amber-700"
                   }`}>
-                    <div className={`flex items-center gap-3 px-4 py-3 text-sm ${
-                      blocking.length > 0 ? "bg-red-50 text-red-700" : "bg-emerald-50 text-emerald-700"
-                    }`}>
-                      {blocking.length === 0 ? <CheckCircle2 size={15} /> : <XCircle size={15} />}
-                      <span className="font-medium">{blocking.length === 0 ? "Analysis complete — ready for review" : `${blocking.length} blocking issue${blocking.length > 1 ? "s" : ""}`}</span>
-                      {warnings.length > 0 && <span className="text-xs text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full">{warnings.length} warnings</span>}
-                      {infos.length > 0 && <span className="text-xs text-[#8a7e74] bg-(--parchment) px-2 py-0.5 rounded-full">{infos.length} info</span>}
-                      <span className="text-xs opacity-60 ml-auto">{new Date(active.result.ranAt).toLocaleString()}</span>
-                    </div>
-                    {/* Show blocking + warning details inline */}
-                    {(blocking.length > 0 || warnings.length > 0) && (
-                      <div className="px-4 py-2 space-y-1.5 bg-(--linen) border-t border-(--dust-grey)">
-                        {[...blocking, ...warnings].map((d, i) => (
-                          <div key={i} className="flex items-start gap-2 text-xs">
-                            {d.severity === "blocking_error"
-                              ? <XCircle size={11} className="text-red-400 mt-0.5 shrink-0" />
-                              : <AlertTriangle size={11} className="text-amber-400 mt-0.5 shrink-0" />}
-                            <span className={d.severity === "blocking_error" ? "text-red-700" : "text-amber-700"}>
-                              <span className="font-medium">{d.title}</span> — {d.message}
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                    )}
+                    {blocking.length > 0 ? <XCircle size={16} /> : <AlertTriangle size={16} />}
+                    <span className="text-sm font-semibold">
+                      {blocking.length > 0 ? `${blocking.length} blocking issue${blocking.length > 1 ? "s" : ""}` : `${warnings.length} warning${warnings.length > 1 ? "s" : ""} to review`}
+                    </span>
+                    {warnings.length > 0 && blocking.length > 0 && <span className="text-xs text-amber-600 bg-amber-100 px-2 py-0.5 rounded-full">{warnings.length} warnings</span>}
+                    {infos.length > 0 && <span className="text-xs text-[#8a7e74] bg-[#f0f0f0] px-2 py-0.5 rounded-full">{infos.length} info</span>}
                   </div>
-                </BlurFade>
+                  <div className="px-5 py-3 space-y-2">
+                    {[...blocking, ...warnings].map((d, i) => (
+                      <div key={i} className="flex items-start gap-2.5 text-sm">
+                        {d.severity === "blocking_error"
+                          ? <XCircle size={14} className="text-red-400 mt-0.5 shrink-0" />
+                          : <AlertTriangle size={14} className="text-amber-400 mt-0.5 shrink-0" />}
+                        <div>
+                          <span className={`font-medium ${d.severity === "blocking_error" ? "text-red-700" : "text-amber-700"}`}>{d.title}</span>
+                          <p className="text-xs text-[#8a7e74] mt-0.5">{d.message}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               )}
 
               {/* Form cards */}
               {groupedForms.map(({ cat, items }) => (
-                <div key={cat}>
-                  <p className="text-[10px] font-semibold text-[#a89f97] uppercase tracking-widest mb-3 pl-7">{CATEGORY_LABELS[cat]}</p>
-                  <div className="space-y-1">
+                <div key={cat} className="bg-white rounded-2xl shadow-sm overflow-hidden">
+                  <div className="px-5 py-3 border-b border-[#f0f0f0]">
+                    <p className="text-xs font-semibold text-[#a89f97] uppercase tracking-wider">{CATEGORY_LABELS[cat]}</p>
+                  </div>
+                  <div className="divide-y divide-[#f5f5f5]">
                     {items.map((f) => {
                       const isExpanded = expandedForms.has(f.form);
                       const filled = active.filledPdfs[f.form];
 
                       if (f.form === "990-N") {
                         return (
-                          <div key={f.form} className="flex items-center gap-3 py-2 pl-7 pr-4">
-                            <span className="w-16 text-xs font-semibold text-[#8a7e74] shrink-0">{f.form}</span>
-                            <span className="text-sm text-[#5a4a3f] flex-1">{f.title}</span>
-                            <span className="text-[10px] text-[#c4bab2]">Electronic only</span>
+                          <div key={f.form} className="flex items-center gap-4 px-5 py-3.5">
+                            <span className="w-20 text-sm font-semibold text-[#8a7e74] shrink-0">{f.form}</span>
+                            <span className="text-sm text-[#6b5e52] flex-1">{f.title}</span>
+                            <span className="text-xs text-[#c4bab2]">Electronic only</span>
                           </div>
                         );
                       }
@@ -626,15 +653,15 @@ export default function Home() {
                       return (
                         <div key={f.form}>
                           <button onClick={() => toggleForm(f.form)}
-                            className="flex items-center gap-3 w-full py-2 pl-2 pr-4 rounded-lg text-left hover:bg-(--parchment) transition-colors">
-                            <ChevronRight size={12} className={`shrink-0 text-[#c4bab2] transition-transform ${isExpanded ? "rotate-90" : ""}`} />
-                            <span className="w-16 text-xs font-semibold text-[#5a4a3f] shrink-0">{f.form}</span>
-                            <span className="text-sm text-[#8a7e74] flex-1 truncate">{f.title}</span>
-                            {filled && <span className="text-[10px] text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded shrink-0">filled</span>}
-                            <span className="text-[10px] text-[#c4bab2] shrink-0">{f.due}</span>
+                            className="flex items-center gap-4 w-full px-5 py-3.5 text-left hover:bg-[#fafafa] transition-colors">
+                            <ChevronRight size={14} className={`shrink-0 text-[#c4bab2] transition-transform ${isExpanded ? "rotate-90" : ""}`} />
+                            <span className="w-20 text-sm font-bold text-[#3d3229] shrink-0">{f.form}</span>
+                            <span className="text-sm text-[#6b5e52] flex-1 truncate">{f.title}</span>
+                            {filled && <span className="text-[10px] font-medium text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full shrink-0">Filled</span>}
+                            <span className="text-xs text-[#c4bab2] shrink-0">{f.due}</span>
                           </button>
                           {isExpanded && (
-                            <div className="border border-(--dust-grey) rounded-xl overflow-hidden" style={{ height: "80vh" }}>
+                            <div className="mx-5 mb-3 rounded-xl overflow-hidden border border-[#e5e5e5] shadow-sm" style={{ height: "80vh" }}>
                               <PDFFormViewer
                                 pdfBytes={filled?.pdfBytes ?? null}
                                 pdfFileName={PDF_MAPPINGS[f.form]?.pdfFileName}
@@ -657,33 +684,32 @@ export default function Home() {
               {/* Diagnostics */}
               {active.result && active.result.diagnostics.length > 0 && (
                 <BlurFade delay={0.05}>
-                  <div className="bg-(--linen) border border-(--dust-grey) rounded-2xl p-5">
-                    <div className="flex items-center justify-between mb-4">
-                      <p className="text-[10px] font-semibold text-[#a89f97] uppercase tracking-widest">Diagnostics</p>
-                      <div className="flex items-center gap-3 text-xs font-medium">
-                        {blocking.length > 0 && <span className="text-red-400">{blocking.length} blocking</span>}
-                        {warnings.length > 0 && <span className="text-amber-500">{warnings.length} warnings</span>}
-                        {infos.length > 0 && <span className="text-[#a89f97]">{infos.length} info</span>}
+                  <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
+                    <div className="flex items-center justify-between px-5 py-3 border-b border-[#f0f0f0]">
+                      <p className="text-xs font-semibold text-[#a89f97] uppercase tracking-wider">All Diagnostics</p>
+                      <div className="flex items-center gap-2 text-xs">
+                        {blocking.length > 0 && <span className="text-red-500 bg-red-50 px-2 py-0.5 rounded-full font-medium">{blocking.length} blocking</span>}
+                        {warnings.length > 0 && <span className="text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full font-medium">{warnings.length} warnings</span>}
+                        {infos.length > 0 && <span className="text-[#8a7e74] bg-[#f0f0f0] px-2 py-0.5 rounded-full font-medium">{infos.length} info</span>}
                       </div>
                     </div>
-                    <AnimatedList delay={350}>
+                    <div className="divide-y divide-[#f5f5f5]">
                       {active.result.diagnostics.map((d, i) => {
-                        const cfg = d.severity === "blocking_error"
-                          ? { bg: "bg-red-50 border-red-100", icon: <XCircle size={13} className="text-red-400 shrink-0 mt-0.5" />, t: "text-red-700", m: "text-red-500" }
-                          : d.severity === "warning"
-                          ? { bg: "bg-amber-50 border-amber-100", icon: <AlertTriangle size={13} className="text-amber-400 shrink-0 mt-0.5" />, t: "text-amber-700", m: "text-amber-500" }
-                          : { bg: "bg-(--parchment) border-(--powder-petal)", icon: <Info size={13} className="text-[#a89f97] shrink-0 mt-0.5" />, t: "text-[#6b5e52]", m: "text-[#a89f97]" };
+                        const isBlock = d.severity === "blocking_error";
+                        const isWarn = d.severity === "warning";
                         return (
-                          <div key={i} className={`flex gap-3 p-3 rounded-lg border ${cfg.bg}`}>
-                            {cfg.icon}
-                            <div>
-                              <p className={`text-xs font-semibold ${cfg.t}`}>{d.title} <span className="font-normal opacity-50">[{d.code}]</span></p>
-                              <p className={`text-xs mt-0.5 ${cfg.m}`}>{d.message}</p>
+                          <div key={i} className="flex gap-3 px-5 py-3">
+                            {isBlock ? <XCircle size={16} className="text-red-400 shrink-0 mt-0.5" />
+                              : isWarn ? <AlertTriangle size={16} className="text-amber-400 shrink-0 mt-0.5" />
+                              : <Info size={16} className="text-[#c4bab2] shrink-0 mt-0.5" />}
+                            <div className="min-w-0">
+                              <p className={`text-sm font-medium ${isBlock ? "text-red-700" : isWarn ? "text-amber-700" : "text-[#6b5e52]"}`}>{d.title}</p>
+                              <p className="text-xs text-[#a89f97] mt-0.5">{d.message}</p>
                             </div>
                           </div>
                         );
                       })}
-                    </AnimatedList>
+                    </div>
                   </div>
                 </BlurFade>
               )}

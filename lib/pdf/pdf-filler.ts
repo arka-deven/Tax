@@ -1,5 +1,8 @@
-import { PDFDocument } from "pdf-lib";
+import { PDFDocument, rgb } from "pdf-lib";
 import type { FormPdfMapping, FillContext, FilledPdfResult } from "./types";
+
+// IRS requires black ink on all tax forms
+const BLACK = rgb(0, 0, 0);
 
 /**
  * Formats a numeric value as a currency string (no $ sign, with commas).
@@ -109,8 +112,14 @@ export async function fillPdf(
     }
   }
 
-  // Generate appearance streams so filled values are visible in viewers
-  // and fields remain editable via the annotation layer
+  // Set all text fields to black ink and generate appearance streams
+  for (const field of form.getFields()) {
+    if ("setText" in field && typeof (field as any).updateAppearances === "function") {
+      try {
+        (field as any).updateAppearances(undefined, { textColor: BLACK });
+      } catch { /* skip fields that can't update */ }
+    }
+  }
   form.updateFieldAppearances();
 
   if (options.flatten) {

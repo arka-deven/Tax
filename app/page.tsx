@@ -18,8 +18,9 @@ import {
 import { BlurFade } from "@/components/magicui/blur-fade";
 import { AnimatedList } from "@/components/magicui/animated-list";
 import { NumberTicker } from "@/components/magicui/number-ticker";
-import { FORM_FIELD_DEFS, computeFormValues, recomputeFields } from "@/lib/form-fields";
+import { FORM_FIELD_DEFS, FORM_METADATA, computeFormValues, recomputeFields } from "@/lib/form-fields";
 import type { FormFieldDef } from "@/lib/form-fields";
+import IRSFormView from "@/components/IRSFormView";
 
 // ── Error Toast ───────────────────────────────────────────────────────────────
 
@@ -507,169 +508,67 @@ export default function Home() {
               </BlurFade>
             )}
 
-            {/* ── Interactive Form Cards ────────────────────────────────────── */}
+            {/* ── IRS Form Cards ─────────────────────────────────────────── */}
             {groupedForms.map(({ cat, items }) => (
               <div key={cat}>
                 <p className="text-[10px] font-semibold text-stone-400 uppercase tracking-widest mb-2 px-1">
                   {CATEGORY_LABELS[cat]}
                 </p>
-                <div className="space-y-3">
+                <div className="space-y-5">
                   {items.map((f) => {
-                    const rs = resolvedStatus(f);
-                    const isConfirmedRequired = rs === "confirmed_required";
-                    const statusKey: FormStatus =
-                      isConfirmedRequired ? "required"
-                      : rs === "confirmed_possible" ? "possible"
-                      : (rs as FormStatus);
-                    const style = STATUS_STYLES[statusKey] ?? STATUS_STYLES.possible;
-                    const isExpanded = expandedForms.has(f.form);
                     const fieldDefs = FORM_FIELD_DEFS[f.form];
-                    const hasFields = !!fieldDefs;
+                    const meta = FORM_METADATA[f.form];
+                    const hasFields = !!fieldDefs && !!meta;
                     const fv = formValues[f.form] ?? {};
-                    const isGenerating = generatingForm === f.form;
+                    const isGeneratingThis = generatingForm === f.form;
+                    const isExpanded = expandedForms.has(f.form);
 
-                    return (
-                      <div key={f.form} className="bg-white border border-stone-200 rounded-2xl overflow-hidden">
-                        {/* Form header */}
-                        <div
-                          className="px-5 py-4 flex items-center gap-4 cursor-pointer hover:bg-stone-50/60 transition-colors"
-                          onClick={() => toggleForm(f.form)}
-                        >
-                          <ChevronRight
-                            size={14}
-                            className={`text-stone-300 transition-transform shrink-0 ${isExpanded ? "rotate-90" : ""}`}
-                          />
-                          <span className={`inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-lg border shrink-0 ${style.badge}`}>
-                            <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${style.dot}`} />
-                            {f.form}
-                          </span>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-stone-800 truncate">{f.title}</p>
-                            <p className="text-[10px] text-stone-400 mt-0.5">{f.due} · {f.description}</p>
-                          </div>
-                          <div className="shrink-0 flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
-                            {f.irsUrl && (
-                              <a
-                                href={f.irsUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                title="IRS instructions"
-                                className="text-stone-300 hover:text-blue-500 transition-colors"
-                              >
-                                <ExternalLink size={13} />
-                              </a>
-                            )}
-                            {hasFields && (
-                              <button
-                                onClick={() => generateForm(f.form)}
-                                disabled={isGenerating || running}
-                                className="flex items-center gap-1.5 bg-stone-900 hover:bg-stone-700 disabled:opacity-50 text-white text-xs font-medium px-3 py-1.5 rounded-lg transition-colors"
-                              >
-                                {isGenerating || (running && generatingForm === f.form)
-                                  ? <><RefreshCw size={11} className="animate-spin" /> Generating…</>
-                                  : <><Play size={11} /> Generate</>}
-                              </button>
-                            )}
-                          </div>
+                    // If we have field definitions + metadata, render the full IRS form
+                    if (hasFields) {
+                      return (
+                        <div key={f.form}>
+                          {/* Collapse toggle */}
+                          <button
+                            onClick={() => toggleForm(f.form)}
+                            className="flex items-center gap-2 mb-1 text-xs text-stone-500 hover:text-stone-800 transition-colors"
+                          >
+                            <ChevronRight size={12} className={`transition-transform ${isExpanded ? "rotate-90" : ""}`} />
+                            <span className="font-semibold">{f.form}</span>
+                            <span className="text-stone-400">{f.title}</span>
+                            <span className="text-[10px] text-stone-300 ml-auto">{f.due}</span>
+                          </button>
+
+                          {isExpanded && (
+                            <IRSFormView
+                              formCode={f.form}
+                              meta={meta}
+                              year={taxYear}
+                              companyName={companyName ?? ""}
+                              ein={ein ?? ""}
+                              fields={fieldDefs}
+                              values={fv}
+                              editedFields={editedFields}
+                              onFieldChange={(line, val) => handleFieldChange(f.form, line, val)}
+                              onGenerate={() => generateForm(f.form)}
+                              isGenerating={isGeneratingThis || running}
+                            />
+                          )}
                         </div>
+                      );
+                    }
 
-                        {/* Expanded form fields */}
-                        {isExpanded && hasFields && (
-                          <div className="border-t border-stone-100">
-                            <table className="w-full text-xs">
-                              <thead>
-                                <tr className="bg-stone-50 text-left">
-                                  <th className="py-2 px-5 text-[10px] font-semibold text-stone-400 uppercase tracking-widest w-16">Line</th>
-                                  <th className="py-2 px-2 text-[10px] font-semibold text-stone-400 uppercase tracking-widest">Description</th>
-                                  <th className="py-2 px-5 text-[10px] font-semibold text-stone-400 uppercase tracking-widest text-right w-44">Amount</th>
-                                </tr>
-                              </thead>
-                              <tbody className="divide-y divide-stone-100">
-                                {fieldDefs.map((fd: FormFieldDef) => {
-                                  if (fd.section) {
-                                    return (
-                                      <tr key={fd.line} className="bg-stone-50/60">
-                                        <td colSpan={3} className="py-2 px-5 text-[10px] font-bold text-stone-500 uppercase tracking-widest">
-                                          {fd.label}
-                                        </td>
-                                      </tr>
-                                    );
-                                  }
-
-                                  const val = fv[fd.line] ?? "";
-                                  const isEdited = editedFields.has(`${f.form}:${fd.line}`);
-                                  const isComputed = !!fd.compute;
-
-                                  return (
-                                    <tr
-                                      key={fd.line}
-                                      className={`group ${fd.bold ? "bg-stone-50/40" : ""} ${isEdited ? "bg-amber-50/40" : ""}`}
-                                    >
-                                      <td className="py-2 px-5 font-mono text-stone-400 whitespace-nowrap">
-                                        {fd.line}
-                                      </td>
-                                      <td className={`py-2 px-2 text-stone-700 ${fd.bold ? "font-semibold" : ""}`}>
-                                        {fd.label}
-                                        {isEdited && (
-                                          <span className="ml-1.5 text-[9px] font-medium text-amber-500">edited</span>
-                                        )}
-                                      </td>
-                                      <td className="py-1.5 px-5 text-right">
-                                        {fd.type === "currency" ? (
-                                          <div className="flex items-center justify-end gap-1">
-                                            <span className="text-stone-400 text-[10px]">$</span>
-                                            <input
-                                              type="text"
-                                              inputMode="decimal"
-                                              value={val ? formatCurrency(val) : ""}
-                                              placeholder={isComputed ? "auto" : "0.00"}
-                                              onChange={(e) => {
-                                                const raw = e.target.value.replace(/[^0-9.\-]/g, "");
-                                                handleFieldChange(f.form, fd.line, raw);
-                                              }}
-                                              className={`w-32 text-right font-mono text-sm px-2 py-1 rounded border transition-colors outline-none
-                                                ${isComputed && !isEdited
-                                                  ? "border-stone-100 bg-stone-50 text-stone-500"
-                                                  : "border-stone-200 bg-white text-stone-900 focus:border-blue-400 focus:ring-1 focus:ring-blue-100"
-                                                } ${fd.bold ? "font-semibold" : ""}`}
-                                            />
-                                          </div>
-                                        ) : fd.type === "text" ? (
-                                          <input
-                                            type="text"
-                                            value={val}
-                                            placeholder="—"
-                                            onChange={(e) => handleFieldChange(f.form, fd.line, e.target.value)}
-                                            className="w-40 text-right text-sm px-2 py-1 rounded border border-stone-200 bg-white text-stone-900 focus:border-blue-400 focus:ring-1 focus:ring-blue-100 outline-none"
-                                          />
-                                        ) : (
-                                          <span className="text-stone-500">{val || "—"}</span>
-                                        )}
-                                      </td>
-                                    </tr>
-                                  );
-                                })}
-                              </tbody>
-                            </table>
-
-                            {/* No fields generated yet notice */}
-                            {Object.keys(fv).length === 0 && (
-                              <div className="px-5 py-6 text-center">
-                                <p className="text-xs text-stone-400">
-                                  Click <span className="font-semibold text-stone-600">Generate</span> to auto-populate from QuickBooks data
-                                </p>
-                              </div>
-                            )}
-                          </div>
-                        )}
-
-                        {/* Expanded but no field defs */}
-                        {isExpanded && !hasFields && (
-                          <div className="border-t border-stone-100 px-5 py-6 text-center">
-                            <p className="text-xs text-stone-400">
-                              Form fields coming soon. View <a href={f.irsUrl} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">IRS instructions</a> for details.
-                            </p>
-                          </div>
+                    // No field defs — compact card
+                    return (
+                      <div key={f.form} className="bg-white border border-stone-200 rounded-xl px-5 py-3 flex items-center gap-3">
+                        <span className="text-xs font-semibold text-stone-500 bg-stone-100 px-2 py-0.5 rounded">{f.form}</span>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm text-stone-700 truncate">{f.title}</p>
+                          <p className="text-[10px] text-stone-400">{f.due} · {f.description}</p>
+                        </div>
+                        {f.irsUrl && (
+                          <a href={f.irsUrl} target="_blank" rel="noopener noreferrer" className="text-stone-300 hover:text-blue-500">
+                            <ExternalLink size={12} />
+                          </a>
                         )}
                       </div>
                     );

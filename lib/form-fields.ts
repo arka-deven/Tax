@@ -17,14 +17,41 @@ export interface FormFieldDef {
   section?: boolean;
   /** Visual emphasis */
   bold?: boolean;
+  /** IRS-style rotated side label for this section */
+  sideLabel?: string;
 }
+
+// ── Form metadata (header info for IRS-style rendering) ──────────────
+
+export interface FormMeta {
+  code: string;
+  title: string;
+  subtitle: string;
+  omb: string;
+}
+
+export const FORM_METADATA: Record<string, FormMeta> = {
+  "1120":    { code: "1120",    title: "U.S. Corporation Income Tax Return",             subtitle: "For calendar year 2025 or tax year beginning ___, 2025, ending ___, 20___", omb: "1545-0123" },
+  "1120-S":  { code: "1120-S",  title: "U.S. Income Tax Return for an S Corporation",   subtitle: "For calendar year 2025 or tax year beginning ___, 2025, ending ___, 20___", omb: "1545-0123" },
+  "1065":    { code: "1065",    title: "U.S. Return of Partnership Income",              subtitle: "For calendar year 2025 or tax year beginning ___, 2025, ending ___, 20___", omb: "1545-0123" },
+  "Sch C":   { code: "Sch C",   title: "Profit or Loss From Business",                   subtitle: "(Sole Proprietorship)", omb: "1545-0074" },
+  "990":     { code: "990",     title: "Return of Organization Exempt From Income Tax",   subtitle: "Under section 501(c), 527, or 4947(a)(1) of the IRC", omb: "1545-0047" },
+  "Sch L":   { code: "Sch L",   title: "Balance Sheets per Books",                       subtitle: "Form 1120, Page 6", omb: "1545-0123" },
+  "Sch M-1": { code: "Sch M-1", title: "Reconciliation of Income (Loss) per Books With Income per Return", subtitle: "Form 1120, Page 6", omb: "1545-0123" },
+  "Sch M-2": { code: "Sch M-2", title: "Analysis of Unappropriated Retained Earnings per Books", subtitle: "Schedule L, Line 25", omb: "1545-0123" },
+  "1125-A":  { code: "1125-A",  title: "Cost of Goods Sold",                             subtitle: "Attached to Form 1120, 1120-S, 1065, or 1065-B", omb: "1545-0123" },
+  "Sch SE":  { code: "Sch SE",  title: "Self-Employment Tax",                            subtitle: "Attach to Form 1040, 1040-SR, or 1040-NR", omb: "1545-0074" },
+  "4562":    { code: "4562",    title: "Depreciation and Amortization",                  subtitle: "(Including Information on Listed Property)", omb: "1545-0172" },
+  "Sch D":   { code: "Sch D",   title: "Capital Gains and Losses",                       subtitle: "", omb: "1545-0123" },
+  "8995":    { code: "8995",    title: "Qualified Business Income Deduction Simplified Computation", subtitle: "", omb: "1545-2294" },
+};
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // FORM 1120 — U.S. Corporation Income Tax Return
 // ═══════════════════════════════════════════════════════════════════════════════
 
 const FORM_1120: FormFieldDef[] = [
-  { line: "_inc", label: "Income",                                     type: "heading", section: true },
+  { line: "_inc", label: "Income",                                     type: "heading", section: true, sideLabel: "Income" },
   { line: "1a",  label: "Gross receipts or sales",                     type: "currency", factName: "gross_receipts_total" },
   { line: "1b",  label: "Returns and allowances",                      type: "currency" },
   { line: "1c",  label: "Balance (1a minus 1b)",                       type: "currency", compute: ["-", "1a", "1b"], bold: true },
@@ -39,7 +66,7 @@ const FORM_1120: FormFieldDef[] = [
   { line: "10",  label: "Other income",                                type: "currency", factName: "other_income_total" },
   { line: "11",  label: "Total income (lines 3 through 10)",           type: "currency", compute: ["+", "3", "4", "5", "6", "7", "8", "9", "10"], bold: true },
 
-  { line: "_ded", label: "Deductions",                                 type: "heading", section: true },
+  { line: "_ded", label: "Deductions",                                 type: "heading", section: true, sideLabel: "Deductions (See instructions for limitations on deductions.)" },
   { line: "12",  label: "Compensation of officers (Form 1125-E)",      type: "currency", factName: "officer_compensation_total" },
   { line: "13",  label: "Salaries and wages",                          type: "currency", factName: "wages_total" },
   { line: "14",  label: "Repairs and maintenance",                     type: "currency", factName: "repairs_total" },
@@ -57,7 +84,7 @@ const FORM_1120: FormFieldDef[] = [
   { line: "26",  label: "Other deductions (attach statement)",         type: "currency", factName: "general_deduction_total" },
   { line: "27",  label: "Total deductions (lines 12 through 26)",      type: "currency", compute: ["+", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26"], bold: true },
 
-  { line: "_tax", label: "Tax Computation",                            type: "heading", section: true },
+  { line: "_tax", label: "Tax Computation",                            type: "heading", section: true, sideLabel: "Tax, Refundable Credits, and Payments" },
   { line: "28",  label: "Taxable income before NOL (line 11 minus 27)", type: "currency", compute: ["-", "11", "27"], bold: true },
   { line: "29a", label: "Net operating loss deduction",                type: "currency" },
   { line: "29b", label: "Special deductions (Schedule C, line 24)",    type: "currency" },

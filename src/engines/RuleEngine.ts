@@ -75,10 +75,11 @@ function evalCondition(cond: Condition, facts: Map<string, TaxFact>): EvalResult
 
   if (!fact || fact.is_unknown) return "unknown";
 
+  const scalarCond = cond as { fact: string; op: ScalarOp; value: unknown };
   const v = fact.fact_value_json;
-  const target = cond.value;
+  const target = scalarCond.value;
 
-  switch (cond.op) {
+  switch (scalarCond.op) {
     case "eq":  return v === target ? "true" : "false";
     case "neq": return v !== target ? "true" : "false";
     case "gt":  return (v as number) > (target as number) ? "true" : "false";

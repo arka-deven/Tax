@@ -5,7 +5,7 @@ import type { CanonicalLedgerAccount, CanonicalLedgerEntry } from "@/src/models"
 
 export async function upsertAccounts(accounts: CanonicalLedgerAccount[]) {
   if (accounts.length === 0) return;
-  const { error } = await db.from("canonical_ledger_accounts").upsert(accounts);
+  const { error } = await db.from("canonical_ledger_accounts").upsert(accounts as never[]);
   if (error) throw error;
 }
 
@@ -35,7 +35,7 @@ export async function upsertEntries(entries: CanonicalLedgerEntry[]) {
   // Insert in batches of 500 to stay within Supabase limits
   for (let i = 0; i < entries.length; i += 500) {
     const batch = entries.slice(i, i + 500);
-    const { error } = await db.from("canonical_ledger_entries").upsert(batch);
+    const { error } = await db.from("canonical_ledger_entries").upsert(batch as never[]);
     if (error) throw error;
   }
 }

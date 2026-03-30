@@ -10,70 +10,79 @@ const SEMANTIC_MAP: Record<
   string,
   { semantic_category: string; tax_code: string; form: string; schedule: string | null; line: string }
 > = {
-  // ── Income ─────────────────────────────────────────────────────────────────
+  // ── Income ────────────────────────────────────────────────────────────────
+  // Form 1120 line 1a; Form 1120-S line 1a; Form 1065 line 1a; Schedule C line 1
   "Income":                             { semantic_category: "gross_receipts",          tax_code: "GROSS_RECEIPTS",          form: "1120",       schedule: null,   line: "1a" },
   "Income|SalesOfProductIncome":        { semantic_category: "gross_receipts",          tax_code: "GROSS_RECEIPTS",          form: "1120",       schedule: null,   line: "1a" },
   "Income|ServiceFeeIncome":            { semantic_category: "gross_receipts",          tax_code: "GROSS_RECEIPTS",          form: "1120",       schedule: null,   line: "1a" },
   "Income|DiscountsRefundsGiven":       { semantic_category: "gross_receipts",          tax_code: "GROSS_RECEIPTS_REDUCTION", form: "1120",      schedule: null,   line: "1b" },
-  "Income|NonProfitIncome":             { semantic_category: "gross_receipts",          tax_code: "GROSS_RECEIPTS",          form: "990",        schedule: null,   line: "8" },
+  "Income|NonProfitIncome":             { semantic_category: "gross_receipts",          tax_code: "GROSS_RECEIPTS",          form: "990",        schedule: null,   line: "PartVIII_12" },
   "Income|OtherPrimaryIncome":          { semantic_category: "gross_receipts",          tax_code: "GROSS_RECEIPTS",          form: "1120",       schedule: null,   line: "1a" },
   "Income|UnappliedCashPaymentIncome":  { semantic_category: "gross_receipts",          tax_code: "GROSS_RECEIPTS",          form: "1120",       schedule: null,   line: "1a" },
 
+  // Other income — 1120 lines 4-10; 1120-S lines 4-5; Schedule C line 4
   "Other Income":                       { semantic_category: "other_income",            tax_code: "OTHER_INCOME",            form: "1120",       schedule: null,   line: "10" },
-  "Other Income|DividendIncome":        { semantic_category: "dividend_income",         tax_code: "DIVIDEND_INCOME",         form: "1120",       schedule: null,   line: "4" },
+  "Other Income|DividendIncome":        { semantic_category: "dividend_income",         tax_code: "DIVIDEND_INCOME",         form: "1120",       schedule: "C",    line: "4" },
   "Other Income|InterestEarned":        { semantic_category: "interest_income",         tax_code: "INTEREST_INCOME",         form: "1120",       schedule: null,   line: "5" },
   "Other Income|OtherMiscIncome":       { semantic_category: "other_income",            tax_code: "OTHER_INCOME",            form: "1120",       schedule: null,   line: "10" },
-  "Other Income|TaxExemptInterest":     { semantic_category: "tax_exempt_interest",     tax_code: "TAX_EXEMPT_INTEREST",     form: "1120",       schedule: "M-1",  line: "5" },
-  "Other Income|GainLossOnSaleOfAssets":{ semantic_category: "capital_gain_loss",       tax_code: "CAPITAL_GAIN",            form: "1120",       schedule: "D",    line: "7" },
+  "Other Income|TaxExemptInterest":     { semantic_category: "tax_exempt_interest",     tax_code: "TAX_EXEMPT_INTEREST",     form: "1120",       schedule: "M-1",  line: "7a" },
+  "Other Income|GainLossOnSaleOfAssets":{ semantic_category: "capital_gain_loss",       tax_code: "CAPITAL_GAIN",            form: "4797",       schedule: null,   line: "9" },
   "Other Income|RentalIncome":          { semantic_category: "rent_income",             tax_code: "RENT_INCOME",             form: "1120",       schedule: null,   line: "6" },
 
-  // ── Cost of Goods Sold ─────────────────────────────────────────────────────
-  "Cost of Goods Sold":                 { semantic_category: "cost_of_goods_sold",      tax_code: "COGS",                    form: "1120",       schedule: null,   line: "2" },
-  "Cost of Goods Sold|SuppliesMaterialsCogs": { semantic_category: "cost_of_goods_sold", tax_code: "COGS",                  form: "1120",       schedule: null,   line: "2" },
-  "Cost of Goods Sold|CostOfLabor":     { semantic_category: "cost_of_goods_sold",      tax_code: "COGS_LABOR",              form: "1120",       schedule: null,   line: "2" },
-  "Cost of Goods Sold|FreightAndDeliveryCost": { semantic_category: "cost_of_goods_sold", tax_code: "COGS",                 form: "1120",       schedule: null,   line: "2" },
-  "Cost of Goods Sold|OtherCostsOfServicesCogs": { semantic_category: "cost_of_goods_sold", tax_code: "COGS",               form: "1120",       schedule: null,   line: "2" },
+  // ── Cost of Goods Sold ────────────────────────────────────────────────────
+  // 1120 line 2 (from Form 1125-A); 1120-S line 2; 1065 line 2; Schedule C lines 35/42
+  "Cost of Goods Sold":                 { semantic_category: "cost_of_goods_sold",      tax_code: "COGS",                    form: "1125-A",     schedule: null,   line: "8" },
+  "Cost of Goods Sold|SuppliesMaterialsCogs": { semantic_category: "cost_of_goods_sold", tax_code: "COGS",                  form: "1125-A",     schedule: null,   line: "5" },
+  "Cost of Goods Sold|CostOfLabor":     { semantic_category: "cost_of_goods_sold",      tax_code: "COGS_LABOR",              form: "1125-A",     schedule: null,   line: "3" },
+  "Cost of Goods Sold|FreightAndDeliveryCost": { semantic_category: "cost_of_goods_sold", tax_code: "COGS",                 form: "1125-A",     schedule: null,   line: "5" },
+  "Cost of Goods Sold|OtherCostsOfServicesCogs": { semantic_category: "cost_of_goods_sold", tax_code: "COGS",               form: "1125-A",     schedule: null,   line: "5" },
 
-  // ── Expenses ───────────────────────────────────────────────────────────────
+  // ── Expenses — cross-referenced to 1120/1120-S/1065/Schedule C ───────────
   "Expenses":                           { semantic_category: "general_expenses",        tax_code: "GENERAL_DEDUCTION",       form: "1120",       schedule: null,   line: "26" },
-  "Expenses|AdvertisingPromotional":    { semantic_category: "general_expenses",        tax_code: "ADVERTISING",             form: "1120",       schedule: null,   line: "22" },
-  "Expenses|BadDebts":                  { semantic_category: "bad_debt",                tax_code: "BAD_DEBT",                form: "1120",       schedule: null,   line: "15" },
+  "Expenses|AdvertisingPromotional":    { semantic_category: "general_expenses",        tax_code: "ADVERTISING",             form: "1120",       schedule: null,   line: "22" },   // Sched C: line 8
+  "Expenses|BadDebts":                  { semantic_category: "bad_debt",                tax_code: "BAD_DEBT",                form: "1120",       schedule: null,   line: "15" },   // 1120-S: 10; Sched C: implied other
   "Expenses|BankCharges":               { semantic_category: "general_expenses",        tax_code: "GENERAL_DEDUCTION",       form: "1120",       schedule: null,   line: "26" },
-  "Expenses|CharitableContributions":   { semantic_category: "charitable_contributions", tax_code: "CHARITABLE_CONTRIBUTION", form: "1120",      schedule: null,   line: "19" },
-  "Expenses|CommissionsAndFees":        { semantic_category: "general_expenses",        tax_code: "COMMISSION",              form: "1120",       schedule: null,   line: "26" },
-  "Expenses|Depreciation":             { semantic_category: "depreciation",             tax_code: "DEPRECIATION",            form: "1120",       schedule: null,   line: "20" },
-  "Expenses|AmortizationDepreciation": { semantic_category: "depreciation",             tax_code: "DEPRECIATION",            form: "4562",       schedule: null,   line: "22" },
-  "Expenses|EntertainmentMeals":       { semantic_category: "meals_entertainment",      tax_code: "MEALS_50PCT",             form: "1120",       schedule: "M-1",  line: "4b" },
-  "Expenses|EquipmentRental":          { semantic_category: "general_expenses",         tax_code: "RENT_EQUIPMENT",          form: "1120",       schedule: null,   line: "26" },
-  "Expenses|InsuranceGeneralLiability":{ semantic_category: "general_expenses",         tax_code: "INSURANCE",               form: "1120",       schedule: null,   line: "26" },
-  "Expenses|InterestPaid":             { semantic_category: "interest_expense",         tax_code: "INTEREST_EXPENSE",        form: "1120",       schedule: null,   line: "18" },
-  "Expenses|LegalAndProfessionalFees": { semantic_category: "general_expenses",         tax_code: "PROFESSIONAL_FEES",       form: "1120",       schedule: null,   line: "26" },
-  "Expenses|OfficeGeneralAdministrative": { semantic_category: "general_expenses",      tax_code: "OFFICE_EXPENSE",          form: "1120",       schedule: null,   line: "26" },
-  "Expenses|OfficerCompensation":      { semantic_category: "officer_compensation",     tax_code: "OFFICER_COMPENSATION",    form: "1120",       schedule: null,   line: "12" },
+  "Expenses|CharitableContributions":   { semantic_category: "charitable_contributions", tax_code: "CHARITABLE_CONTRIBUTION", form: "1120",      schedule: null,   line: "19" },   // 10% of TI limit for C-Corp
+  "Expenses|CommissionsAndFees":        { semantic_category: "general_expenses",        tax_code: "COMMISSION",              form: "Schedule C", schedule: null,   line: "10" },   // Sched C: line 10 (commissions); 1120: line 26
+  "Expenses|Depreciation":             { semantic_category: "depreciation",             tax_code: "DEPRECIATION",            form: "1120",       schedule: null,   line: "20" },   // 1120-S: 14; 1065: 16c; 4562: Part II
+  "Expenses|AmortizationDepreciation": { semantic_category: "depreciation",             tax_code: "AMORTIZATION",            form: "4562",       schedule: null,   line: "28" },   // 4562 Part III line 28
+  "Expenses|EntertainmentMeals":       { semantic_category: "meals_entertainment",      tax_code: "MEALS_50PCT",             form: "1120",       schedule: "M-1",  line: "5c" },   // 50% disallowance on M-1 line 5c; Sched C line 24b
+  "Expenses|EquipmentRental":          { semantic_category: "general_expenses",         tax_code: "RENT_EQUIPMENT",          form: "1120",       schedule: null,   line: "26" },   // Sched C: line 20a
+  "Expenses|InsuranceGeneralLiability":{ semantic_category: "general_expenses",         tax_code: "INSURANCE",               form: "1120",       schedule: null,   line: "26" },   // Sched C: line 15
+  "Expenses|InterestPaid":             { semantic_category: "interest_expense",         tax_code: "INTEREST_EXPENSE",        form: "1120",       schedule: null,   line: "18" },   // 1120-S: 13; 1065: 15; Sched C: 16b
+  "Expenses|LegalAndProfessionalFees": { semantic_category: "general_expenses",         tax_code: "PROFESSIONAL_FEES",       form: "1120",       schedule: null,   line: "26" },   // Sched C: line 17
+  "Expenses|OfficeGeneralAdministrative": { semantic_category: "general_expenses",      tax_code: "OFFICE_EXPENSE",          form: "1120",       schedule: null,   line: "26" },   // Sched C: line 18
+  "Expenses|OfficerCompensation":      { semantic_category: "officer_compensation",     tax_code: "OFFICER_COMPENSATION",    form: "1120",       schedule: null,   line: "12" },   // 1120-S: line 7; attach 1125-E if >$500K gross
   "Expenses|OtherBusinessExpenses":    { semantic_category: "general_expenses",         tax_code: "GENERAL_DEDUCTION",       form: "1120",       schedule: null,   line: "26" },
-  "Expenses|PayrollExpenses":          { semantic_category: "wages",                    tax_code: "WAGES",                   form: "1120",       schedule: null,   line: "13" },
-  "Expenses|PenaltiesSettlements":     { semantic_category: "nondeductible",            tax_code: "NONDEDUCTIBLE",           form: "1120",       schedule: "M-1",  line: "3" },
-  "Expenses|RentOrLeaseOfBuildings":   { semantic_category: "rent_expense",             tax_code: "RENT_BUILDING",           form: "1120",       schedule: null,   line: "17" },
-  "Expenses|RepairsAndMaintenance":    { semantic_category: "general_expenses",         tax_code: "REPAIRS",                 form: "1120",       schedule: null,   line: "14" },
-  "Expenses|Taxes":                    { semantic_category: "taxes_and_licenses",       tax_code: "TAXES_LICENSES",          form: "1120",       schedule: null,   line: "17" },
-  "Expenses|Travel":                   { semantic_category: "travel",                   tax_code: "TRAVEL",                  form: "1120",       schedule: null,   line: "26" },
-  "Expenses|Utilities":                { semantic_category: "general_expenses",         tax_code: "UTILITIES",               form: "1120",       schedule: null,   line: "26" },
+  "Expenses|PayrollExpenses":          { semantic_category: "wages",                    tax_code: "WAGES",                   form: "1120",       schedule: null,   line: "13" },   // 1120-S: 8; 1065: 9; Sched C: 26
+  "Expenses|PenaltiesSettlements":     { semantic_category: "nondeductible",            tax_code: "NONDEDUCTIBLE",           form: "1120",       schedule: "M-1",  line: "3" },    // Nondeductible — M-1 addback
+  "Expenses|RentOrLeaseOfBuildings":   { semantic_category: "rent_expense",             tax_code: "RENT_BUILDING",           form: "1120",       schedule: null,   line: "16" },   // 1120-S: 11; 1065: 13; Sched C: 20b
+  "Expenses|RepairsAndMaintenance":    { semantic_category: "general_expenses",         tax_code: "REPAIRS",                 form: "1120",       schedule: null,   line: "14" },   // 1120-S: 9; 1065: 11; Sched C: 21
+  "Expenses|Taxes":                    { semantic_category: "taxes_and_licenses",       tax_code: "TAXES_LICENSES",          form: "1120",       schedule: null,   line: "17" },   // 1120-S: 12; 1065: 14; Sched C: 23
+  "Expenses|Travel":                   { semantic_category: "travel",                   tax_code: "TRAVEL",                  form: "Schedule C", schedule: null,   line: "24a" },  // 1120: line 26; Sched C: 24a
+  "Expenses|Utilities":                { semantic_category: "general_expenses",         tax_code: "UTILITIES",               form: "1120",       schedule: null,   line: "26" },   // Sched C: line 25
 
-  // ── Other Expense ──────────────────────────────────────────────────────────
+  // ── Other Expense ─────────────────────────────────────────────────────────
   "Other Expense":                     { semantic_category: "other_expense",            tax_code: "OTHER_EXPENSE",           form: "1120",       schedule: null,   line: "26" },
   "Other Expense|OtherMiscExpense":    { semantic_category: "other_expense",            tax_code: "OTHER_EXPENSE",           form: "1120",       schedule: null,   line: "26" },
-  "Other Expense|IncomeTaxExpense":    { semantic_category: "income_tax_expense",       tax_code: "INCOME_TAX_NONDEDUCTIBLE", form: "1120",      schedule: "M-1",  line: "7" },
+  "Other Expense|IncomeTaxExpense":    { semantic_category: "income_tax_expense",       tax_code: "INCOME_TAX_NONDEDUCTIBLE", form: "1120",      schedule: "M-1",  line: "2" },    // M-1 line 2: federal income tax per books (nondeductible)
 
-  // ── Assets (balance sheet — not directly on income return but flagged) ─────
-  "Fixed Asset":                       { semantic_category: "fixed_assets",             tax_code: "FIXED_ASSET",             form: "4562",       schedule: null,   line: "1" },
-  "Fixed Asset|Machinery":             { semantic_category: "fixed_assets",             tax_code: "FIXED_ASSET",             form: "4562",       schedule: null,   line: "1" },
-  "Fixed Asset|Vehicles":              { semantic_category: "fixed_assets",             tax_code: "FIXED_ASSET_VEHICLE",     form: "4562",       schedule: null,   line: "26" },
-  "Fixed Asset|Buildings":             { semantic_category: "fixed_assets",             tax_code: "FIXED_ASSET_BUILDING",    form: "4562",       schedule: null,   line: "1" },
+  // ── Fixed / Long-Term Assets ──────────────────────────────────────────────
+  // Balance sheet items — appear on Schedule L; depreciated via Form 4562
+  "Fixed Asset":                       { semantic_category: "fixed_assets",             tax_code: "FIXED_ASSET",             form: "4562",       schedule: null,   line: "19c" },  // 4562: 7-year MACRS (most equipment)
+  "Fixed Asset|Machinery":             { semantic_category: "fixed_assets",             tax_code: "FIXED_ASSET",             form: "4562",       schedule: null,   line: "19c" },  // 4562: 7-year MACRS
+  "Fixed Asset|Vehicles":              { semantic_category: "fixed_assets",             tax_code: "FIXED_ASSET_VEHICLE",     form: "4562",       schedule: null,   line: "19b" },  // 4562: 5-year MACRS + listed property Part V
+  "Fixed Asset|Buildings":             { semantic_category: "fixed_assets",             tax_code: "FIXED_ASSET_BUILDING",    form: "4562",       schedule: null,   line: "19i" },  // 4562: 39-year nonresidential real property
+  "Fixed Asset|LeaseholdImprovements": { semantic_category: "fixed_assets",             tax_code: "FIXED_ASSET_QIP",         form: "4562",       schedule: null,   line: "19e" },  // 4562: 15-year QIP (eligible for bonus)
+  "Fixed Asset|FurnitureAndFixtures":  { semantic_category: "fixed_assets",             tax_code: "FIXED_ASSET",             form: "4562",       schedule: null,   line: "19c" },  // 4562: 7-year MACRS
 
   // ── Equity / Retained Earnings ─────────────────────────────────────────────
-  "Equity":                            { semantic_category: "equity",                   tax_code: "EQUITY",                  form: "1120",       schedule: "L",    line: "26" },
-  "Equity|RetainedEarnings":           { semantic_category: "retained_earnings",        tax_code: "RETAINED_EARNINGS",       form: "1120",       schedule: "M-2",  line: "3" },
-  "Equity|OpeningBalanceEquity":       { semantic_category: "equity",                   tax_code: "EQUITY",                  form: "1120",       schedule: "L",    line: "26" },
+  // Schedule L (balance sheet); M-2 (retained earnings reconciliation)
+  "Equity":                            { semantic_category: "equity",                   tax_code: "EQUITY",                  form: "1120",       schedule: "L",    line: "36" },   // Sched L line 36: Additional paid-in capital
+  "Equity|RetainedEarnings":           { semantic_category: "retained_earnings",        tax_code: "RETAINED_EARNINGS",       form: "1120",       schedule: "M-2",  line: "8" },    // M-2 line 8: balance at end of year
+  "Equity|OpeningBalanceEquity":       { semantic_category: "equity",                   tax_code: "EQUITY",                  form: "1120",       schedule: "L",    line: "36" },
+  "Equity|PartnersEquity":             { semantic_category: "equity",                   tax_code: "EQUITY",                  form: "1065",       schedule: "M-2",  line: "11" },   // 1065 M-2 line 11: balance at end of year
+  "Equity|ShareholdersEquity":         { semantic_category: "equity",                   tax_code: "EQUITY",                  form: "1120-S",     schedule: "M-2",  line: "9" },    // 1120-S M-2 (AAA) line 9
 };
 
 export function mapTrialBalanceLines(

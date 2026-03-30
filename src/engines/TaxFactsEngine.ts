@@ -167,5 +167,41 @@ export function deriveTaxFacts(
     unmappedCount === 0 ? 1.0 : 0.5
   ));
 
+  // has_asset_sales — true when any capital gain/loss or asset-sale mapping is present with a non-zero balance
+  const assetSaleMappings = mappings.filter(
+    (m) => m.semantic_category === "capital_gain_loss" || m.semantic_category === "fixed_assets"
+  );
+  const hasAssetSales = assetSaleMappings.some((m) => {
+    const balance = balanceByLine.get(m.tb_line_id) ?? 0;
+    return Math.abs(balance) > 0;
+  });
+  facts.push(fact(
+    "has_asset_sales",
+    hasAssetSales,
+    "boolean",
+    assetSaleMappings.map((m) => m.mapping_id),
+    "True when capital gain/loss or fixed asset disposal balances are present in the trial balance"
+  ));
+
+  // total_assets — sum of all asset-category balances (used for M-1 vs M-3 threshold)
+  const assetMappings = mappings.filter(
+    (m) =>
+      m.semantic_category === "fixed_assets" ||
+      m.semantic_category === "equity" ||
+      m.semantic_category === "retained_earnings"
+  );
+  const totalAssets = assetMappings.reduce((acc, m) => {
+    const balance = balanceByLine.get(m.tb_line_id) ?? 0;
+    return acc + Math.abs(balance);
+  }, 0);
+  facts.push(fact(
+    "total_assets",
+    totalAssets,
+    "number",
+    assetMappings.map((m) => m.mapping_id),
+    "Approximate total assets derived from fixed asset and equity trial balance lines. Use balance sheet data for precise M-1/M-3 determination.",
+    0.6 // lower confidence — proper total assets require full balance sheet
+  ));
+
   return facts;
 }

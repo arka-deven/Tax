@@ -4,6 +4,7 @@ import type { RawSourceRecord } from "@/src/models";
 export async function upsertRawSource(record: RawSourceRecord) {
   const { error } = await db
     .from("raw_source_records")
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     .upsert({
       raw_source_id: record.raw_source_id,
       source_system: record.source_system,
@@ -12,7 +13,7 @@ export async function upsertRawSource(record: RawSourceRecord) {
       payload_json: record.payload_json as object,
       ingested_at: record.ingested_at,
       checksum: record.checksum,
-    });
+    } as never);
   if (error) throw error;
 }
 

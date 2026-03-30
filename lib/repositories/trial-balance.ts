@@ -5,7 +5,7 @@ import type { TaxAdjustment, TrialBalanceLine } from "@/src/models";
 
 export async function upsertTrialBalanceLines(lines: TrialBalanceLine[]) {
   if (lines.length === 0) return;
-  const { error } = await db.from("trial_balance_lines").upsert(lines);
+  const { error } = await db.from("trial_balance_lines").upsert(lines as never[]);
   if (error) throw error;
 }
 
@@ -23,7 +23,7 @@ export async function getTrialBalanceLines(entityId: string, taxYear: number): P
 
 export async function upsertAdjustments(adjustments: TaxAdjustment[]) {
   if (adjustments.length === 0) return;
-  const { error } = await db.from("tax_adjustments").upsert(adjustments);
+  const { error } = await db.from("tax_adjustments").upsert(adjustments as never[]);
   if (error) throw error;
 }
 

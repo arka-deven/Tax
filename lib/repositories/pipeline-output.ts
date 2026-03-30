@@ -10,7 +10,7 @@ import type {
 
 export async function upsertMappings(mappings: TaxCodeMapping[]) {
   if (mappings.length === 0) return;
-  const { error } = await db.from("tax_code_mappings").upsert(mappings);
+  const { error } = await db.from("tax_code_mappings").upsert(mappings as never[]);
   if (error) throw error;
 }
 
@@ -30,7 +30,7 @@ export async function upsertFacts(facts: TaxFact[]) {
   if (facts.length === 0) return;
   const { error } = await db
     .from("tax_facts")
-    .upsert(facts, { onConflict: "entity_id,tax_year,fact_name" });
+    .upsert(facts as never[], { onConflict: "entity_id,tax_year,fact_name" });
   if (error) throw error;
 }
 
@@ -56,7 +56,7 @@ export async function replaceDiagnostics(entityId: string, taxYear: number, diag
     .eq("resolution_status", "open");
 
   if (diagnostics.length === 0) return;
-  const { error } = await db.from("diagnostics").insert(diagnostics);
+  const { error } = await db.from("diagnostics").insert(diagnostics as never[]);
   if (error) throw error;
 }
 
@@ -74,7 +74,7 @@ export async function getDiagnostics(entityId: string, taxYear: number): Promise
 
 export async function upsertFormRequirements(requirements: FormRequirement[]) {
   if (requirements.length === 0) return;
-  const { error } = await db.from("form_requirements").upsert(requirements);
+  const { error } = await db.from("form_requirements").upsert(requirements as never[]);
   if (error) throw error;
 }
 

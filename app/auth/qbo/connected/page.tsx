@@ -1,11 +1,9 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 
-// Opened inside the OAuth popup.
-// Posts result to the opener then closes itself.
-export default function QBOConnectedPage() {
+function QBOConnectedInner() {
   const params = useSearchParams();
 
   useEffect(() => {
@@ -28,5 +26,13 @@ export default function QBOConnectedPage() {
     <div className="flex h-screen items-center justify-center text-stone-500 text-sm">
       Connecting…
     </div>
+  );
+}
+
+export default function QBOConnectedPage() {
+  return (
+    <Suspense fallback={<div className="flex h-screen items-center justify-center text-stone-500 text-sm">Connecting…</div>}>
+      <QBOConnectedInner />
+    </Suspense>
   );
 }

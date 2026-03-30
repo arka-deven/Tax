@@ -676,4 +676,175 @@ export const STARTER_RULES: RuleDefinition[] = [
     WARN,
     { document: "IRC §163(j); Form 8990 Instructions", section: "Who Must File", text: "Taxpayers with business interest expense may need to limit it to 30% of ATI under IRC §163(j)." }
   ),
+
+  // ── Section 179 — 2024 thresholds ────────────────────────────────────────
+  // $1,220,000 limit; phase-out begins at $3,050,000 of property placed in service.
+  rule(
+    "RULE_SECTION_179_2024",
+    "depreciation",
+    YEAR,
+    ALL_ENTITIES,
+    { fact: "has_depreciable_assets", op: "eq", value: true },
+    {
+      form_code: "4562",
+      requirement_status: "required",
+      explanation: "Section 179 expensing limit for 2024: $1,220,000. Phase-out begins when total property placed in service exceeds $3,050,000 (dollar-for-dollar reduction). Bonus depreciation for 2024: 60%.",
+    },
+    WARN,
+    { document: "IRC §179; Form 4562 Instructions (2024)", section: "Part I", text: "2024 Section 179 limit: $1,220,000. Phase-out start: $3,050,000. Bonus depreciation: 60% for property placed in service in 2024." }
+  ),
+
+  // ── Form 4797 — sale of business property / depreciation recapture ────────
+  rule(
+    "RULE_ASSET_SALE_4797",
+    "asset_sale",
+    YEAR,
+    ALL_ENTITIES,
+    { fact: "has_asset_sales", op: "eq", value: true },
+    {
+      form_code: "4797",
+      requirement_status: "required",
+      explanation: "Form 4797 (Sales of Business Property) required for dispositions of Section 1231 property. §1245 recapture: full depreciation as ordinary income. §1250 recapture: additional depreciation on real property. 5-year §1231 lookback rule applies.",
+    },
+    WARN,
+    { document: "Form 4797 Instructions; IRC §§1231, 1245, 1250", section: "Who Must File", text: "File Form 4797 for sales or exchanges of business property. Depreciation recapture under §1245 (personal property) and §1250 (real property) is ordinary income." }
+  ),
+
+  // ── S-Corp built-in gains tax ─────────────────────────────────────────────
+  // Applies when S-Corp was formerly a C-Corp and sells appreciated assets within 5 years.
+  rule(
+    "RULE_SCORP_BUILT_IN_GAINS",
+    "built_in_gains",
+    YEAR,
+    ["s_corp"],
+    {
+      and: [
+        { fact: "entity_type", op: "eq", value: "s_corp" },
+        { fact: "has_asset_sales", op: "eq", value: true },
+      ],
+    },
+    {
+      form_code: "1120-S",
+      schedule_code: "D",
+      requirement_status: "possible",
+      explanation: "If this S-Corp was converted from a C-Corp and sells appreciated assets within 5 years of conversion, the built-in gains tax applies at 21% on net recognized built-in gain (Schedule D of Form 1120-S).",
+    },
+    WARN,
+    { document: "IRC §1374; Form 1120-S Instructions", section: "Schedule D", text: "Built-in gains tax: 21% on net recognized built-in gain for S-corps that converted from C-corp status, if assets sold within 5-year recognition period." }
+  ),
+
+  // ── Schedule K-2/K-3 — international items (partnerships/S-corps) ─────────
+  rule(
+    "RULE_PARTNERSHIP_K2_K3",
+    "foreign",
+    YEAR,
+    ["llc_partnership", "partnership", "s_corp"],
+    {
+      and: [
+        {
+          or: [
+            { fact: "entity_type", op: "eq", value: "llc_partnership" },
+            { fact: "entity_type", op: "eq", value: "partnership" },
+            { fact: "entity_type", op: "eq", value: "s_corp" },
+          ],
+        },
+        { fact: "foreign_activity_present", op: "eq", value: true },
+      ],
+    },
+    {
+      form_code: "1065",
+      schedule_code: "K-2/K-3",
+      requirement_status: "required",
+      explanation: "Schedules K-2 and K-3 are required for partnerships and S-corps with items of international tax relevance (foreign income, foreign taxes, foreign partners, or partners who need FTC information).",
+    },
+    WARN,
+    { document: "Form 1065 Instructions; Form 1120-S Instructions", section: "Schedule K-2 and K-3", text: "Partnerships and S-corps with international items must file Schedules K-2 (entity) and K-3 (per partner/shareholder). Domestic filing exception available if no foreign activity, no foreign partners, and no partner requests K-3." }
+  ),
+
+  // ── Form 990-T — unrelated business income tax ────────────────────────────
+  rule(
+    "RULE_NONPROFIT_990T",
+    "unrelated_business",
+    YEAR,
+    ["nonprofit"],
+    {
+      and: [
+        { fact: "entity_type", op: "eq", value: "nonprofit" },
+        { fact: "gross_receipts_total", op: "gt", value: 1000 },
+      ],
+    },
+    {
+      form_code: "990-T",
+      requirement_status: "possible",
+      explanation: "Form 990-T (Exempt Organization Business Income Tax Return) is required if gross unrelated business income is $1,000 or more. UBIT applies at 21% for corporations. Separate silo rules apply to each unrelated trade/business.",
+    },
+    WARN,
+    { document: "IRC §511; Form 990-T Instructions", section: "Who Must File", text: "Exempt organizations with gross unrelated business income >= $1,000 must file Form 990-T and pay UBIT at the applicable corporate or trust rate." }
+  ),
+
+  // ── QBI deduction — Section 199A (passthrough entities) ──────────────────
+  rule(
+    "RULE_QBI_199A",
+    "deduction",
+    YEAR,
+    ["s_corp", "llc_partnership", "partnership", "llc_single", "sole_prop"],
+    {
+      and: [
+        {
+          or: [
+            { fact: "entity_type", op: "eq", value: "s_corp" },
+            { fact: "entity_type", op: "eq", value: "llc_partnership" },
+            { fact: "entity_type", op: "eq", value: "partnership" },
+            { fact: "entity_type", op: "eq", value: "llc_single" },
+            { fact: "entity_type", op: "eq", value: "sole_prop" },
+          ],
+        },
+        { fact: "net_income_before_tax", op: "gt", value: 0 },
+      ],
+    },
+    {
+      form_code: "8995",
+      requirement_status: "possible",
+      explanation: "Section 199A QBI deduction: 20% of qualified business income for passthrough entities. W-2 wage / UBIA limitations apply when individual taxable income exceeds $383,900 (MFJ) / $191,950 (single) for 2024. Use Form 8995 (simple) or 8995-A (complex).",
+    },
+    WARN,
+    { document: "IRC §199A; Form 8995/8995-A Instructions", section: "Who Must File", text: "Non-corporate taxpayers with qualified business income from a passthrough entity may deduct up to 20% of QBI. W-2 wage and UBIA of qualified property limitations apply above income thresholds." }
+  ),
+
+  // ── Home office — Form 8829 (sole prop / SMLLC only) ─────────────────────
+  rule(
+    "RULE_HOME_OFFICE_8829",
+    "deduction",
+    YEAR,
+    ["llc_single", "sole_prop"],
+    {
+      or: [
+        { fact: "entity_type", op: "eq", value: "llc_single" },
+        { fact: "entity_type", op: "eq", value: "sole_prop" },
+      ],
+    },
+    {
+      form_code: "8829",
+      requirement_status: "possible",
+      explanation: "Form 8829 (Expenses for Business Use of Home) applies if a portion of the home is used regularly and exclusively for business. Simplified method: $5/sq ft up to 300 sq ft ($1,500 max). Regular method uses Form 8829.",
+    },
+    WARN,
+    { document: "IRC §280A; Form 8829 Instructions", section: "Who Must File", text: "Sole proprietors using part of their home regularly and exclusively for business may deduct home office expenses via Form 8829 or the simplified method on Schedule C." }
+  ),
+
+  // ── Schedule D — capital gains (all entities) ─────────────────────────────
+  rule(
+    "RULE_CAPITAL_GAINS_SCHEDULE_D",
+    "capital_gains",
+    YEAR,
+    ALL_ENTITIES,
+    { fact: "has_asset_sales", op: "eq", value: true },
+    {
+      form_code: "Schedule D",
+      requirement_status: "possible",
+      explanation: "Schedule D reports capital gains and losses. C-Corp capital losses may only offset capital gains (3-year carryback / 5-year carryforward). Individuals: net long-term capital gains taxed at 0%/15%/20% rates.",
+    },
+    WARN,
+    { document: "IRC §§1211, 1212; Schedule D Instructions", section: "Who Must File", text: "File Schedule D for capital asset sales. C-Corp capital losses: 3-year carryback, 5-year carryforward. Capital losses cannot offset ordinary income for C-Corps." }
+  ),
 ];

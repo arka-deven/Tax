@@ -89,6 +89,9 @@ export function deriveTaxFacts(
     "Sum of charitable contribution mappings"
   ));
 
+  // NOTE: Charitable contribution limitation (IRC §170(b)(2)) is computed below
+  // after total_income and deduction components are available.
+
   const officerComp = sumCategory("officer_compensation");
   facts.push(fact(
     "officer_compensation_total",
@@ -183,6 +186,48 @@ export function deriveTaxFacts(
   for (const [name, code, explanation] of taxCodeFacts) {
     const s = sumByTaxCode(code);
     facts.push(fact(name, s.total, "number", s.mappingIds, explanation));
+  }
+
+  // ── Interest Expense Limitation Proxy (IRC §163(j)) ─────────────────────
+  // §163(j) proxy: 30% of adjusted taxable income (simplified — ATI approximated
+  // as taxable income + interest expense + depreciation + amortization add-backs).
+  // This is a rough estimate — full §163(j) computation requires Form 8990.
+  {
+    const interestExpForLimit = sumByTaxCode("INTEREST_EXPENSE");
+    const depreciationForLimit = sumByTaxCode("DEPRECIATION");
+    const amortizationForLimit = sumByTaxCode("AMORTIZATION");
+    // ATI will be recomputed more precisely once taxable_income is known;
+    // at this stage we use gross_receipts - cogs as a stand-in for taxable income.
+    const roughTaxableIncome = grossReceipts.total - cogs.total;
+    const adjustedTaxableIncome =
+      roughTaxableIncome +
+      interestExpForLimit.total +
+      depreciationForLimit.total +
+      amortizationForLimit.total;
+    const interestExpenseLimit30 = adjustedTaxableIncome * 0.30;
+    const interestExpenseDisallowed = Math.max(0, interestExpForLimit.total - interestExpenseLimit30);
+
+    facts.push(fact(
+      "adjusted_taxable_income_163j",
+      adjustedTaxableIncome,
+      "number",
+      [...interestExpForLimit.mappingIds, ...depreciationForLimit.mappingIds, ...amortizationForLimit.mappingIds],
+      "Adjusted taxable income for §163(j) (simplified ATI = TI + interest + depreciation + amortization)"
+    ));
+    facts.push(fact(
+      "interest_expense_limitation_30pct",
+      interestExpenseLimit30,
+      "number",
+      interestExpForLimit.mappingIds,
+      "§163(j) business interest limitation — 30% of ATI (Form 8990)"
+    ));
+    facts.push(fact(
+      "interest_expense_disallowed",
+      interestExpenseDisallowed,
+      "number",
+      interestExpForLimit.mappingIds,
+      "Business interest expense disallowed under §163(j) — carryforward indefinitely"
+    ));
   }
 
   // ── Derived facts ─────────────────────────────────────────────────────────
@@ -614,7 +659,7 @@ export function deriveTaxFacts(
     0.9
   ));
 
-  // Form 1120 line 27
+  // Form 1120 line 27 — deduction components (declared here so charitable limitation can reference them)
   const officerCompTC = sumByTaxCode("OFFICER_COMP");
   const wagesTC = sumByTaxCode("WAGES");
   const repairsTC = sumByTaxCode("REPAIRS");
@@ -626,6 +671,40 @@ export function deriveTaxFacts(
   const depreciationTC = sumByTaxCode("DEPRECIATION");
   const advertisingTC = sumByTaxCode("ADVERTISING");
   const generalDeductionTC = sumByTaxCode("GENERAL_DEDUCTION");
+
+  // ── Charitable Contribution Limitation (IRC §170(b)(2)) ──────────────────
+  // C-Corp charitable deduction limited to 10% of taxable income computed
+  // without regard to the charitable deduction itself.
+  const deductionsExcludingCharitable =
+    officerComp.total +
+    wagesTC.total +
+    repairsTC.total +
+    badDebtTC.total +
+    rentBuildingTC.total +
+    taxesLicensesTC.total +
+    interestExpTC.total +
+    depreciationTC.total +
+    advertisingTC.total +
+    generalDeductionTC.total;
+  const taxableIncomeBeforeCharitable = totalIncome - deductionsExcludingCharitable;
+  const charitableLimitAmount = taxableIncomeBeforeCharitable * 0.10;
+  const charitableAllowable = Math.min(charitable.total, Math.max(0, charitableLimitAmount));
+  const charitableExcess = Math.max(0, charitable.total - charitableAllowable);
+
+  facts.push(fact(
+    "charitable_contributions_allowable",
+    charitableAllowable,
+    "number",
+    charitable.mappingIds,
+    "Charitable contributions allowed after 10% of TI limitation (IRC §170(b)(2))"
+  ));
+  facts.push(fact(
+    "charitable_contributions_excess",
+    charitableExcess,
+    "number",
+    charitable.mappingIds,
+    "Charitable contributions in excess of 10% of TI — 5-year carryforward (IRC §170(d))"
+  ));
 
   const totalDeductions =
     officerComp.total +
@@ -680,6 +759,16 @@ export function deriveTaxFacts(
     [],
     "Taxable income (NOL assumed zero) — Form 1120 line 30",
     0.9
+  ));
+
+  // ── Net Operating Loss (NOL) Tracking ────────────────────────────────────
+  const nolAvailable = taxableIncomeBeforeNol < 0 ? Math.abs(taxableIncomeBeforeNol) : 0;
+  facts.push(fact(
+    "net_operating_loss_current_year",
+    nolAvailable,
+    "number",
+    [...grossReceipts.mappingIds, ...cogs.mappingIds],
+    "Current year NOL available for carryforward (post-TCJA: 80% limitation on usage, indefinite carryforward per IRC §172)"
   ));
 
   // Form 1120 line 31 — C-Corp flat 21% rate
@@ -758,6 +847,46 @@ export function deriveTaxFacts(
     [],
     "Deductible portion of self-employment tax (50%) — Schedule SE line 7",
     0.95
+  ));
+
+  // ── Pass-Through Separately Stated Items (K-1 Preparation) ──────────────
+  // For S-Corps (Form 1120-S) and Partnerships (Form 1065), income/deduction
+  // items that must be separately stated on Schedule K-1.
+
+  facts.push(fact(
+    "ordinary_business_income",
+    totalIncome - totalDeductions,
+    "number",
+    [...grossReceipts.mappingIds, ...cogs.mappingIds],
+    "Ordinary business income/(loss) for K-1 Line 1"
+  ));
+  facts.push(fact(
+    "separately_stated_interest_income",
+    interestIncome.total,
+    "number",
+    interestIncome.mappingIds,
+    "Separately stated interest income for K-1 Line 5"
+  ));
+  facts.push(fact(
+    "separately_stated_dividend_income",
+    dividendIncome.total,
+    "number",
+    dividendIncome.mappingIds,
+    "Separately stated dividend income for K-1 Line 6a"
+  ));
+  facts.push(fact(
+    "separately_stated_rental_income",
+    rentIncome.total,
+    "number",
+    rentIncome.mappingIds,
+    "Separately stated rental income for K-1 Line 2"
+  ));
+  facts.push(fact(
+    "separately_stated_charitable",
+    charitable.total,
+    "number",
+    charitable.mappingIds,
+    "Separately stated charitable contributions for K-1 Line 12a"
   ));
 
   // ── QBI Deduction Facts (Form 8995) ───────────────────────────────────────

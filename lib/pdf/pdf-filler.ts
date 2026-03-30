@@ -54,7 +54,7 @@ function resolveValue(
 export async function fillPdf(
   mapping: FormPdfMapping,
   ctx: FillContext,
-  options: { flatten?: boolean; pdfBytes?: Uint8Array } = {}
+  options: { flatten?: boolean; pdfBytes?: Uint8Array; overrides?: Record<string, string> } = {}
 ): Promise<FilledPdfResult> {
   // Load the blank PDF — either from provided bytes or fetch from /public/
   let pdfDoc: PDFDocument;
@@ -73,7 +73,8 @@ export async function fillPdf(
   const unfilledFields: string[] = [];
 
   for (const fieldMapping of mapping.fields) {
-    const value = resolveValue(fieldMapping, ctx);
+    // Manual override takes priority over computed/fact values
+    const value = options.overrides?.[fieldMapping.pdfFieldName] ?? resolveValue(fieldMapping, ctx);
     if (value === undefined || value === "") {
       unfilledFields.push(fieldMapping.pdfFieldName);
       continue;
@@ -107,6 +108,10 @@ export async function fillPdf(
       }
     }
   }
+
+  // Generate appearance streams so filled values are visible in viewers
+  // and fields remain editable via the annotation layer
+  form.updateFieldAppearances();
 
   if (options.flatten) {
     form.flatten();

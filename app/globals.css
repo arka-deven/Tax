@@ -1,5 +1,6 @@
 @import "tailwindcss";
 
+
 @keyframes shimmer-slide {
   to {
     transform: translate(calc(100cqw - 100%), 0);

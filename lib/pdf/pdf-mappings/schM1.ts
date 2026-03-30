@@ -64,6 +64,7 @@ export const SCH_M1_MAPPING: FormPdfMapping = {
     },
     {
       pdfFieldName: `${LEFT}f6_141[0]`,
+      factName: "nondeductible_total",
       format: "currency",
       irsLine: "5d",
       description: "Expenses on books not on return — other (amount)",

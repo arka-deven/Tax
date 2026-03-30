@@ -220,7 +220,7 @@ export const F990_MAPPING: FormPdfMapping = {
     },
     {
       pdfFieldName: `${P}f1_36[0]`,
-      factName: undefined,
+      factName: "total_liabilities",
       format: "currency",
       irsLine: "21",
       description: "Total liabilities (Part X, line 26)",

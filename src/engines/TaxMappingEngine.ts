@@ -76,6 +76,7 @@ const SEMANTIC_MAP: Record<
   "Other Expense":                     { semantic_category: "other_expense",            tax_code: "OTHER_EXPENSE",           form: "1120",       schedule: null,   line: "26" },
   "Other Expense|OtherMiscExpense":    { semantic_category: "other_expense",            tax_code: "OTHER_EXPENSE",           form: "1120",       schedule: null,   line: "26" },
   "Other Expense|IncomeTaxExpense":    { semantic_category: "income_tax_expense",       tax_code: "INCOME_TAX_NONDEDUCTIBLE", form: "1120",      schedule: "M-1",  line: "2" },    // M-1 line 2: federal income tax per books (nondeductible)
+  "Other Expense|EstimatedTaxPayments": { semantic_category: "estimated_tax_payments", tax_code: "ESTIMATED_TAX_PAYMENTS", form: "1120", schedule: null, line: "32" },  // Estimated tax payments made during the year
 
   // ── Fixed / Long-Term Assets ──────────────────────────────────────────────
   // Balance sheet items — appear on Schedule L; depreciated via Form 4562

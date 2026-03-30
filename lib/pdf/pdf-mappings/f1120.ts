@@ -316,7 +316,7 @@ export const F1120_MAPPING: FormPdfMapping = {
     },
     {
       pdfFieldName: "topmostSubform[0].Page1[0].f1_45[0]",
-      factName: "special_deductions_total",
+      factName: "special_deductions_drd",
       format: "currency",
       irsLine: "29b",
       description: "Special deductions (Schedule C, line 24, column (c))",
@@ -338,7 +338,7 @@ export const F1120_MAPPING: FormPdfMapping = {
     },
     {
       pdfFieldName: "topmostSubform[0].Page1[0].f1_48[0]",
-      factName: "total_payments",
+      factName: "estimated_tax_payments_total",
       format: "currency",
       irsLine: "32",
       description:
@@ -362,7 +362,7 @@ export const F1120_MAPPING: FormPdfMapping = {
     },
     {
       pdfFieldName: "topmostSubform[0].Page1[0].f1_51[0]",
-      factName: "overpayment",
+      factName: "overpayment_amount",
       format: "currency",
       irsLine: "35",
       description:

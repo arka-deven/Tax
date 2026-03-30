@@ -76,12 +76,14 @@ export const F1040SC_MAPPING: FormPdfMapping = {
     },
     {
       pdfFieldName: `${PAGE1}f1_11[0]`,
+      factName: "returns_allowances_total",
       format: "currency",
       irsLine: "2",
       description: "Returns and allowances",
     },
     {
       pdfFieldName: `${PAGE1}f1_12[0]`,
+      compute: (ctx: FillContext) => { const gr = Number(ctx.facts.gross_receipts_total ?? 0); const ra = Number(ctx.facts.returns_allowances_total ?? 0); return String(gr - ra); },
       format: "currency",
       irsLine: "3",
       description: "Subtract Line 2 from Line 1",
@@ -95,6 +97,7 @@ export const F1040SC_MAPPING: FormPdfMapping = {
     },
     {
       pdfFieldName: `${PAGE1}f1_14[0]`,
+      factName: "gross_profit",
       format: "currency",
       irsLine: "5",
       description: "Gross profit (subtract Line 4 from Line 3)",
@@ -108,6 +111,7 @@ export const F1040SC_MAPPING: FormPdfMapping = {
     },
     {
       pdfFieldName: `${PAGE1}f1_16[0]`,
+      factName: "total_income",
       format: "currency",
       irsLine: "7",
       description: "Gross income (add Lines 5 and 6)",
@@ -136,6 +140,7 @@ export const F1040SC_MAPPING: FormPdfMapping = {
     },
     {
       pdfFieldName: `${L8_17}f1_20[0]`,
+      factName: "contract_labor_total",
       format: "currency",
       irsLine: "11",
       description: "Contract labor (see instructions)",
@@ -155,6 +160,7 @@ export const F1040SC_MAPPING: FormPdfMapping = {
     },
     {
       pdfFieldName: `${L8_17}f1_23[0]`,
+      factName: "employee_benefits_total",
       format: "currency",
       irsLine: "14",
       description: "Employee benefit programs (other than on Line 19)",
@@ -197,6 +203,7 @@ export const F1040SC_MAPPING: FormPdfMapping = {
     },
     {
       pdfFieldName: `${L18_27}f1_29[0]`,
+      factName: "pension_profitsharing_total",
       format: "currency",
       irsLine: "19",
       description: "Pension and profit-sharing plans",
@@ -282,12 +289,14 @@ export const F1040SC_MAPPING: FormPdfMapping = {
     // ── Net profit ────────────────────────────────────────────────────────────
     {
       pdfFieldName: `${PAGE1}f1_41[0]`,
+      factName: "total_deductions",
       format: "currency",
       irsLine: "28",
       description: "Total expenses before expenses for business use of home (add Lines 8 through 27a)",
     },
     {
       pdfFieldName: `${PAGE1}f1_42[0]`,
+      compute: (ctx: FillContext) => { const ti = Number(ctx.facts.total_income ?? 0); const td = Number(ctx.facts.total_deductions ?? 0); return String(ti - td); },
       format: "currency",
       irsLine: "29",
       description: "Tentative profit or (loss) (subtract Line 28 from Line 7)",
@@ -306,6 +315,7 @@ export const F1040SC_MAPPING: FormPdfMapping = {
     },
     {
       pdfFieldName: `${PAGE1}f1_45[0]`,
+      factName: "net_income_before_tax",
       format: "currency",
       irsLine: "31",
       description: "Net profit or (loss) (subtract Line 30 from Line 29)",

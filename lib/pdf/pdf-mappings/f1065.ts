@@ -129,12 +129,14 @@ export const F1065_MAPPING: FormPdfMapping = {
     },
     {
       pdfFieldName: `${PAGE1}f1_20[0]`,
+      factName: "returns_allowances_total",
       format: "currency",
       irsLine: "1b",
       description: "Returns and allowances",
     },
     {
       pdfFieldName: `${PAGE1}f1_21[0]`,
+      compute: (ctx: FillContext) => { const gr = Number(ctx.facts.gross_receipts_total ?? 0); const ra = Number(ctx.facts.returns_allowances_total ?? 0); return String(gr - ra); },
       format: "currency",
       irsLine: "1c",
       description: "Balance (Line 1a minus 1b)",
@@ -148,6 +150,7 @@ export const F1065_MAPPING: FormPdfMapping = {
     },
     {
       pdfFieldName: `${PAGE1}f1_23[0]`,
+      factName: "gross_profit",
       format: "currency",
       irsLine: "3",
       description: "Gross profit (Line 1c minus Line 2)",
@@ -179,6 +182,7 @@ export const F1065_MAPPING: FormPdfMapping = {
     },
     {
       pdfFieldName: `${PAGE1}f1_28[0]`,
+      factName: "total_income",
       format: "currency",
       irsLine: "8",
       description: "Total income (loss) (Lines 3 through 7)",
@@ -248,6 +252,7 @@ export const F1065_MAPPING: FormPdfMapping = {
     },
     {
       pdfFieldName: `${PAGE1}f1_38[0]`,
+      compute: (ctx: FillContext) => String(Number(ctx.facts.depreciation_total ?? 0)),
       format: "currency",
       irsLine: "16c",
       description: "Net depreciation (Line 16a minus 16b)",
@@ -260,12 +265,14 @@ export const F1065_MAPPING: FormPdfMapping = {
     },
     {
       pdfFieldName: `${PAGE1}f1_40[0]`,
+      factName: "pension_profitsharing_total",
       format: "currency",
       irsLine: "18",
       description: "Retirement plans, etc.",
     },
     {
       pdfFieldName: `${PAGE1}f1_41[0]`,
+      factName: "employee_benefits_total",
       format: "currency",
       irsLine: "19",
       description: "Employee benefit programs",
@@ -279,12 +286,14 @@ export const F1065_MAPPING: FormPdfMapping = {
     },
     {
       pdfFieldName: `${PAGE1}f1_43[0]`,
+      factName: "total_deductions",
       format: "currency",
       irsLine: "21",
       description: "Total deductions (add Lines 9 through 20)",
     },
     {
       pdfFieldName: `${PAGE1}f1_44[0]`,
+      factName: "ordinary_business_income",
       format: "currency",
       irsLine: "22",
       description: "Ordinary business income (loss) (Line 8 minus Line 21)",

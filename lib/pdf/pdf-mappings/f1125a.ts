@@ -72,7 +72,7 @@ export const F1125A_MAPPING: FormPdfMapping = {
     },
     {
       pdfFieldName: `${P}f1_9[0]`,
-      factName: undefined,
+      factName: "inventory_total",
       format: "currency",
       irsLine: "6",
       description: "Inventory at end of year",

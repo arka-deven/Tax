@@ -786,6 +786,22 @@ export function deriveTaxFacts(
     0.95
   ));
 
+  // ── Estimated tax payments & amount owed/overpaid ─────────────────────
+  const estTaxPayments = sumByTaxCode("ESTIMATED_TAX_PAYMENTS");
+  facts.push(fact("estimated_tax_payments_total", estTaxPayments.total, "number", estTaxPayments.mappingIds, "Sum of estimated tax payments made during the year (Form 1120 Line 32)"));
+
+  // Special deductions — Dividends Received Deduction (DRD) for C-Corps
+  // IRC §243: 50% of dividends from domestic corporations (simplified)
+  const drdAmount = dividendIncome.total * 0.50;
+  facts.push(fact("special_deductions_drd", drdAmount, "number", dividendIncome.mappingIds, "Dividends received deduction (50% of domestic dividends per IRC §243)", 0.7));
+
+  // Amount owed or overpayment
+  const totalTax = Math.max(0, taxableIncomeBeforeNol * 0.21);
+  const amountOwed = Math.max(0, totalTax - estTaxPayments.total);
+  const overpayment = Math.max(0, estTaxPayments.total - totalTax);
+  facts.push(fact("amount_owed", amountOwed, "number", [], "Tax due: total tax minus payments (Form 1120 Line 34)"));
+  facts.push(fact("overpayment_amount", overpayment, "number", [], "Overpayment: payments minus total tax (Form 1120 Line 35)"));
+
   // ── Schedule SE Computation Facts ─────────────────────────────────────────
 
   const netSeEarnings = netIncome; // same as net_income_before_tax from Sch C

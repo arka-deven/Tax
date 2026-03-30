@@ -105,7 +105,7 @@ export const F1120SD_MAPPING: FormPdfMapping = {
     // -------------------------------------------------------------------------
     {
       pdfFieldName: `${P2}f2_6[0]`,
-      factName: undefined,
+      factName: "capital_gain_total",
       format: "currency",
       irsLine: "16",
       description: "Combined net capital gain or (loss) — add lines 7 and 15",

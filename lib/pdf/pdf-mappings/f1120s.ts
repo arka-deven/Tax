@@ -90,12 +90,14 @@ export const F1120S_MAPPING: FormPdfMapping = {
     },
     {
       pdfFieldName: `${PAGE1}f1_15[0]`,
+      factName: "returns_allowances_total",
       format: "currency",
       irsLine: "1b",
       description: "Returns and allowances",
     },
     {
       pdfFieldName: `${PAGE1}f1_16[0]`,
+      compute: (ctx: FillContext) => { const gr = Number(ctx.facts.gross_receipts_total ?? 0); const ra = Number(ctx.facts.returns_allowances_total ?? 0); return String(gr - ra); },
       format: "currency",
       irsLine: "1c",
       description: "Balance (Line 1a minus 1b)",
@@ -109,12 +111,14 @@ export const F1120S_MAPPING: FormPdfMapping = {
     },
     {
       pdfFieldName: `${PAGE1}f1_18[0]`,
+      factName: "gross_profit",
       format: "currency",
       irsLine: "3",
       description: "Gross profit (Line 1c minus Line 2)",
     },
     {
       pdfFieldName: `${PAGE1}f1_19[0]`,
+      factName: "capital_gain_total",
       format: "currency",
       irsLine: "4",
       description: "Net gain (loss) from Form 4797",
@@ -128,6 +132,7 @@ export const F1120S_MAPPING: FormPdfMapping = {
     },
     {
       pdfFieldName: `${PAGE1}f1_21[0]`,
+      factName: "total_income",
       format: "currency",
       irsLine: "6",
       description: "Total income (loss) (Lines 3 through 5)",
@@ -205,12 +210,14 @@ export const F1120S_MAPPING: FormPdfMapping = {
     },
     {
       pdfFieldName: `${PAGE1}f1_32[0]`,
+      factName: "pension_profitsharing_total",
       format: "currency",
       irsLine: "17",
       description: "Pension, profit-sharing, etc., plans",
     },
     {
       pdfFieldName: `${PAGE1}f1_33[0]`,
+      factName: "employee_benefits_total",
       format: "currency",
       irsLine: "18",
       description: "Employee benefit programs",
@@ -224,6 +231,7 @@ export const F1120S_MAPPING: FormPdfMapping = {
     },
     {
       pdfFieldName: `${PAGE1}f1_35[0]`,
+      factName: "total_deductions",
       format: "currency",
       irsLine: "20",
       description: "Total deductions (add Lines 7 through 19)",
@@ -232,6 +240,7 @@ export const F1120S_MAPPING: FormPdfMapping = {
     // ── Tax and payments (Lines 21 – 26) ─────────────────────────────────────
     {
       pdfFieldName: `${PAGE1}f1_36[0]`,
+      factName: "ordinary_business_income",
       format: "currency",
       irsLine: "21",
       description: "Ordinary business income (loss) (Line 6 minus Line 20)",

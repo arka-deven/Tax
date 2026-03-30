@@ -431,6 +431,7 @@ export const SCH_L_MAPPING: FormPdfMapping = {
     },
     {
       pdfFieldName: `${ASSETS}Line12[0].f6_60[0]`,
+      factName: "land_total",
       format: "currency",
       irsLine: "12d",
       description: "Land — end of year (column b)",
@@ -459,6 +460,7 @@ export const SCH_L_MAPPING: FormPdfMapping = {
     },
     {
       pdfFieldName: `${ASSETS}Line13a[0].f6_64[0]`,
+      factName: "intangible_assets_total",
       format: "currency",
       irsLine: "13a-d",
       description: "Intangible assets (amortizable only) — end of year (column b)",
@@ -487,6 +489,7 @@ export const SCH_L_MAPPING: FormPdfMapping = {
     },
     {
       pdfFieldName: `${ASSETS}Line13b[0].f6_68[0]`,
+      factName: "accum_amortization_total",
       format: "currency",
       irsLine: "13b-d",
       description: "Less accumulated amortization — end of year (column b)",
@@ -915,6 +918,7 @@ export const SCH_L_MAPPING: FormPdfMapping = {
     },
     {
       pdfFieldName: `${LIAB}Line27[0].f6_128[0]`,
+      compute: (ctx: FillContext) => { const tl = Number(ctx.facts.total_liabilities ?? 0); const cs = Number(ctx.facts.capital_stock_total ?? 0); const re = Number(ctx.facts.retained_earnings_total ?? 0); return String(tl + Math.abs(cs) + Math.abs(re)); },
       format: "currency",
       irsLine: "27d",
       description: "Total liabilities and shareholders' equity — end of year (column b)",

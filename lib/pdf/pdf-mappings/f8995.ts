@@ -37,7 +37,7 @@ export const F8995_MAPPING: FormPdfMapping = {
     },
     {
       pdfFieldName: `${P}f1_4[0]`,
-      factName: "ein",
+      compute: (ctx: FillContext) => ctx.meta.ein,
       format: "string",
       irsLine: "1ii",
       description: "Taxpayer identification number for the trade or business (row 1)",
@@ -118,21 +118,21 @@ export const F8995_MAPPING: FormPdfMapping = {
     },
     {
       pdfFieldName: `${P}f1_18[0]`,
-      factName: undefined,
+      factName: "taxable_income",
       format: "currency",
       irsLine: "11",
       description: "Taxable income before QBI deduction",
     },
     {
       pdfFieldName: `${P}f1_19[0]`,
-      factName: undefined,
+      factName: "capital_gain_total",
       format: "currency",
       irsLine: "12",
       description: "Net capital gains (from Schedule D or instructions)",
     },
     {
       pdfFieldName: `${P}f1_20[0]`,
-      factName: undefined,
+      compute: (ctx: FillContext) => { const ti = Number(ctx.facts.taxable_income ?? 0); const cg = Number(ctx.facts.capital_gain_total ?? 0); return String(Math.max(0, ti - cg)); },
       format: "currency",
       irsLine: "13",
       description: "Subtract line 12 from line 11 (not less than zero)",

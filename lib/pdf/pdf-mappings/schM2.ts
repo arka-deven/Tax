@@ -96,6 +96,7 @@ export const SCH_M2_MAPPING: FormPdfMapping = {
     },
     {
       pdfFieldName: `${RIGHT}f6_169[0]`,
+      factName: "retained_earnings_total",
       format: "currency",
       irsLine: "8",
       description: "Balance at end of year (line 4 minus line 7)",

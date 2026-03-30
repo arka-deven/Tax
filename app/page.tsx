@@ -331,20 +331,20 @@ export default function Home() {
 
   if (companies.length === 0) {
     return (
-      <div className="flex h-screen items-center justify-center bg-white">
+      <div className="flex h-screen items-center justify-center bg-(--linen)">
         <BlurFade delay={0}>
           <div className="flex flex-col items-center gap-6 max-w-sm text-center px-6">
-            <div className="w-12 h-12 rounded-2xl bg-stone-100 flex items-center justify-center">
-              <FileText size={22} className="text-stone-500" />
+            <div className="w-12 h-12 rounded-2xl bg-(--powder-petal) flex items-center justify-center">
+              <FileText size={22} className="text-[#8a7e74]" />
             </div>
             <div>
-              <h1 className="text-xl font-semibold text-stone-900 tracking-tight">Tax</h1>
-              <p className="text-stone-400 text-sm mt-1">Connect your QuickBooks Online account to get started.</p>
+              <h1 className="text-xl font-semibold text-[#3d3229] tracking-tight">Tax</h1>
+              <p className="text-[#a89f97] text-sm mt-1">Connect your QuickBooks Online account to get started.</p>
             </div>
             <button onClick={connectQBO} className="flex items-center gap-2 bg-[#2CA01C] hover:bg-[#248518] text-white text-sm font-semibold px-6 py-3 rounded-xl transition-colors shadow-sm">
               <Plug size={15} /> Connect QuickBooks Online
             </button>
-            <p className="text-stone-300 text-xs">Your books are read-only. We never write to QuickBooks.</p>
+            <p className="text-[#c4bab2] text-xs">Your books are read-only. We never write to QuickBooks.</p>
           </div>
         </BlurFade>
       </div>
@@ -356,7 +356,7 @@ export default function Home() {
   if (choosingTypeFor) {
     const co = companies.find((c) => c.id === choosingTypeFor);
     return (
-      <div className="flex h-screen items-center justify-center bg-white">
+      <div className="flex h-screen items-center justify-center bg-(--linen)">
         <BlurFade delay={0}>
           <div className="flex flex-col gap-5 max-w-sm w-full px-6">
             <div>
@@ -364,15 +364,15 @@ export default function Home() {
                 <span className="w-2 h-2 rounded-full bg-emerald-400" />
                 <span className="text-xs text-emerald-600 font-medium">{co?.name ?? "QuickBooks"} connected</span>
               </div>
-              <h2 className="text-lg font-semibold text-stone-900">What type of entity is this?</h2>
-              <p className="text-stone-400 text-sm mt-0.5">This determines which IRS forms apply. Forms will auto-fill from QBO data.</p>
+              <h2 className="text-lg font-semibold text-[#3d3229]">What type of entity is this?</h2>
+              <p className="text-[#a89f97] text-sm mt-0.5">This determines which IRS forms apply. Forms will auto-fill from QBO data.</p>
             </div>
             <div className="space-y-2">
               {ENTITY_OPTIONS.map((opt) => (
                 <button key={opt.value} onClick={() => autoFillCompany(choosingTypeFor, opt.value)}
-                  className="w-full flex items-center justify-between px-4 py-3 rounded-xl border border-stone-200 hover:border-stone-400 hover:bg-stone-50 transition-colors text-left">
-                  <div><p className="text-sm font-medium text-stone-800">{opt.label}</p><p className="text-xs text-stone-400">{opt.sub}</p></div>
-                  <ChevronRight size={14} className="text-stone-300" />
+                  className="w-full flex items-center justify-between px-4 py-3 rounded-xl border border-(--dust-grey) hover:border-(--almond-silk) hover:bg-(--parchment) transition-colors text-left">
+                  <div><p className="text-sm font-medium text-[#4a3f35]">{opt.label}</p><p className="text-xs text-[#a89f97]">{opt.sub}</p></div>
+                  <ChevronRight size={14} className="text-[#c4bab2]" />
                 </button>
               ))}
             </div>
@@ -389,34 +389,34 @@ export default function Home() {
   })).filter((g) => g.items.length > 0);
 
   return (
-    <div className="flex h-screen overflow-hidden bg-white font-sans">
+    <div className="flex h-screen overflow-hidden bg-(--linen) font-sans">
       {errorMsg && <ErrorToast message={errorMsg} onClose={() => setErrorMsg(null)} />}
 
       {/* ── Sidebar ──────────────────────────────────────────────────── */}
-      <aside className="w-56 shrink-0 flex flex-col border-r border-stone-100 bg-stone-50">
-        <div className="px-5 py-5 border-b border-stone-100">
+      <aside className="w-56 shrink-0 flex flex-col border-r border-(--powder-petal) bg-(--parchment)">
+        <div className="px-5 py-5 border-b border-(--powder-petal)">
           <div className="flex items-center gap-2">
-            <FileText size={15} className="text-stone-400" />
-            <span className="font-semibold text-stone-800 tracking-tight text-sm">Tax</span>
+            <FileText size={15} className="text-[#a89f97]" />
+            <span className="font-semibold text-[#4a3f35] tracking-tight text-sm">Tax</span>
           </div>
-          <p className="text-stone-400 text-[10px] mt-0.5">Internal · {taxYear}</p>
+          <p className="text-[#a89f97] text-[10px] mt-0.5">Internal · {taxYear}</p>
         </div>
 
         {/* Company list */}
         <div className="flex-1 px-3 py-3 space-y-2 overflow-y-auto">
-          <p className="text-stone-400 text-[10px] font-semibold uppercase tracking-widest px-2 mb-1">Companies</p>
+          <p className="text-[#a89f97] text-[10px] font-semibold uppercase tracking-widest px-2 mb-1">Companies</p>
           {companies.map((co) => {
             const isActive = co.id === activeId;
             const coLabel = co.entityType ? ENTITY_OPTIONS.find((o) => o.value === co.entityType)?.label : null;
             return (
               <button key={co.id} onClick={() => { setActiveId(co.id); setExpandedForms(new Set()); }}
-                className={`w-full text-left px-3 py-2.5 rounded-lg border transition-colors ${isActive ? "bg-white border-stone-200 shadow-xs" : "border-transparent hover:bg-white/60"}`}>
+                className={`w-full text-left px-3 py-2.5 rounded-lg border transition-colors ${isActive ? "bg-(--linen) border-(--dust-grey) shadow-xs" : "border-transparent hover:bg-(--linen)/60"}`}>
                 <div className="flex items-start gap-2">
-                  <Building2 size={13} className={`mt-0.5 shrink-0 ${isActive ? "text-stone-500" : "text-stone-300"}`} />
+                  <Building2 size={13} className={`mt-0.5 shrink-0 ${isActive ? "text-[#8a7e74]" : "text-[#c4bab2]"}`} />
                   <div className="min-w-0 flex-1">
-                    <p className="text-xs font-semibold text-stone-800 truncate">{co.name}</p>
+                    <p className="text-xs font-semibold text-[#4a3f35] truncate">{co.name}</p>
                     {coLabel ? (
-                      <p className="text-[10px] text-stone-400 mt-0.5">{coLabel}</p>
+                      <p className="text-[10px] text-[#a89f97] mt-0.5">{coLabel}</p>
                     ) : (
                       <button onClick={(e) => { e.stopPropagation(); setChoosingTypeFor(co.id); }}
                         className="text-[10px] text-blue-600 hover:text-blue-800 font-medium mt-0.5">
@@ -425,8 +425,8 @@ export default function Home() {
                     )}
                     {co.loading && (
                       <div className="flex items-center gap-1 mt-1">
-                        <RefreshCw size={9} className="animate-spin text-stone-400" />
-                        <span className="text-[10px] text-stone-400">Auto-filling…</span>
+                        <RefreshCw size={9} className="animate-spin text-[#a89f97]" />
+                        <span className="text-[10px] text-[#a89f97]">Auto-filling…</span>
                       </div>
                     )}
                   </div>
@@ -437,44 +437,44 @@ export default function Home() {
 
           {/* Add another company */}
           <button onClick={connectQBO}
-            className="w-full flex items-center gap-2 px-3 py-2 rounded-lg border border-dashed border-stone-200 hover:border-stone-400 hover:bg-white/60 transition-colors text-xs text-stone-400 hover:text-stone-600">
+            className="w-full flex items-center gap-2 px-3 py-2 rounded-lg border border-dashed border-(--dust-grey) hover:border-(--almond-silk) hover:bg-(--linen)/60 transition-colors text-xs text-[#a89f97] hover:text-[#6b5e52]">
             <Plus size={12} /> Add Company
           </button>
         </div>
 
         {/* Footer */}
-        <div className="px-3 py-3 border-t border-stone-100 space-y-1">
+        <div className="px-3 py-3 border-t border-(--powder-petal) space-y-1">
           {active && (
             <button onClick={() => disconnectCompany(active.id)}
-              className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-stone-400 hover:text-red-500 hover:bg-red-50 transition-colors text-xs">
+              className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-[#a89f97] hover:text-red-500 hover:bg-red-50 transition-colors text-xs">
               <LogOut size={12} /> Disconnect {active.name.split(" ")[0]}
             </button>
           )}
-          <p className="text-stone-300 text-[10px] px-3">v0.2.0</p>
+          <p className="text-[#c4bab2] text-[10px] px-3">v0.2.0</p>
         </div>
       </aside>
 
       {/* ── Main ─────────────────────────────────────────────────────── */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Header */}
-        <header className="shrink-0 border-b border-stone-100 bg-white px-8 py-4 flex items-center justify-between">
+        <header className="shrink-0 border-b border-(--powder-petal) bg-(--linen) px-8 py-4 flex items-center justify-between">
           {active ? (
             <div className="space-y-0.5">
               <div className="flex items-center gap-2.5 flex-wrap">
-                <h1 className="font-semibold text-stone-900">{active.name}</h1>
-                {active.ein && <span className="text-[11px] font-mono text-stone-400 bg-stone-50 border border-stone-200 px-2 py-0.5 rounded">EIN {active.ein}</span>}
-                {entityLabel && <span className="text-xs border border-stone-200 text-stone-500 px-2 py-0.5 rounded-full bg-stone-50">{entityLabel}</span>}
+                <h1 className="font-semibold text-[#3d3229]">{active.name}</h1>
+                {active.ein && <span className="text-[11px] font-mono text-[#a89f97] bg-(--parchment) border border-(--dust-grey) px-2 py-0.5 rounded">EIN {active.ein}</span>}
+                {entityLabel && <span className="text-xs border border-(--dust-grey) text-[#8a7e74] px-2 py-0.5 rounded-full bg-(--parchment)">{entityLabel}</span>}
               </div>
               <div className="flex items-center gap-1.5">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                <span className="text-xs text-stone-400">QuickBooks Online connected</span>
-                {active.loading && <><RefreshCw size={10} className="animate-spin text-stone-400 ml-2" /><span className="text-xs text-stone-400">Auto-filling forms…</span></>}
+                <span className="text-xs text-[#a89f97]">QuickBooks Online connected</span>
+                {active.loading && <><RefreshCw size={10} className="animate-spin text-[#a89f97] ml-2" /><span className="text-xs text-[#a89f97]">Auto-filling forms…</span></>}
               </div>
             </div>
           ) : (
-            <p className="text-stone-400 text-sm">Select a company from the sidebar</p>
+            <p className="text-[#a89f97] text-sm">Select a company from the sidebar</p>
           )}
-          <select className="text-sm border border-stone-200 rounded-lg px-3 py-1.5 text-stone-600 bg-white" value={taxYear}
+          <select className="text-sm border border-(--dust-grey) rounded-lg px-3 py-1.5 text-[#6b5e52] bg-(--linen)" value={taxYear}
             onChange={(e) => setTaxYear(Number(e.target.value))}>
             {[2025, 2024, 2023].map((y) => <option key={y}>{y}</option>)}
           </select>
@@ -483,7 +483,7 @@ export default function Home() {
         {/* Content */}
         <main className="flex-1 overflow-y-auto px-8 py-7">
           {!active?.entityType ? (
-            <div className="flex flex-col items-center justify-center h-full text-stone-400 gap-4">
+            <div className="flex flex-col items-center justify-center h-full text-[#a89f97] gap-4">
               <Building2 size={40} className="text-stone-200" />
               <p className="text-sm">{active ? "Choose an entity type to auto-fill forms" : "Select a company from the sidebar"}</p>
             </div>
@@ -505,7 +505,7 @@ export default function Home() {
               {/* Form cards */}
               {groupedForms.map(({ cat, items }) => (
                 <div key={cat}>
-                  <p className="text-[10px] font-semibold text-stone-400 uppercase tracking-widest mb-2 px-1">{CATEGORY_LABELS[cat]}</p>
+                  <p className="text-[10px] font-semibold text-[#a89f97] uppercase tracking-widest mb-2 px-1">{CATEGORY_LABELS[cat]}</p>
                   <div className="space-y-5">
                     {items.map((f) => {
                       const isExpanded = expandedForms.has(f.form);
@@ -513,9 +513,9 @@ export default function Home() {
 
                       if (f.form === "990-N") {
                         return (
-                          <div key={f.form} className="bg-stone-50 border border-stone-200 rounded-xl px-5 py-3 flex items-center gap-3">
-                            <span className="text-xs font-semibold text-stone-500 bg-stone-100 px-2 py-0.5 rounded">{f.form}</span>
-                            <div className="flex-1"><p className="text-sm text-stone-700">{f.title}</p><p className="text-[10px] text-stone-400">Electronic filing only</p></div>
+                          <div key={f.form} className="bg-(--parchment) border border-(--dust-grey) rounded-xl px-5 py-3 flex items-center gap-3">
+                            <span className="text-xs font-semibold text-[#8a7e74] bg-(--powder-petal) px-2 py-0.5 rounded">{f.form}</span>
+                            <div className="flex-1"><p className="text-sm text-[#5a4a3f]">{f.title}</p><p className="text-[10px] text-[#a89f97]">Electronic filing only</p></div>
                           </div>
                         );
                       }
@@ -523,15 +523,15 @@ export default function Home() {
                       return (
                         <div key={f.form}>
                           <button onClick={() => toggleForm(f.form)}
-                            className="flex items-center gap-2 mb-1 text-xs text-stone-500 hover:text-stone-800 transition-colors">
+                            className="flex items-center gap-2 mb-1 text-xs text-[#8a7e74] hover:text-[#4a3f35] transition-colors">
                             <ChevronRight size={12} className={`transition-transform ${isExpanded ? "rotate-90" : ""}`} />
                             <span className="font-semibold">{f.form}</span>
-                            <span className="text-stone-400">{f.title}</span>
+                            <span className="text-[#a89f97]">{f.title}</span>
                             {filled && <span className="text-[10px] text-emerald-500 ml-1">filled</span>}
-                            <span className="text-[10px] text-stone-300 ml-auto">{f.due}</span>
+                            <span className="text-[10px] text-[#c4bab2] ml-auto">{f.due}</span>
                           </button>
                           {isExpanded && (
-                            <div className="border border-stone-200 rounded-xl overflow-hidden" style={{ height: "80vh" }}>
+                            <div className="border border-(--dust-grey) rounded-xl overflow-hidden" style={{ height: "80vh" }}>
                               <PDFFormViewer
                                 pdfBytes={filled?.pdfBytes ?? null}
                                 pdfFileName={PDF_MAPPINGS[f.form]?.pdfFileName}
@@ -554,13 +554,13 @@ export default function Home() {
               {/* Diagnostics */}
               {active.result && active.result.diagnostics.length > 0 && (
                 <BlurFade delay={0.05}>
-                  <div className="bg-white border border-stone-200 rounded-2xl p-5">
+                  <div className="bg-(--linen) border border-(--dust-grey) rounded-2xl p-5">
                     <div className="flex items-center justify-between mb-4">
-                      <p className="text-[10px] font-semibold text-stone-400 uppercase tracking-widest">Diagnostics</p>
+                      <p className="text-[10px] font-semibold text-[#a89f97] uppercase tracking-widest">Diagnostics</p>
                       <div className="flex items-center gap-3 text-xs font-medium">
                         {blocking.length > 0 && <span className="text-red-400">{blocking.length} blocking</span>}
                         {warnings.length > 0 && <span className="text-amber-500">{warnings.length} warnings</span>}
-                        {infos.length > 0 && <span className="text-stone-400">{infos.length} info</span>}
+                        {infos.length > 0 && <span className="text-[#a89f97]">{infos.length} info</span>}
                       </div>
                     </div>
                     <AnimatedList delay={350}>
@@ -569,7 +569,7 @@ export default function Home() {
                           ? { bg: "bg-red-50 border-red-100", icon: <XCircle size={13} className="text-red-400 shrink-0 mt-0.5" />, t: "text-red-700", m: "text-red-500" }
                           : d.severity === "warning"
                           ? { bg: "bg-amber-50 border-amber-100", icon: <AlertTriangle size={13} className="text-amber-400 shrink-0 mt-0.5" />, t: "text-amber-700", m: "text-amber-500" }
-                          : { bg: "bg-stone-50 border-stone-100", icon: <Info size={13} className="text-stone-400 shrink-0 mt-0.5" />, t: "text-stone-600", m: "text-stone-400" };
+                          : { bg: "bg-(--parchment) border-(--powder-petal)", icon: <Info size={13} className="text-[#a89f97] shrink-0 mt-0.5" />, t: "text-[#6b5e52]", m: "text-[#a89f97]" };
                         return (
                           <div key={i} className={`flex gap-3 p-3 rounded-lg border ${cfg.bg}`}>
                             {cfg.icon}

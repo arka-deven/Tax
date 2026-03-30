@@ -1,5 +1,17 @@
 @import "tailwindcss";
 
+:root {
+  --parchment: #edede9;
+  --dust-grey: #d6ccc2;
+  --linen: #f5ebe0;
+  --powder-petal: #e3d5ca;
+  --almond-silk: #d5bdaf;
+}
+
+body {
+  background-color: var(--linen);
+  color: #3d3229;
+}
 
 @keyframes shimmer-slide {
   to {

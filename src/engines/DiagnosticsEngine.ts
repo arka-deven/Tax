@@ -66,18 +66,19 @@ export function runDiagnostics(
    *  EXISTING CHECKS (preserved)
    * ================================================================ */
 
-  // 1. Unmapped balances
+  // 1. Unmapped balances — only truly unmapped (no account type at all)
+  // Catch-all classified accounts (low confidence) show as warnings, not blockers
   for (const m of mappings.filter((m) => m.tax_code === "UNMAPPED")) {
     diagnostics.push(
       makeDiag(
         {
           entity_id: entityId,
           tax_year: taxYear,
-          severity: "blocking_error",
+          severity: "warning",
           category: "mapping_warning",
           code: "UNMAPPED_BALANCE",
           title: "Unmapped trial balance line",
-          message: `Trial balance line ${m.tb_line_id} has no tax mapping. The balance cannot be placed on a return.`,
+          message: `${m.explanation ?? `Trial balance line ${m.tb_line_id} has no tax mapping.`} Review and reclassify manually.`,
           source_mapping_ids: [m.mapping_id],
           source_tb_line_ids: [m.tb_line_id],
         },

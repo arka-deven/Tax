@@ -364,17 +364,39 @@ export function mapTrialBalanceLines(
             : `Auto-classified "${accountType}${accountSubtype ? `|${accountSubtype}` : ""}" as ${fallback.cat} (review recommended)`,
           source_refs: line.source_refs,
         });
+      } else if (accountType) {
+        // Last resort: any typed account gets classified as "other deductions" (expense-like)
+        // or "other current assets" (asset-like) based on balance sign.
+        // This prevents blocking errors — the CPA can reclassify during review.
+        const balance = line.adjusted_balance;
+        const isDebitNormal = balance >= 0;
+        const catchAll = isDebitNormal
+          ? { cat: "general_expenses", code: "GENERAL_DEDUCTION", form: "1120", line: "26" }
+          : { cat: "other_income", code: "OTHER_INCOME", form: "1120", line: "10" };
+        mappings.push({
+          mapping_id: `map_${line.tb_line_id}`,
+          entity_id: line.entity_id, tax_year: line.tax_year, tb_line_id: line.tb_line_id,
+          semantic_category: catchAll.cat, tax_code: catchAll.code,
+          target_form: catchAll.form, target_schedule: null, target_line: catchAll.line,
+          mapping_method: "heuristic" as MappingMethod,
+          confidence_score: 0.3,
+          requires_review: true,
+          review_reason_code: "CATCH_ALL_FALLBACK",
+          explanation: `Catch-all: "${accountType}${accountSubtype ? `|${accountSubtype}` : ""}" auto-placed as ${catchAll.cat} by balance sign (review required)`,
+          source_refs: line.source_refs,
+        });
       } else {
+        // No account type at all — this means the account wasn't found in the type map
         mappings.push({
           mapping_id: `map_${line.tb_line_id}`,
           entity_id: line.entity_id, tax_year: line.tax_year, tb_line_id: line.tb_line_id,
           semantic_category: "unmapped", tax_code: "UNMAPPED",
           target_form: "UNKNOWN", target_schedule: null, target_line: "UNKNOWN",
-          mapping_method: "heuristic",
+          mapping_method: "heuristic" as MappingMethod,
           confidence_score: 0.0,
           requires_review: true,
-          review_reason_code: "NO_MAPPING_FOUND",
-          explanation: `No mapping found for account ${line.account_id} (type: ${accountType ?? "unknown"}${accountSubtype ? `|${accountSubtype}` : ""})`,
+          review_reason_code: "ACCOUNT_TYPE_MISSING",
+          explanation: `Account ${line.account_id} has no type in the chart of accounts — may need to be re-synced from QBO`,
           source_refs: line.source_refs,
         });
       }

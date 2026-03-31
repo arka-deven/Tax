@@ -203,26 +203,46 @@ export default function Home() {
     setCompanies((prev) => prev.map((c) => (c.id === id ? { ...c, ...patch } : c)));
   }
 
-  // ── Auto-check existing QBO connection on mount ───────────────────────────
+  // ── Auto-check existing QBO connections on mount ──────────────────────────
 
   useEffect(() => {
     async function checkExisting() {
       try {
-        const res = await fetch("/api/auth/qbo/status?entityId=entity_1");
-        const json = await res.json();
-        if (json.connected) {
-          const qboType = json.entityType as EntityType | "" | undefined;
+        // Fetch all connected entities from Supabase
+        const connRes = await fetch("/api/auth/qbo/connections");
+        const { entities } = await connRes.json() as { entities: { entityId: string; realmId: string }[] };
+        if (!entities?.length) return;
+
+        // Fetch status for each (in parallel) to get company name, EIN, entity type
+        const statuses = await Promise.all(
+          entities.map(async (e) => {
+            const res = await fetch(`/api/auth/qbo/status?entityId=${e.entityId}`);
+            return res.json();
+          })
+        );
+
+        const connected = statuses.filter((s) => s.connected);
+        if (!connected.length) return;
+
+        const cos: Company[] = connected.map((s) => {
+          const qboType = s.entityType as EntityType | "" | undefined;
           const resolved = qboType && ENTITY_OPTIONS.some((o: { value: string }) => o.value === qboType) ? qboType as EntityType : null;
-          const co: Company = {
-            id: "entity_1", name: json.companyName || "Company", ein: json.ein || "",
+          return {
+            id: s.entityId, name: s.companyName || "Company", ein: s.ein || "",
             entityType: resolved, result: null, filledPdfs: {}, fieldOverrides: {}, loading: false,
           };
-          setCompanies([co]);
-          setActiveId("entity_1");
-          setChoosingTypeFor("entity_1");
-          if (resolved) {
-            setDetectedType({ companyId: "entity_1", type: resolved });
-          }
+        });
+
+        setCompanies(cos);
+        setActiveId(cos[0].id);
+
+        // If only one company and no entity type yet, prompt for type
+        const first = cos[0];
+        if (!first.entityType) {
+          setChoosingTypeFor(first.id);
+        } else {
+          setDetectedType({ companyId: first.id, type: first.entityType });
+          setChoosingTypeFor(first.id);
         }
       } catch { /* not connected */ }
     }

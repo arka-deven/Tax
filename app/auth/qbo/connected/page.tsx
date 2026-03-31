@@ -14,13 +14,15 @@ function QBOConnectedInner() {
     const ein = params.get("ein") ?? "";
     const error = params.get("error");
 
-    // Notify parent window
+    // Notify parent window — use "*" because the popup may land on a
+    // different Vercel deployment URL than the opener (e.g. production
+    // alias vs preview deployment).
     if (window.opener) {
       window.opener.postMessage(
         error
           ? { type: "QBO_AUTH_ERROR", error }
           : { type: "QBO_AUTH_SUCCESS", entityId, companyName, ein },
-        window.location.origin
+        "*"
       );
     }
 

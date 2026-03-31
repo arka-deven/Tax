@@ -221,7 +221,10 @@ export default function Home() {
 
   useEffect(() => {
     function handleMessage(event: MessageEvent) {
-      if (event.origin !== window.location.origin) return;
+      // Accept messages from any *.vercel.app origin (preview vs production alias)
+      const ok = event.origin === window.location.origin
+        || new URL(event.origin).hostname.endsWith(".vercel.app");
+      if (!ok) return;
       if (event.data?.type === "QBO_AUTH_SUCCESS") {
         const eid = event.data.entityId ?? `entity_${Date.now()}`;
         const co: Company = {

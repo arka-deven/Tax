@@ -14,8 +14,8 @@ export async function POST(request: NextRequest) {
     // Token may already be invalid — still clean up local state
   }
 
-  tokenStore.delete(entityId);
-  realmStore.delete(entityId);
+  await tokenStore.delete(entityId);
+  await realmStore.delete(entityId);
 
   return NextResponse.json({ disconnected: true });
 }

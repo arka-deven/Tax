@@ -14,8 +14,8 @@ export async function GET(request: NextRequest) {
 
   try {
     await client.createToken(request.url);
-    tokenStore.set(entityId, client.getToken());
-    if (realmId) realmStore.set(entityId, realmId);
+    await tokenStore.set(entityId, client.getToken());
+    if (realmId) await realmStore.set(entityId, realmId);
   } catch (err) {
     console.error("QBO OAuth callback error:", err);
     return NextResponse.redirect(new URL("/auth/qbo/connected?error=oauth_failed", request.url));

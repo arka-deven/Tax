@@ -7,8 +7,8 @@ export async function GET(request: NextRequest) {
   if (!entityId)
     return NextResponse.json({ error: "entityId required" }, { status: 400 });
 
-  const connected = tokenStore.has(entityId);
-  const realmId = realmStore.get(entityId) ?? null;
+  const connected = await tokenStore.has(entityId);
+  const realmId = (await realmStore.get(entityId)) ?? null;
 
   if (!connected || !realmId) {
     return NextResponse.json({ entityId, connected: false, realmId: null });
@@ -35,7 +35,7 @@ export async function GET(request: NextRequest) {
   } catch (err) {
     // Check if this is a hard auth failure (refresh token expired) vs transient error
     const msg = err instanceof Error ? err.message : "";
-    if (msg.includes("re-auth required") || !tokenStore.has(entityId)) {
+    if (msg.includes("re-auth required") || !(await tokenStore.has(entityId))) {
       // Token was deleted by getClientForEntity — truly disconnected
       return NextResponse.json({ entityId, connected: false, realmId: null });
     }

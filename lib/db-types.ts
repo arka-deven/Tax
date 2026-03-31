@@ -212,6 +212,16 @@ export interface Database {
         Insert: Omit<Database["public"]["Tables"]["form_requirements"]["Row"], never>;
         Update: Partial<Database["public"]["Tables"]["form_requirements"]["Insert"]>;
       };
+      qbo_tokens: {
+        Row: {
+          entity_id: string;
+          token_json: Json;
+          realm_id: string | null;
+          updated_at: string;
+        };
+        Insert: Omit<Database["public"]["Tables"]["qbo_tokens"]["Row"], never>;
+        Update: Partial<Database["public"]["Tables"]["qbo_tokens"]["Insert"]>;
+      };
       filing_packages: {
         Row: {
           filing_package_id: string;

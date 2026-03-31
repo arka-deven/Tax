@@ -18,7 +18,7 @@ export function makeOAuthClient() {
  * Throws if the entity has no stored token.
  */
 export async function getClientForEntity(entityId: string) {
-  const token = tokenStore.get(entityId);
+  const token = await tokenStore.get(entityId);
   if (!token) throw new Error(`No QBO token for entity ${entityId}`);
 
   const client = makeOAuthClient();
@@ -29,12 +29,12 @@ export async function getClientForEntity(entityId: string) {
   // Token expired — refresh it
   try {
     const refreshed = await client.refresh();
-    tokenStore.set(entityId, refreshed.getToken());
+    await tokenStore.set(entityId, refreshed.getToken());
     return client;
   } catch (err) {
     // Refresh token also expired — force re-auth
-    tokenStore.delete(entityId);
-    realmStore.delete(entityId);
+    await tokenStore.delete(entityId);
+    await realmStore.delete(entityId);
     throw new Error(`QBO token expired for entity ${entityId} — re-auth required`);
   }
 }

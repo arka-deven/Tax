@@ -24,7 +24,7 @@ function extractJson(response: any): any {
 
 async function qboQuery<T>(entityId: string, query: string): Promise<T> {
   const client = await getClientForEntity(entityId);
-  const realmId = realmStore.get(entityId);
+  const realmId = await realmStore.get(entityId);
   if (!realmId) throw new Error(`No realmId for entity ${entityId}`);
 
   const url = `${baseUrl()}/v3/company/${realmId}/query?query=${encodeURIComponent(query)}&minorversion=65`;
@@ -38,7 +38,7 @@ async function qboQuery<T>(entityId: string, query: string): Promise<T> {
 
 async function qboGet<T>(entityId: string, path: string): Promise<T> {
   const client = await getClientForEntity(entityId);
-  const realmId = realmStore.get(entityId);
+  const realmId = await realmStore.get(entityId);
   if (!realmId) throw new Error(`No realmId for entity ${entityId}`);
 
   const url = `${baseUrl()}/v3/company/${realmId}/${path}`;
@@ -325,7 +325,7 @@ export interface QBOCompanyData {
 }
 
 export async function fetchCompanyInfo(entityId: string): Promise<QBOCompanyInfo | null> {
-  const realmId = realmStore.get(entityId);
+  const realmId = await realmStore.get(entityId);
   if (!realmId) return null;
   try {
     const data = await qboGet<{ CompanyInfo: QBOCompanyInfo }>(

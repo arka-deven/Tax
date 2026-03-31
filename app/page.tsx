@@ -182,8 +182,8 @@ export default function Home() {
   const [choosingTypeFor, setChoosingTypeFor] = useState<string | null>(null);
   /** Pending entity type — set when user picks type but EIN is missing, needs input first */
   const [pendingType, setPendingType] = useState<{ companyId: string; type: EntityType } | null>(null);
-  /** Auto-fill queued from OAuth/status — fires after companies state settles */
-  const [pendingAutoFill, setPendingAutoFill] = useState<{ companyId: string; type: EntityType } | null>(null);
+  /** Entity type detected from QBO TaxForm — shown as a confirmation prompt before proceeding */
+  const [detectedType, setDetectedType] = useState<{ companyId: string; type: EntityType } | null>(null);
   const [einInput, setEinInput] = useState("");
 
   const active = companies.find((c) => c.id === activeId) ?? null;
@@ -207,19 +207,16 @@ export default function Home() {
         const json = await res.json();
         if (json.connected) {
           const qboType = json.entityType as EntityType | "" | undefined;
-          const detectedType = qboType && ENTITY_OPTIONS.some((o: { value: string }) => o.value === qboType) ? qboType as EntityType : null;
+          const resolved = qboType && ENTITY_OPTIONS.some((o: { value: string }) => o.value === qboType) ? qboType as EntityType : null;
           const co: Company = {
             id: "entity_1", name: json.companyName || "Company", ein: json.ein || "",
-            entityType: detectedType, result: null, filledPdfs: {}, fieldOverrides: {}, loading: false,
+            entityType: resolved, result: null, filledPdfs: {}, fieldOverrides: {}, loading: false,
           };
           setCompanies([co]);
           setActiveId("entity_1");
-          if (detectedType && co.ein) {
-            setPendingAutoFill({ companyId: "entity_1", type: detectedType });
-          } else if (detectedType) {
-            setPendingType({ companyId: "entity_1", type: detectedType });
-          } else {
-            setChoosingTypeFor("entity_1");
+          setChoosingTypeFor("entity_1");
+          if (resolved) {
+            setDetectedType({ companyId: "entity_1", type: resolved });
           }
         }
       } catch { /* not connected */ }
@@ -238,25 +235,19 @@ export default function Home() {
       if (event.data?.type === "QBO_AUTH_SUCCESS") {
         const eid = event.data.entityId ?? `entity_${Date.now()}`;
         const qboType = event.data.entityType as EntityType | "" | undefined;
-        const detectedType = qboType && ENTITY_OPTIONS.some((o) => o.value === qboType) ? qboType as EntityType : null;
+        const resolved = qboType && ENTITY_OPTIONS.some((o) => o.value === qboType) ? qboType as EntityType : null;
         const co: Company = {
           id: eid, name: event.data.companyName || "Company", ein: event.data.ein || "",
-          entityType: detectedType, result: null, filledPdfs: {}, fieldOverrides: {}, loading: false,
+          entityType: resolved, result: null, filledPdfs: {}, fieldOverrides: {}, loading: false,
         };
         setCompanies((prev) => {
           const exists = prev.find((c) => c.id === eid);
           return exists ? prev.map((c) => (c.id === eid ? co : c)) : [...prev, co];
         });
         setActiveId(eid);
-        if (detectedType && co.ein) {
-          // Entity type detected from QBO — skip manual selection, run pipeline directly
-          setPendingAutoFill({ companyId: eid, type: detectedType });
-        } else if (detectedType) {
-          // Have type but missing EIN — ask for details
-          setPendingType({ companyId: eid, type: detectedType });
-        } else {
-          // QBO didn't provide TaxForm — fall back to manual selection
-          setChoosingTypeFor(eid);
+        setChoosingTypeFor(eid);
+        if (resolved) {
+          setDetectedType({ companyId: eid, type: resolved });
         }
       }
     }
@@ -337,16 +328,6 @@ export default function Home() {
     updateCompany(companyId, { result: pipelineResult, filledPdfs: newPdfs, loading: false });
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [companies, taxYear]);
-
-  // ── Auto-fill after QBO entity type detection (runs once companies state is settled) ──
-
-  useEffect(() => {
-    if (!pendingAutoFill) return;
-    const co = companies.find((c) => c.id === pendingAutoFill.companyId);
-    if (!co) return; // companies not settled yet — will re-run when they do
-    setPendingAutoFill(null);
-    autoFillCompany(pendingAutoFill.companyId, pendingAutoFill.type);
-  }, [pendingAutoFill, companies, autoFillCompany]);
 
   // ── Re-generate a single form (after manual edits) ────────────────────────
 
@@ -491,36 +472,70 @@ export default function Home() {
                 )}
 
                 {/* Step 2: Entity Type */}
-                {currentStep === 2 && (
-                  <div>
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="w-2 h-2 rounded-full bg-emerald-400" />
-                      <span className="text-xs text-emerald-600 font-medium">{onboardingCompany?.name ?? "Company"} connected</span>
-                    </div>
-                    <h2 className="text-2xl font-bold text-[#2d232e]">Select Entity Type</h2>
-                    <p className="text-[#78737a] text-sm mt-1 mb-5">This determines which IRS forms apply.</p>
-                    <div className="space-y-2">
-                      {ENTITY_OPTIONS.map((opt) => (
-                        <button key={opt.value} onClick={() => {
-                          const company = companies.find((c) => c.id === choosingTypeFor);
-                          if (!company?.ein) {
-                            setPendingType({ companyId: choosingTypeFor!, type: opt.value });
-                            setChoosingTypeFor(null);
-                          } else {
-                            autoFillCompany(choosingTypeFor!, opt.value);
-                          }
-                        }}
-                          className="w-full flex items-center justify-between px-4 py-3 rounded-xl border border-(--bone)/60 hover:border-(--taupe-grey) hover:bg-(--bone)/60 transition-all text-left group">
-                          <div>
-                            <p className="text-sm font-semibold text-[#2d232e]">{opt.label}</p>
-                            <p className="text-xs text-[#9a959c]">{opt.sub}</p>
+                {currentStep === 2 && (() => {
+                  const det = detectedType?.companyId === choosingTypeFor ? detectedType : null;
+                  const detOpt = det ? ENTITY_OPTIONS.find((o) => o.value === det.type) : null;
+
+                  // Helper to proceed with a chosen type
+                  function proceedWith(type: EntityType) {
+                    const company = companies.find((c) => c.id === choosingTypeFor);
+                    setDetectedType(null);
+                    if (!company?.ein) {
+                      setPendingType({ companyId: choosingTypeFor!, type });
+                      setChoosingTypeFor(null);
+                    } else {
+                      autoFillCompany(choosingTypeFor!, type);
+                    }
+                  }
+
+                  return (
+                    <div>
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="w-2 h-2 rounded-full bg-emerald-400" />
+                        <span className="text-xs text-emerald-600 font-medium">{onboardingCompany?.name ?? "Company"} connected</span>
+                      </div>
+
+                      {/* QBO detected a type — ask for confirmation */}
+                      {det && detOpt ? (
+                        <>
+                          <h2 className="text-2xl font-bold text-[#2d232e]">Confirm Entity Type</h2>
+                          <p className="text-[#78737a] text-sm mt-1 mb-5">Detected from your QuickBooks company settings.</p>
+
+                          <div className="px-4 py-4 rounded-xl border-2 border-emerald-200 bg-emerald-50/50 mb-4">
+                            <p className="text-sm font-semibold text-[#2d232e]">{detOpt.label}</p>
+                            <p className="text-xs text-[#78737a] mt-0.5">{detOpt.sub}</p>
                           </div>
-                          <ArrowRight size={14} className="text-[#b5b2b4] group-hover:text-[#78737a] group-hover:translate-x-0.5 transition-all" />
-                        </button>
-                      ))}
+
+                          <button onClick={() => proceedWith(det.type)}
+                            className="w-full flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl bg-[#2d232e] text-white text-sm font-semibold hover:bg-[#474448] transition-colors">
+                            <CheckCircle2 size={15} /> Yes, that&apos;s correct
+                          </button>
+                          <button onClick={() => setDetectedType(null)}
+                            className="text-xs text-[#9a959c] hover:text-[#534b52] transition-colors text-center w-full mt-3">
+                            Not correct? Choose manually
+                          </button>
+                        </>
+                      ) : (
+                        <>
+                          <h2 className="text-2xl font-bold text-[#2d232e]">Select Entity Type</h2>
+                          <p className="text-[#78737a] text-sm mt-1 mb-5">This determines which IRS forms apply.</p>
+                          <div className="space-y-2">
+                            {ENTITY_OPTIONS.map((opt) => (
+                              <button key={opt.value} onClick={() => proceedWith(opt.value)}
+                                className="w-full flex items-center justify-between px-4 py-3 rounded-xl border border-(--bone)/60 hover:border-(--taupe-grey) hover:bg-(--bone)/60 transition-all text-left group">
+                                <div>
+                                  <p className="text-sm font-semibold text-[#2d232e]">{opt.label}</p>
+                                  <p className="text-xs text-[#9a959c]">{opt.sub}</p>
+                                </div>
+                                <ArrowRight size={14} className="text-[#b5b2b4] group-hover:text-[#78737a] group-hover:translate-x-0.5 transition-all" />
+                              </button>
+                            ))}
+                          </div>
+                        </>
+                      )}
                     </div>
-                  </div>
-                )}
+                  );
+                })()}
 
                 {/* Step 3: Company Details */}
                 {currentStep === 3 && (() => {

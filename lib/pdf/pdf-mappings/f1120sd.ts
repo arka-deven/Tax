@@ -1,4 +1,5 @@
 import type { FormPdfMapping, FillContext } from "../types";
+import { sbCheck, officer, currency } from "../types";
 
 const P1 = "topmostSubform[0].Page1[0].";
 const P2 = "topmostSubform[0].Page2[0].";
@@ -33,21 +34,21 @@ export const F1120SD_MAPPING: FormPdfMapping = {
     // -------------------------------------------------------------------------
     {
       pdfFieldName: `${P1}f1_3[0]`,
-      factName: undefined,
+      manual: true, // TODO: wire to factName
       format: "currency",
       irsLine: "1a",
       description: "Short-term totals from Form 8949, box A",
     },
     {
       pdfFieldName: `${P1}f1_4[0]`,
-      factName: undefined,
+      manual: true, // TODO: wire to factName
       format: "currency",
       irsLine: "1b",
       description: "Short-term totals from Form 8949, box B",
     },
     {
       pdfFieldName: `${P1}f1_5[0]`,
-      factName: undefined,
+      manual: true, // TODO: wire to factName
       format: "currency",
       irsLine: "1c",
       description: "Short-term totals from Form 8949, box C",
@@ -66,28 +67,28 @@ export const F1120SD_MAPPING: FormPdfMapping = {
     // -------------------------------------------------------------------------
     {
       pdfFieldName: `${P2}f2_1[0]`,
-      factName: undefined,
+      manual: true, // TODO: wire to factName
       format: "currency",
       irsLine: "8a",
       description: "Long-term totals from Form 8949, box D",
     },
     {
       pdfFieldName: `${P2}f2_2[0]`,
-      factName: undefined,
+      manual: true, // TODO: wire to factName
       format: "currency",
       irsLine: "8b",
       description: "Long-term totals from Form 8949, box E",
     },
     {
       pdfFieldName: `${P2}f2_3[0]`,
-      factName: undefined,
+      manual: true, // TODO: wire to factName
       format: "currency",
       irsLine: "8c",
       description: "Long-term totals from Form 8949, box F",
     },
     {
       pdfFieldName: `${P2}f2_4[0]`,
-      factName: undefined,
+      manual: true, // TODO: wire to factName
       format: "currency",
       irsLine: "11",
       description: "Long-term capital gain from installment sales (Form 6252)",
@@ -110,5 +111,10 @@ export const F1120SD_MAPPING: FormPdfMapping = {
       irsLine: "16",
       description: "Combined net capital gain or (loss) — add lines 7 and 15",
     },
+
+    // ── Auto-generated mappings (remaining fields) ──────────────────
+    { pdfFieldName: "Return[0].Page1[0].c1_1[1]", compute: (ctx: FillContext) => sbCheck(ctx, "p1_q1"), format: "boolean", description: "Checkbox: p1_q1" },
+    { pdfFieldName: "Return[0].Page1[0].Table1[0].Line1a[0].ShadeBox[0]", staticValue: "", description: "Table  Line " },
+    { pdfFieldName: "Return[0].Page1[0].Table2[0].BodyRow1[0].R1[0]", staticValue: "", description: "Table  Line " },
   ],
 };

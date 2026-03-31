@@ -1,0 +1,68 @@
+[
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].PartIITable[0].TableBodyRow4[0].f1_52[0]",
+    "page": 1,
+    "source": "table_row",
+    "reason": "table_structure"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].PartIITable[0].TableBodyRow4[0].f1_53[0]",
+    "page": 1,
+    "source": "table_row",
+    "reason": "table_structure"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].PartIITable[0].TableBodyRow5[0].f1_54[0]",
+    "page": 1,
+    "source": "table_row",
+    "reason": "table_structure"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].PartIITable[0].TableBodyRow5[0].f1_56[0]",
+    "page": 1,
+    "source": "table_row",
+    "reason": "table_structure"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].PartIITable[0].TableBodyRow5[0].f1_57[0]",
+    "page": 1,
+    "source": "table_row",
+    "reason": "table_structure"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].PartIITable[0].TableBodyRow6[0].f1_58[0]",
+    "page": 1,
+    "source": "table_row",
+    "reason": "table_structure"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].PartIITable[0].TableBodyRow6[0].f1_60[0]",
+    "page": 1,
+    "source": "table_row",
+    "reason": "table_structure"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].PartIITable[0].TableBodyRow6[0].f1_61[0]",
+    "page": 1,
+    "source": "table_row",
+    "reason": "table_structure"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].PartIITable[0].TableBodyRow7[0].f1_62[0]",
+    "page": 1,
+    "source": "table_row",
+    "reason": "table_structure"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].PartIITable[0].TableBodyRow7[0].f1_64[0]",
+    "page": 1,
+    "source": "table_row",
+    "reason": "table_structure"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].PartIITable[0].TableBodyRow7[0].f1_65[0]",
+    "page": 1,
+    "source": "table_row",
+    "reason": "table_structure"
+  }
+]

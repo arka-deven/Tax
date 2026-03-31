@@ -50,5 +50,13 @@ export const F8829_MAPPING: FormPdfMapping = {
 
     // ── Part IV – Carryover of Unallowed Expenses ─────────────────────────────
     // Placeholder; requires prior-year carryover data.
+
+    // ── Auto-generated mappings (remaining fields) ──────────────────
+    { pdfFieldName: "topmostSubform[0].Page1[0].f1_52[0]", staticValue: "", description: "Unmapped — page 1" },
+    { pdfFieldName: "topmostSubform[0].Page1[0].f1_53[0]", staticValue: "", description: "Unmapped — page 1" },
+    { pdfFieldName: "topmostSubform[0].Page1[0].f1_54[0]", staticValue: "", description: "Unmapped — page 1" },
+    { pdfFieldName: "topmostSubform[0].Page1[0].f1_56[0]", staticValue: "", description: "Unmapped — page 1" },
+    { pdfFieldName: "topmostSubform[0].Page1[0].f1_57[0]", staticValue: "", description: "Unmapped — page 1" },
+    { pdfFieldName: "topmostSubform[0].Page1[0].f1_58[0]", staticValue: "", description: "Unmapped — page 1" },
   ],
 };

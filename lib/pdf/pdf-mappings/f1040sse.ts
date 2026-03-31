@@ -36,14 +36,14 @@ export const F1040SSE_MAPPING: FormPdfMapping = {
     // -------------------------------------------------------------------------
     {
       pdfFieldName: `${P}f1_3[0]`,
-      factName: undefined,
+      manual: true, // TODO: wire to factName
       format: "currency",
       irsLine: "1a",
       description: "Net farm profit (or loss) from Schedule F",
     },
     {
       pdfFieldName: `${P}f1_4[0]`,
-      factName: undefined,
+      manual: true, // TODO: wire to factName
       format: "currency",
       irsLine: "1b",
       description: "Social security tips from Form 4137",
@@ -74,7 +74,7 @@ export const F1040SSE_MAPPING: FormPdfMapping = {
     },
     {
       pdfFieldName: `${P}f1_8[0]`,
-      factName: undefined,
+      manual: true, // TODO: wire to factName
       format: "currency",
       irsLine: "4b",
       description: "If line 4a is less than $400, enter amount from line 3",

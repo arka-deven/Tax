@@ -1,4 +1,5 @@
 import type { FormPdfMapping, FillContext } from "../types";
+import { sbCheck, officer, currency } from "../types";
 
 const P = "topmostSubform[0].Page1[0].";
 
@@ -51,7 +52,7 @@ export const F1125A_MAPPING: FormPdfMapping = {
     },
     {
       pdfFieldName: `${P}f1_6[0]`,
-      factName: undefined,
+      manual: true, // TODO: wire to factName
       format: "currency",
       irsLine: "4a",
       description: "Additional section 263A costs (attach statement)",
@@ -86,7 +87,7 @@ export const F1125A_MAPPING: FormPdfMapping = {
     },
     {
       pdfFieldName: `${P}f1_11[0]`,
-      factName: undefined,
+      manual: true, // TODO: wire to factName
       format: "string",
       irsLine: "8",
       description: "Line 8 — additional information or override (see instructions)",
@@ -121,15 +122,24 @@ export const F1125A_MAPPING: FormPdfMapping = {
     },
     {
       pdfFieldName: `${P}c1_4[0]`,
-      factName: undefined,
+      manual: true, // TODO: wire to factName
       irsLine: "10",
       description: "Checkbox — LIFO inventory method adopted this tax year",
     },
     {
       pdfFieldName: `${P}c1_5[0]`,
-      factName: undefined,
+      manual: true, // TODO: wire to factName
       irsLine: "11",
       description: "Checkbox — section 263A applies to the entity",
     },
+
+    // ── Auto-generated mappings (remaining fields) ──────────────────
+    { pdfFieldName: "topmostSubform[0].Page1[0].c1_6[0]", compute: (ctx: FillContext) => sbCheck(ctx, "p1_q6"), format: "boolean", description: "Checkbox: p1_q6" },
+    { pdfFieldName: "topmostSubform[0].Page1[0].c1_7[0]", compute: (ctx: FillContext) => sbCheck(ctx, "p1_q7"), format: "boolean", description: "Checkbox: p1_q7" },
+    { pdfFieldName: "topmostSubform[0].Page1[0].c1_8[0]", compute: (ctx: FillContext) => sbCheck(ctx, "p1_q8"), format: "boolean", description: "Checkbox: p1_q8" },
+    { pdfFieldName: "topmostSubform[0].Page1[0].c1_9[0]", compute: (ctx: FillContext) => sbCheck(ctx, "p1_q9"), format: "boolean", description: "Checkbox: p1_q9" },
+    { pdfFieldName: "topmostSubform[0].Page1[0].c1_9[1]", compute: (ctx: FillContext) => sbCheck(ctx, "p1_q9"), format: "boolean", description: "Checkbox: p1_q9" },
+    { pdfFieldName: "topmostSubform[0].Page1[0].c1_10[0]", compute: (ctx: FillContext) => sbCheck(ctx, "p1_q10"), format: "boolean", description: "Checkbox: p1_q10" },
+    { pdfFieldName: "topmostSubform[0].Page1[0].c1_10[1]", compute: (ctx: FillContext) => sbCheck(ctx, "p1_q10"), format: "boolean", description: "Checkbox: p1_q10" },
   ],
 };

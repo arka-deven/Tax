@@ -561,6 +561,53 @@ export function deriveTaxFacts(
   const distributions = sumByTaxCode("OWNER_DISTRIBUTIONS");
   facts.push(fact("owner_distributions_total", Math.abs(distributions.total), "number", distributions.mappingIds, "Cash distributions to owners/partners/shareholders (Schedule M-2 Line 5a)"));
 
+  // ── Additional balance sheet facts (Schedule L lines not previously produced) ──
+
+  // Sch L line 4 — U.S. government obligations
+  const usGovtRaw = sumCategoryRaw("us_govt_obligations");
+  facts.push(fact("us_govt_obligations_total", usGovtRaw.total, "number", usGovtRaw.mappingIds, "U.S. government obligations — Schedule L line 4", 0.85));
+
+  // Sch L line 5 — Tax-exempt securities
+  const taxExemptSecRaw = sumCategoryRaw("tax_exempt_securities");
+  facts.push(fact("tax_exempt_securities_total", taxExemptSecRaw.total, "number", taxExemptSecRaw.mappingIds, "Tax-exempt securities — Schedule L line 5", 0.85));
+
+  // Sch L line 8 — Mortgage and real estate loans
+  const mortgageLoansRaw = sumCategoryRaw("mortgage_loans");
+  facts.push(fact("mortgage_loans_total", mortgageLoansRaw.total, "number", mortgageLoansRaw.mappingIds, "Mortgage and real estate loans — Schedule L line 8", 0.85));
+
+  // Sch L line 10b — Accumulated depletion
+  const accumDepletionRaw = sumCategoryRaw("accum_depletion");
+  facts.push(fact("accum_depletion_total", accumDepletionRaw.total, "number", accumDepletionRaw.mappingIds, "Accumulated depletion — Schedule L line 10b", 0.85));
+
+  // Sch L line 17 — Short-term notes payable
+  const shortTermNotesRaw = sumCategoryRaw("short_term_notes");
+  facts.push(fact("short_term_notes_total", shortTermNotesRaw.total, "number", shortTermNotesRaw.mappingIds, "Short-term notes payable — Schedule L line 17", 0.85));
+
+  // Sch L line 20 — Other liabilities (distinct from other_current)
+  const otherLiabRaw = sumCategoryRaw("other_liabilities");
+  facts.push(fact("other_liabilities_total", otherLiabRaw.total, "number", otherLiabRaw.mappingIds, "Other liabilities — Schedule L line 20 (if separate from long-term)", 0.85));
+
+  // Sch L line 23 — Additional paid-in capital
+  const apicRaw = sumCategoryRaw("additional_paid_in_capital");
+  facts.push(fact("additional_paid_in_capital", apicRaw.total, "number", apicRaw.mappingIds, "Additional paid-in capital — Schedule L line 23", 0.85));
+
+  // Sch L line 25 — Adjustments to shareholders' equity
+  facts.push(fact("equity_adjustments_total", 0, "number", [], "Adjustments to shareholders' equity — Schedule L line 25 (placeholder)", 0.5));
+
+  // Sch L line 26 — Treasury stock
+  const treasuryRaw = sumByTaxCode("TREASURY_STOCK");
+  facts.push(fact("treasury_stock_total", treasuryRaw.total, "number", treasuryRaw.mappingIds, "Cost of treasury stock — Schedule L line 26", 0.85));
+
+  // Depletion expense (Form 1120 line 21)
+  const depletionRaw = sumByTaxCode("DEPLETION");
+  facts.push(fact("depletion_total", depletionRaw.total, "number", depletionRaw.mappingIds, "Depletion expense — Form 1120 line 21"));
+
+  // NOL deduction (Form 1120 line 29a) — from entity profile carryforward
+  facts.push(fact("nol_deduction_total", 0, "number", [], "Net operating loss deduction — from prior year carryforward (manual/carryforward table)", 0.5));
+
+  // Estimated tax penalty (Form 1120 line 33 / 1120-S line 24) — placeholder
+  facts.push(fact("estimated_tax_penalty", 0, "number", [], "Estimated tax penalty — requires Form 2220 computation (placeholder)", 0.5));
+
   // ── Recomputed total_assets (replaces approximate version above) ──────────
   const totalAssetsProper =
     cashRaw.total +

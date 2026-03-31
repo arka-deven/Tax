@@ -1,0 +1,238 @@
+{
+  "f1040sc": {
+    "total_pdf_fields": 105,
+    "already_mapped": 57,
+    "new_entries": 48,
+    "breakdown": {
+      "schedule_b_checkbox": 21,
+      "unmapped_blank": 9,
+      "table_structure": 18
+    }
+  },
+  "f1040sse": {
+    "total_pdf_fields": 27,
+    "already_mapped": 27,
+    "new_entries": 0,
+    "breakdown": {}
+  },
+  "f1065": {
+    "total_pdf_fields": 440,
+    "already_mapped": 242,
+    "new_entries": 198,
+    "breakdown": {
+      "schedule_b_checkbox": 85,
+      "unmapped_blank": 60,
+      "table_structure": 53
+    }
+  },
+  "f1065sb1": {
+    "total_pdf_fields": 65,
+    "already_mapped": 54,
+    "new_entries": 11,
+    "breakdown": {
+      "table_structure": 11
+    }
+  },
+  "f1065sk1": {
+    "total_pdf_fields": 111,
+    "already_mapped": 66,
+    "new_entries": 45,
+    "breakdown": {
+      "schedule_b_checkbox": 13,
+      "k1_entity_owner_info": 32
+    }
+  },
+  "f1118": {
+    "total_pdf_fields": 1263,
+    "already_mapped": 285,
+    "new_entries": 978,
+    "breakdown": {
+      "table_structure": 935,
+      "schedule_b_checkbox": 6,
+      "unmapped_blank": 37
+    }
+  },
+  "f1120": {
+    "total_pdf_fields": 481,
+    "already_mapped": 298,
+    "new_entries": 183,
+    "breakdown": {
+      "schedule_b_checkbox": 79,
+      "unmapped_blank": 33,
+      "banking_info": 1,
+      "signature_or_preparer": 1,
+      "table_structure": 69
+    }
+  },
+  "f1120s": {
+    "total_pdf_fields": 390,
+    "already_mapped": 243,
+    "new_entries": 147,
+    "breakdown": {
+      "schedule_b_checkbox": 49,
+      "unmapped_blank": 40,
+      "banking_info": 1,
+      "table_structure": 57
+    }
+  },
+  "f1120sd": {
+    "total_pdf_fields": 48,
+    "already_mapped": 45,
+    "new_entries": 3,
+    "breakdown": {
+      "schedule_b_checkbox": 1,
+      "table_structure": 2
+    }
+  },
+  "f1120sm3": {
+    "total_pdf_fields": 380,
+    "already_mapped": 68,
+    "new_entries": 312,
+    "breakdown": {
+      "schedule_b_checkbox": 30,
+      "table_structure": 282
+    }
+  },
+  "f1120ssk": {
+    "total_pdf_fields": 114,
+    "already_mapped": 60,
+    "new_entries": 54,
+    "breakdown": {
+      "schedule_b_checkbox": 5,
+      "k1_entity_owner_info": 49
+    }
+  },
+  "f1125a": {
+    "total_pdf_fields": 25,
+    "already_mapped": 18,
+    "new_entries": 7,
+    "breakdown": {
+      "schedule_b_checkbox": 7
+    }
+  },
+  "f1125e": {
+    "total_pdf_fields": 125,
+    "already_mapped": 62,
+    "new_entries": 63,
+    "breakdown": {
+      "table_structure": 62,
+      "unmapped_blank": 1
+    }
+  },
+  "f4562": {
+    "total_pdf_fields": 277,
+    "already_mapped": 83,
+    "new_entries": 194,
+    "breakdown": {
+      "table_structure": 139,
+      "schedule_b_checkbox": 53,
+      "depreciation_table": 2
+    }
+  },
+  "f4797": {
+    "total_pdf_fields": 182,
+    "already_mapped": 65,
+    "new_entries": 117,
+    "breakdown": {
+      "table_structure": 108,
+      "asset_sale_row": 9
+    }
+  },
+  "f7203": {
+    "total_pdf_fields": 188,
+    "already_mapped": 56,
+    "new_entries": 132,
+    "breakdown": {
+      "schedule_b_checkbox": 7,
+      "table_structure": 125
+    }
+  },
+  "f8825": {
+    "total_pdf_fields": 221,
+    "already_mapped": 66,
+    "new_entries": 155,
+    "breakdown": {
+      "table_structure": 150,
+      "rental_property_grid": 5
+    }
+  },
+  "f8829": {
+    "total_pdf_fields": 58,
+    "already_mapped": 52,
+    "new_entries": 6,
+    "breakdown": {
+      "unmapped_blank": 6
+    }
+  },
+  "f8990": {
+    "total_pdf_fields": 134,
+    "already_mapped": 66,
+    "new_entries": 68,
+    "breakdown": {
+      "schedule_b_checkbox": 3,
+      "unmapped_blank": 19,
+      "table_structure": 46
+    }
+  },
+  "f8995": {
+    "total_pdf_fields": 33,
+    "already_mapped": 33,
+    "new_entries": 0,
+    "breakdown": {}
+  },
+  "f990": {
+    "total_pdf_fields": 1075,
+    "already_mapped": 77,
+    "new_entries": 998,
+    "breakdown": {
+      "schedule_b_checkbox": 396,
+      "table_structure": 471,
+      "unmapped_blank": 34,
+      "990_part_ix_grid": 76,
+      "checkbox": 21
+    }
+  },
+  "f990ez": {
+    "total_pdf_fields": 325,
+    "already_mapped": 3,
+    "new_entries": 322,
+    "breakdown": {
+      "checkbox": 70,
+      "unmapped_blank": 98,
+      "table_structure": 116,
+      "schedule_b_checkbox": 38
+    }
+  },
+  "f990ezb": {
+    "total_pdf_fields": 201,
+    "already_mapped": 124,
+    "new_entries": 77,
+    "breakdown": {
+      "schedule_b_checkbox": 25,
+      "table_structure": 48,
+      "unmapped_blank": 4
+    }
+  },
+  "f990sa": {
+    "total_pdf_fields": 454,
+    "already_mapped": 116,
+    "new_entries": 338,
+    "breakdown": {
+      "schedule_b_checkbox": 103,
+      "table_structure": 216,
+      "checkbox": 2,
+      "unmapped_blank": 17
+    }
+  },
+  "f990t": {
+    "total_pdf_fields": 128,
+    "already_mapped": 62,
+    "new_entries": 66,
+    "breakdown": {
+      "schedule_b_checkbox": 33,
+      "unmapped_blank": 24,
+      "table_structure": 8,
+      "signature_or_preparer": 1
+    }
+  }
+}

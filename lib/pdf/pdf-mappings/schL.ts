@@ -397,24 +397,28 @@ export const SCH_L_MAPPING: FormPdfMapping = {
     // -------------------------------------------------------------------------
     {
       pdfFieldName: `${ASSETS}Line11a[0].f6_49[0]`,
+      factName: "boy_other_assets_total",
       format: "currency",
       irsLine: "11a-a",
       description: "Depletable assets — beginning of year (column a)",
     },
     {
       pdfFieldName: `${ASSETS}Line11a[0].f6_50[0]`,
+      factName: "boy_other_assets_total",
       format: "currency",
       irsLine: "11a-b",
       description: "Depletable assets — beginning of year (column b)",
     },
     {
       pdfFieldName: `${ASSETS}Line11a[0].f6_51[0]`,
+      factName: "other_assets_total",
       format: "currency",
       irsLine: "11a-c",
       description: "Depletable assets — end of year (column a)",
     },
     {
       pdfFieldName: `${ASSETS}Line11a[0].f6_52[0]`,
+      factName: "other_assets_total",
       format: "currency",
       irsLine: "11a-d",
       description: "Depletable assets — end of year (column b)",
@@ -425,24 +429,28 @@ export const SCH_L_MAPPING: FormPdfMapping = {
     // -------------------------------------------------------------------------
     {
       pdfFieldName: `${ASSETS}Line11b[0].f6_53[0]`,
+      factName: "boy_accum_depreciation_total",
       format: "currency",
       irsLine: "11b-a",
       description: "Less accumulated depletion — beginning of year (column a)",
     },
     {
       pdfFieldName: `${ASSETS}Line11b[0].f6_54[0]`,
+      factName: "boy_accum_depreciation_total",
       format: "currency",
       irsLine: "11b-b",
       description: "Less accumulated depletion — beginning of year (column b)",
     },
     {
       pdfFieldName: `${ASSETS}Line11b[0].f6_55[0]`,
+      factName: "accum_depletion_total",
       format: "currency",
       irsLine: "11b-c",
       description: "Less accumulated depletion — end of year (column a)",
     },
     {
       pdfFieldName: `${ASSETS}Line11b[0].f6_56[0]`,
+      factName: "accum_depletion_total",
       format: "currency",
       irsLine: "11b-d",
       description: "Less accumulated depletion — end of year (column b)",

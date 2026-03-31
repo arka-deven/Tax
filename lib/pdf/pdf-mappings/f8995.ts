@@ -51,42 +51,42 @@ export const F8995_MAPPING: FormPdfMapping = {
     },
     {
       pdfFieldName: `${P}f1_6[0]`,
-      factName: undefined,
+      manual: true, // TODO: wire to factName
       format: "string",
       irsLine: "2i",
       description: "Trade, business, or aggregation name (row 2)",
     },
     {
       pdfFieldName: `${P}f1_7[0]`,
-      factName: undefined,
+      manual: true, // TODO: wire to factName
       format: "string",
       irsLine: "2ii",
       description: "Taxpayer identification number (row 2)",
     },
     {
       pdfFieldName: `${P}f1_8[0]`,
-      factName: undefined,
+      manual: true, // TODO: wire to factName
       format: "currency",
       irsLine: "2iii",
       description: "Qualified business income or (loss) (row 2)",
     },
     {
       pdfFieldName: `${P}f1_9[0]`,
-      factName: undefined,
+      manual: true, // TODO: wire to factName
       format: "string",
       irsLine: "3i",
       description: "Trade, business, or aggregation name (row 3)",
     },
     {
       pdfFieldName: `${P}f1_10[0]`,
-      factName: undefined,
+      manual: true, // TODO: wire to factName
       format: "string",
       irsLine: "3ii",
       description: "Taxpayer identification number (row 3)",
     },
     {
       pdfFieldName: `${P}f1_11[0]`,
-      factName: undefined,
+      manual: true, // TODO: wire to factName
       format: "currency",
       irsLine: "3iii",
       description: "Qualified business income or (loss) (row 3)",

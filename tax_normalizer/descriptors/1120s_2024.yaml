@@ -1,0 +1,145 @@
+---
+form: "1120-S"
+tax_year: 2024
+version: "1.0"
+
+fields:
+  - field_id: gross_receipts
+    label: "Gross receipts or sales"
+    form: "1120-S"
+    line: "1a"
+    mandatory: true
+    source_type: QBO
+    qbo_accounts: ["income_sales", "income_services"]
+    data_type: currency
+
+  - field_id: returns_allowances
+    label: "Returns and allowances"
+    form: "1120-S"
+    line: "1b"
+    mandatory: false
+    source_type: QBO
+    qbo_accounts: ["returns_allowances"]
+    data_type: currency
+    default_value: 0
+
+  - field_id: net_receipts
+    label: "Balance (1a minus 1b)"
+    form: "1120-S"
+    line: "1c"
+    mandatory: true
+    source_type: CALCULATED
+    formula: "gross_receipts - returns_allowances"
+    data_type: currency
+
+  - field_id: cogs
+    label: "Cost of goods sold"
+    form: "1120-S"
+    line: "2"
+    mandatory: true
+    source_type: QBO
+    qbo_accounts: ["cogs_materials", "cogs_labor"]
+    data_type: currency
+
+  - field_id: gross_profit
+    label: "Gross profit"
+    form: "1120-S"
+    line: "3"
+    mandatory: true
+    source_type: CALCULATED
+    formula: "net_receipts - cogs"
+    data_type: currency
+
+  - field_id: other_income
+    label: "Net gain (loss) from Form 4797"
+    form: "1120-S"
+    line: "4"
+    mandatory: false
+    source_type: QBO
+    qbo_accounts: ["other_income"]
+    data_type: currency
+    warn_if_missing: false
+
+  - field_id: total_income
+    label: "Total income (loss)"
+    form: "1120-S"
+    line: "6"
+    mandatory: true
+    source_type: CALCULATED
+    formula: "gross_profit + other_income"
+    data_type: currency
+    cross_validations:
+      - "total_income == gross_profit + other_income"
+
+  - field_id: compensation
+    label: "Compensation of officers"
+    form: "1120-S"
+    line: "7"
+    mandatory: true
+    source_type: QBO
+    qbo_accounts: ["officer_compensation"]
+    data_type: currency
+
+  - field_id: rent
+    label: "Rents"
+    form: "1120-S"
+    line: "13"
+    mandatory: false
+    source_type: QBO
+    qbo_accounts: ["rent_expense"]
+    data_type: currency
+    default_value: 0
+
+  - field_id: total_deductions
+    label: "Total deductions"
+    form: "1120-S"
+    line: "20"
+    mandatory: true
+    source_type: CALCULATED
+    formula: "compensation + rent"
+    data_type: currency
+
+  - field_id: ordinary_income
+    label: "Ordinary business income (loss)"
+    form: "1120-S"
+    line: "21"
+    mandatory: true
+    source_type: CALCULATED
+    formula: "total_income - total_deductions"
+    data_type: currency
+
+  - field_id: ein_field
+    label: "Employer identification number"
+    form: "1120-S"
+    line: "B"
+    mandatory: true
+    source_type: MANUAL
+    data_type: ein
+
+  - field_id: foreign_tax_paid
+    label: "Foreign taxes paid"
+    form: "1120-S"
+    line: "F1"
+    mandatory: false
+    source_type: CONDITIONAL
+    condition: "has_foreign_income == True"
+    qbo_accounts: ["foreign_tax_paid"]
+    data_type: currency
+    default_value: 0
+
+  - field_id: tax_year_start
+    label: "Tax year beginning"
+    form: "1120-S"
+    line: "C_start"
+    mandatory: true
+    source_type: MANUAL
+    data_type: date
+
+  - field_id: ownership_pct
+    label: "Ownership percentage"
+    form: "1120-S"
+    line: "K1_J"
+    mandatory: false
+    source_type: PASSTHROUGH
+    data_type: percentage
+    max_val: 100

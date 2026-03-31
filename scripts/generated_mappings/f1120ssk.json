@@ -1,0 +1,336 @@
+[
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].c1_01[0]",
+    "page": 1,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p1_q01",
+    "reason": "schedule_b_checkbox"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].c1_02[0]",
+    "page": 1,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p1_q02",
+    "reason": "schedule_b_checkbox"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].RightCol[0].Lines1-12[0].f1_52[0]",
+    "page": 1,
+    "source": "owner_info",
+    "reason": "k1_entity_owner_info"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].RightCol[0].Lines1-12[0].f1_53[0]",
+    "page": 1,
+    "source": "owner_info",
+    "reason": "k1_entity_owner_info"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].RightCol[0].Lines1-12[0].f1_54[0]",
+    "page": 1,
+    "source": "owner_info",
+    "reason": "k1_entity_owner_info"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].RightCol[0].Lines1-12[0].f1_56[0]",
+    "page": 1,
+    "source": "owner_info",
+    "reason": "k1_entity_owner_info"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].RightCol[0].Lines1-12[0].f1_57[0]",
+    "page": 1,
+    "source": "owner_info",
+    "reason": "k1_entity_owner_info"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].RightCol[0].Lines1-12[0].f1_58[0]",
+    "page": 1,
+    "source": "owner_info",
+    "reason": "k1_entity_owner_info"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].RightCol[0].Lines13-17[0].f1_60[0]",
+    "page": 1,
+    "source": "owner_info",
+    "reason": "k1_entity_owner_info"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].RightCol[0].Lines13-17[0].f1_61[0]",
+    "page": 1,
+    "source": "owner_info",
+    "reason": "k1_entity_owner_info"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].RightCol[0].Lines13-17[0].f1_62[0]",
+    "page": 1,
+    "source": "owner_info",
+    "reason": "k1_entity_owner_info"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].RightCol[0].Lines13-17[0].f1_64[0]",
+    "page": 1,
+    "source": "owner_info",
+    "reason": "k1_entity_owner_info"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].RightCol[0].Lines13-17[0].f1_65[0]",
+    "page": 1,
+    "source": "owner_info",
+    "reason": "k1_entity_owner_info"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].RightCol[0].Lines13-17[0].f1_66[0]",
+    "page": 1,
+    "source": "owner_info",
+    "reason": "k1_entity_owner_info"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].RightCol[0].Lines13-17[0].c1_03[0]",
+    "page": 1,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p1_q03",
+    "reason": "schedule_b_checkbox"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].RightCol[0].Lines13-17[0].f1_72[0]",
+    "page": 1,
+    "source": "owner_info",
+    "reason": "k1_entity_owner_info"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].RightCol[0].Lines13-17[0].f1_73[0]",
+    "page": 1,
+    "source": "owner_info",
+    "reason": "k1_entity_owner_info"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].RightCol[0].Lines13-17[0].f1_74[0]",
+    "page": 1,
+    "source": "owner_info",
+    "reason": "k1_entity_owner_info"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].RightCol[0].Lines13-17[0].f1_75[0]",
+    "page": 1,
+    "source": "owner_info",
+    "reason": "k1_entity_owner_info"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].RightCol[0].Lines13-17[0].f1_76[0]",
+    "page": 1,
+    "source": "owner_info",
+    "reason": "k1_entity_owner_info"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].RightCol[0].Lines13-17[0].f1_77[0]",
+    "page": 1,
+    "source": "owner_info",
+    "reason": "k1_entity_owner_info"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].RightCol[0].Lines13-17[0].f1_78[0]",
+    "page": 1,
+    "source": "owner_info",
+    "reason": "k1_entity_owner_info"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].RightCol[0].Lines13-17[0].f1_79[0]",
+    "page": 1,
+    "source": "owner_info",
+    "reason": "k1_entity_owner_info"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].RightCol[0].Lines13-17[0].f1_80[0]",
+    "page": 1,
+    "source": "owner_info",
+    "reason": "k1_entity_owner_info"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].RightCol[0].Lines13-17[0].f1_81[0]",
+    "page": 1,
+    "source": "owner_info",
+    "reason": "k1_entity_owner_info"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].RightCol[0].Lines13-17[0].f1_82[0]",
+    "page": 1,
+    "source": "owner_info",
+    "reason": "k1_entity_owner_info"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].RightCol[0].Lines13-17[0].f1_83[0]",
+    "page": 1,
+    "source": "owner_info",
+    "reason": "k1_entity_owner_info"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].RightCol[0].Lines13-17[0].f1_84[0]",
+    "page": 1,
+    "source": "owner_info",
+    "reason": "k1_entity_owner_info"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].RightCol[0].Lines13-17[0].f1_85[0]",
+    "page": 1,
+    "source": "owner_info",
+    "reason": "k1_entity_owner_info"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].RightCol[0].Lines13-17[0].f1_87[0]",
+    "page": 1,
+    "source": "owner_info",
+    "reason": "k1_entity_owner_info"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].RightCol[0].Lines13-17[0].f1_88[0]",
+    "page": 1,
+    "source": "owner_info",
+    "reason": "k1_entity_owner_info"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].RightCol[0].Lines13-17[0].f1_89[0]",
+    "page": 1,
+    "source": "owner_info",
+    "reason": "k1_entity_owner_info"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].RightCol[0].Lines13-17[0].f1_90[0]",
+    "page": 1,
+    "source": "owner_info",
+    "reason": "k1_entity_owner_info"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].RightCol[0].Lines13-17[0].f1_91[0]",
+    "page": 1,
+    "source": "owner_info",
+    "reason": "k1_entity_owner_info"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].RightCol[0].Lines13-17[0].f1_92[0]",
+    "page": 1,
+    "source": "owner_info",
+    "reason": "k1_entity_owner_info"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].RightCol[0].Lines13-17[0].f1_93[0]",
+    "page": 1,
+    "source": "owner_info",
+    "reason": "k1_entity_owner_info"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].RightCol[0].Lines13-17[0].f1_94[0]",
+    "page": 1,
+    "source": "owner_info",
+    "reason": "k1_entity_owner_info"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].RightCol[0].Lines13-17[0].f1_95[0]",
+    "page": 1,
+    "source": "owner_info",
+    "reason": "k1_entity_owner_info"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].RightCol[0].Lines13-17[0].f1_96[0]",
+    "page": 1,
+    "source": "owner_info",
+    "reason": "k1_entity_owner_info"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].RightCol[0].Lines13-17[0].f1_97[0]",
+    "page": 1,
+    "source": "owner_info",
+    "reason": "k1_entity_owner_info"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].RightCol[0].Lines13-17[0].f1_98[0]",
+    "page": 1,
+    "source": "owner_info",
+    "reason": "k1_entity_owner_info"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].RightCol[0].Lines13-17[0].f1_99[0]",
+    "page": 1,
+    "source": "owner_info",
+    "reason": "k1_entity_owner_info"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].RightCol[0].Lines13-17[0].f1_100[0]",
+    "page": 1,
+    "source": "owner_info",
+    "reason": "k1_entity_owner_info"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].RightCol[0].Lines13-17[0].f1_101[0]",
+    "page": 1,
+    "source": "owner_info",
+    "reason": "k1_entity_owner_info"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].RightCol[0].Lines13-17[0].f1_102[0]",
+    "page": 1,
+    "source": "owner_info",
+    "reason": "k1_entity_owner_info"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].RightCol[0].Lines13-17[0].f1_103[0]",
+    "page": 1,
+    "source": "owner_info",
+    "reason": "k1_entity_owner_info"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].RightCol[0].Lines13-17[0].f1_104[0]",
+    "page": 1,
+    "source": "owner_info",
+    "reason": "k1_entity_owner_info"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].RightCol[0].Lines13-17[0].f1_105[0]",
+    "page": 1,
+    "source": "owner_info",
+    "reason": "k1_entity_owner_info"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].RightCol[0].Lines13-17[0].f1_106[0]",
+    "page": 1,
+    "source": "owner_info",
+    "reason": "k1_entity_owner_info"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].RightCol[0].Lines13-17[0].f1_107[0]",
+    "page": 1,
+    "source": "owner_info",
+    "reason": "k1_entity_owner_info"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].RightCol[0].Lines13-17[0].f1_108[0]",
+    "page": 1,
+    "source": "owner_info",
+    "reason": "k1_entity_owner_info"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].RightCol[0].Lines13-17[0].f1_109[0]",
+    "page": 1,
+    "source": "owner_info",
+    "reason": "k1_entity_owner_info"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].RightCol[0].c1_04[0]",
+    "page": 1,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p1_q04",
+    "reason": "schedule_b_checkbox"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].RightCol[0].c1_05[0]",
+    "page": 1,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p1_q05",
+    "reason": "schedule_b_checkbox"
+  }
+]

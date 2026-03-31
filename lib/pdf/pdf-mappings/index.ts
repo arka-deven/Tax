@@ -21,6 +21,11 @@ import { F1065SK1_MAPPING } from "./f1065sk1";
 import { F1065SB1_MAPPING } from "./f1065sb1";
 import { K2K3_MAPPING } from "./k2k3";
 
+// Per-form schedule variants (different PDF field IDs per entity type)
+import { SCH_L_1120S_MAPPING } from "./schL_1120s";
+import { SCH_M1_1120S_MAPPING } from "./schM1_1120s";
+import { SCH_M2_1120S_MAPPING } from "./schM2_1120s";
+
 // Attachments
 import { F1040SSE_MAPPING } from "./f1040sse";
 import { F1125A_MAPPING } from "./f1125a";
@@ -34,11 +39,15 @@ import { F1118_MAPPING } from "./f1118";
 import { F8825_MAPPING } from "./f8825";
 import { F8829_MAPPING } from "./f8829";
 import { F7203_MAPPING } from "./f7203";
+import { F1120SSK_MAPPING } from "./f1120ssk";
 
 /**
  * Maps form codes (as used in FORMS_BY_ENTITY) to their PDF mapping definitions.
  * Every form listed in FORMS_BY_ENTITY should have an entry here so the
  * PDF viewer is used instead of compact cards.
+ *
+ * For schedules embedded in different parent forms (L, M-1, M-2), use
+ * colon-qualified keys: "Sch L:1120-S", "Sch M-1:1120-S", etc.
  *
  * NOTE: "990-N" is electronic-only (e-Postcard) — no PDF exists.
  */
@@ -52,7 +61,7 @@ export const PDF_MAPPINGS: Record<string, FormPdfMapping> = {
   "990-EZ":  F990EZ_MAPPING,
   "990-T":   F990T_MAPPING,
 
-  // ── Schedules ────────────────────────────────────────────────────────────
+  // ── Schedules (C-Corp / default — targets f1120.pdf) ─────────────────────
   "Sch L":   SCH_L_MAPPING,
   "Sch M-1": SCH_M1_MAPPING,
   "Sch M-2": SCH_M2_MAPPING,
@@ -65,6 +74,12 @@ export const PDF_MAPPINGS: Record<string, FormPdfMapping> = {
   "Sch D":   F1120SD_MAPPING,
   "Sch SE":  F1040SSE_MAPPING,
   "K-2/K-3": K2K3_MAPPING,
+
+  // ── Per-form schedule variants (S-Corp — targets f1120s.pdf) ─────────────
+  "Sch L:1120-S":   SCH_L_1120S_MAPPING,
+  "Sch M-1:1120-S": SCH_M1_1120S_MAPPING,
+  "Sch M-2:1120-S": SCH_M2_1120S_MAPPING,
+  "Sch K-1:1120-S": F1120SSK_MAPPING,
 
   // ── Attachments ──────────────────────────────────────────────────────────
   "1125-A":  F1125A_MAPPING,

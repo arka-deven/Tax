@@ -1,4 +1,5 @@
 import type { FormPdfMapping, FillContext } from "../types";
+import { sbCheck, officer, currency } from "../types";
 
 const PAGE1 = "topmostSubform[0].Page1[0].";
 const L8_17 = `${PAGE1}Lines8-17[0].`;
@@ -27,12 +28,14 @@ export const F1040SC_MAPPING: FormPdfMapping = {
     },
     {
       pdfFieldName: `${PAGE1}f1_3[0]`,
+      compute: (ctx: FillContext) => ctx.meta.principalBusinessActivity ?? "",
       format: "string",
       irsLine: "A",
       description: "Principal business or profession",
     },
     {
       pdfFieldName: `${PAGE1}BComb[0].f1_4[0]`,
+      compute: (ctx: FillContext) => ctx.meta.naicsCode ?? "",
       format: "string",
       irsLine: "B",
       description: "Business code number",
@@ -148,6 +151,7 @@ export const F1040SC_MAPPING: FormPdfMapping = {
     },
     {
       pdfFieldName: `${L8_17}f1_21[0]`,
+      factName: "depletion_total",
       format: "currency",
       irsLine: "12",
       description: "Depletion",
@@ -175,6 +179,7 @@ export const F1040SC_MAPPING: FormPdfMapping = {
     },
     {
       pdfFieldName: `${L8_17}f1_25[0]`,
+      manual: true,
       format: "currency",
       irsLine: "16a",
       description: "Interest: mortgage (paid to banks, etc.)",
@@ -283,6 +288,7 @@ export const F1040SC_MAPPING: FormPdfMapping = {
     {
       // f1_39 comes after f1_40 in PDF field ordering despite lower number
       pdfFieldName: `${L18_27}f1_39[0]`,
+      staticValue: "",
       format: "currency",
       irsLine: "27b",
       description: "Reserved for future use",
@@ -305,12 +311,14 @@ export const F1040SC_MAPPING: FormPdfMapping = {
     },
     {
       pdfFieldName: `${L30}f1_43[0]`,
+      manual: true,
       format: "currency",
       irsLine: "30",
       description: "Expenses for business use of your home (attach Form 8829)",
     },
     {
       pdfFieldName: `${L30}f1_44[0]`,
+      manual: true,
       format: "currency",
       irsLine: "30",
       description: "Home office expense continuation",
@@ -322,5 +330,55 @@ export const F1040SC_MAPPING: FormPdfMapping = {
       irsLine: "31",
       description: "Net profit or (loss) (subtract Line 30 from Line 29)",
     },
+
+    // ── Auto-generated mappings (remaining fields) ──────────────────
+    { pdfFieldName: "topmostSubform[0].Page1[0].c1_1[1]", compute: (ctx: FillContext) => sbCheck(ctx, "p1_q1"), format: "boolean", description: "Checkbox: p1_q1" },
+    { pdfFieldName: "topmostSubform[0].Page1[0].c1_1[2]", compute: (ctx: FillContext) => sbCheck(ctx, "p1_q1"), format: "boolean", description: "Checkbox: p1_q1" },
+    { pdfFieldName: "topmostSubform[0].Page1[0].c1_2[1]", compute: (ctx: FillContext) => sbCheck(ctx, "p1_q2"), format: "boolean", description: "Checkbox: p1_q2" },
+    { pdfFieldName: "topmostSubform[0].Page1[0].c1_4[1]", compute: (ctx: FillContext) => sbCheck(ctx, "p1_q4"), format: "boolean", description: "Checkbox: p1_q4" },
+    { pdfFieldName: "topmostSubform[0].Page1[0].c1_5[1]", compute: (ctx: FillContext) => sbCheck(ctx, "p1_q5"), format: "boolean", description: "Checkbox: p1_q5" },
+    { pdfFieldName: "topmostSubform[0].Page1[0].Line1_ReadOrder[0].c1_6[0]", compute: (ctx: FillContext) => sbCheck(ctx, "p1_q6"), format: "boolean", description: "Checkbox: p1_q6" },
+    { pdfFieldName: "topmostSubform[0].Page1[0].c1_7[0]", compute: (ctx: FillContext) => sbCheck(ctx, "p1_q7"), format: "boolean", description: "Checkbox: p1_q7" },
+    { pdfFieldName: "topmostSubform[0].Page1[0].c1_7[1]", compute: (ctx: FillContext) => sbCheck(ctx, "p1_q7"), format: "boolean", description: "Checkbox: p1_q7" },
+    { pdfFieldName: "topmostSubform[0].Page2[0].c2_1[0]", compute: (ctx: FillContext) => sbCheck(ctx, "p2_q1"), format: "boolean", description: "Checkbox: p2_q1" },
+    { pdfFieldName: "topmostSubform[0].Page2[0].c2_2[0]", compute: (ctx: FillContext) => sbCheck(ctx, "p2_q2"), format: "boolean", description: "Checkbox: p2_q2" },
+    { pdfFieldName: "topmostSubform[0].Page2[0].c2_3[0]", compute: (ctx: FillContext) => sbCheck(ctx, "p2_q3"), format: "boolean", description: "Checkbox: p2_q3" },
+    { pdfFieldName: "topmostSubform[0].Page2[0].c2_4[0]", compute: (ctx: FillContext) => sbCheck(ctx, "p2_q4"), format: "boolean", description: "Checkbox: p2_q4" },
+    { pdfFieldName: "topmostSubform[0].Page2[0].c2_4[1]", compute: (ctx: FillContext) => sbCheck(ctx, "p2_q4"), format: "boolean", description: "Checkbox: p2_q4" },
+    { pdfFieldName: "topmostSubform[0].Page2[0].f2_7[0]", staticValue: "", description: "Unmapped — page 2" },
+    { pdfFieldName: "topmostSubform[0].Page2[0].f2_8[0]", staticValue: "", description: "Unmapped — page 2" },
+    { pdfFieldName: "topmostSubform[0].Page2[0].f2_9[0]", staticValue: "", description: "Unmapped — page 2" },
+    { pdfFieldName: "topmostSubform[0].Page2[0].f2_10[0]", staticValue: "", description: "Unmapped — page 2" },
+    { pdfFieldName: "topmostSubform[0].Page2[0].f2_11[0]", staticValue: "", description: "Unmapped — page 2" },
+    { pdfFieldName: "topmostSubform[0].Page2[0].f2_12[0]", staticValue: "", description: "Unmapped — page 2" },
+    { pdfFieldName: "topmostSubform[0].Page2[0].f2_13[0]", staticValue: "", description: "Unmapped — page 2" },
+    { pdfFieldName: "topmostSubform[0].Page2[0].f2_14[0]", staticValue: "", description: "Unmapped — page 2" },
+    { pdfFieldName: "topmostSubform[0].Page2[0].c2_5[0]", compute: (ctx: FillContext) => sbCheck(ctx, "p2_q5"), format: "boolean", description: "Checkbox: p2_q5" },
+    { pdfFieldName: "topmostSubform[0].Page2[0].c2_5[1]", compute: (ctx: FillContext) => sbCheck(ctx, "p2_q5"), format: "boolean", description: "Checkbox: p2_q5" },
+    { pdfFieldName: "topmostSubform[0].Page2[0].c2_6[0]", compute: (ctx: FillContext) => sbCheck(ctx, "p2_q6"), format: "boolean", description: "Checkbox: p2_q6" },
+    { pdfFieldName: "topmostSubform[0].Page2[0].c2_6[1]", compute: (ctx: FillContext) => sbCheck(ctx, "p2_q6"), format: "boolean", description: "Checkbox: p2_q6" },
+    { pdfFieldName: "topmostSubform[0].Page2[0].c2_7[0]", compute: (ctx: FillContext) => sbCheck(ctx, "p2_q7"), format: "boolean", description: "Checkbox: p2_q7" },
+    { pdfFieldName: "topmostSubform[0].Page2[0].c2_7[1]", compute: (ctx: FillContext) => sbCheck(ctx, "p2_q7"), format: "boolean", description: "Checkbox: p2_q7" },
+    { pdfFieldName: "topmostSubform[0].Page2[0].c2_8[0]", compute: (ctx: FillContext) => sbCheck(ctx, "p2_q8"), format: "boolean", description: "Checkbox: p2_q8" },
+    { pdfFieldName: "topmostSubform[0].Page2[0].c2_8[1]", compute: (ctx: FillContext) => sbCheck(ctx, "p2_q8"), format: "boolean", description: "Checkbox: p2_q8" },
+    { pdfFieldName: "topmostSubform[0].Page2[0].PartVTable[0].Item1[0].f2_15[0]", staticValue: "", description: "Table  Line " },
+    { pdfFieldName: "topmostSubform[0].Page2[0].PartVTable[0].Item1[0].f2_16[0]", staticValue: "", description: "Table  Line " },
+    { pdfFieldName: "topmostSubform[0].Page2[0].PartVTable[0].Item2[0].f2_17[0]", staticValue: "", description: "Table  Line " },
+    { pdfFieldName: "topmostSubform[0].Page2[0].PartVTable[0].Item2[0].f2_18[0]", staticValue: "", description: "Table  Line " },
+    { pdfFieldName: "topmostSubform[0].Page2[0].PartVTable[0].Item3[0].f2_19[0]", staticValue: "", description: "Table  Line " },
+    { pdfFieldName: "topmostSubform[0].Page2[0].PartVTable[0].Item3[0].f2_20[0]", staticValue: "", description: "Table  Line " },
+    { pdfFieldName: "topmostSubform[0].Page2[0].PartVTable[0].Item4[0].f2_21[0]", staticValue: "", description: "Table  Line " },
+    { pdfFieldName: "topmostSubform[0].Page2[0].PartVTable[0].Item4[0].f2_22[0]", staticValue: "", description: "Table  Line " },
+    { pdfFieldName: "topmostSubform[0].Page2[0].PartVTable[0].Item5[0].f2_23[0]", staticValue: "", description: "Table  Line " },
+    { pdfFieldName: "topmostSubform[0].Page2[0].PartVTable[0].Item5[0].f2_24[0]", staticValue: "", description: "Table  Line " },
+    { pdfFieldName: "topmostSubform[0].Page2[0].PartVTable[0].Item6[0].f2_25[0]", staticValue: "", description: "Table  Line " },
+    { pdfFieldName: "topmostSubform[0].Page2[0].PartVTable[0].Item6[0].f2_26[0]", staticValue: "", description: "Table  Line " },
+    { pdfFieldName: "topmostSubform[0].Page2[0].PartVTable[0].Item7[0].f2_27[0]", staticValue: "", description: "Table  Line " },
+    { pdfFieldName: "topmostSubform[0].Page2[0].PartVTable[0].Item7[0].f2_28[0]", staticValue: "", description: "Table  Line " },
+    { pdfFieldName: "topmostSubform[0].Page2[0].PartVTable[0].Item8[0].f2_29[0]", staticValue: "", description: "Table  Line " },
+    { pdfFieldName: "topmostSubform[0].Page2[0].PartVTable[0].Item8[0].f2_30[0]", staticValue: "", description: "Table  Line " },
+    { pdfFieldName: "topmostSubform[0].Page2[0].PartVTable[0].Item9[0].f2_31[0]", staticValue: "", description: "Table  Line " },
+    { pdfFieldName: "topmostSubform[0].Page2[0].PartVTable[0].Item9[0].f2_32[0]", staticValue: "", description: "Table  Line " },
+    { pdfFieldName: "topmostSubform[0].Page2[0].f2_33[0]", staticValue: "", description: "Unmapped — page 2" },
   ],
 };

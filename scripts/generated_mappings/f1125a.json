@@ -1,0 +1,58 @@
+[
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].c1_6[0]",
+    "page": 1,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p1_q6",
+    "reason": "schedule_b_checkbox"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].c1_7[0]",
+    "page": 1,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p1_q7",
+    "reason": "schedule_b_checkbox"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].c1_8[0]",
+    "page": 1,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p1_q8",
+    "reason": "schedule_b_checkbox"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].c1_9[0]",
+    "page": 1,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p1_q9",
+    "reason": "schedule_b_checkbox"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].c1_9[1]",
+    "page": 1,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p1_q9",
+    "reason": "schedule_b_checkbox"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].c1_10[0]",
+    "page": 1,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p1_q10",
+    "reason": "schedule_b_checkbox"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].c1_10[1]",
+    "page": 1,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p1_q10",
+    "reason": "schedule_b_checkbox"
+  }
+]

@@ -1,0 +1,1396 @@
+[
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].c1_6[0]",
+    "page": 1,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p1_q6",
+    "reason": "schedule_b_checkbox"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].c1_7[0]",
+    "page": 1,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p1_q7",
+    "reason": "schedule_b_checkbox"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].c1_8[0]",
+    "page": 1,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p1_q8",
+    "reason": "schedule_b_checkbox"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].c1_9[0]",
+    "page": 1,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p1_q9",
+    "reason": "schedule_b_checkbox"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].c1_10[0]",
+    "page": 1,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p1_q10",
+    "reason": "schedule_b_checkbox"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].f1_52[0]",
+    "page": 1,
+    "staticValue": "",
+    "reason": "unmapped_blank"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].f1_53[0]",
+    "page": 1,
+    "staticValue": "",
+    "reason": "unmapped_blank"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].f1_54[0]",
+    "page": 1,
+    "staticValue": "",
+    "reason": "unmapped_blank"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].RoutingNo[0].f1_56[0]",
+    "page": 1,
+    "manual": true,
+    "reason": "banking_info"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].c1_11[0]",
+    "page": 1,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p1_q11",
+    "reason": "schedule_b_checkbox"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].c1_11[1]",
+    "page": 1,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p1_q11",
+    "reason": "schedule_b_checkbox"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].AccountNo[0].f1_57[0]",
+    "page": 1,
+    "staticValue": "",
+    "reason": "unmapped_blank"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].SignHere-ReadOrder[0].f1_58[0]",
+    "page": 1,
+    "manual": true,
+    "reason": "signature_or_preparer"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].c1_12[0]",
+    "page": 1,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p1_q12",
+    "reason": "schedule_b_checkbox"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].c1_12[1]",
+    "page": 1,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p1_q12",
+    "reason": "schedule_b_checkbox"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].c1_13[0]",
+    "page": 1,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p1_q13",
+    "reason": "schedule_b_checkbox"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].f1_60[0]",
+    "page": 1,
+    "staticValue": "",
+    "reason": "unmapped_blank"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].f1_61[0]",
+    "page": 1,
+    "staticValue": "",
+    "reason": "unmapped_blank"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].f1_62[0]",
+    "page": 1,
+    "staticValue": "",
+    "reason": "unmapped_blank"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page1[0].f1_64[0]",
+    "page": 1,
+    "staticValue": "",
+    "reason": "unmapped_blank"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page2[0].Table_ScheduleC[0].Line3[0].f2_7[0]",
+    "page": 2,
+    "source": "table_row",
+    "reason": "table_structure",
+    "table": "ScheduleC",
+    "tableLine": "3"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page2[0].Table_ScheduleC[0].Line3[0].f2_8[0]",
+    "page": 2,
+    "source": "table_row",
+    "reason": "table_structure",
+    "table": "ScheduleC",
+    "tableLine": "3"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page2[0].Table_ScheduleC[0].Line3[0].f2_9[0]",
+    "page": 2,
+    "source": "table_row",
+    "reason": "table_structure",
+    "table": "ScheduleC",
+    "tableLine": "3"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page2[0].Table_ScheduleC[0].Line4[0].f2_10[0]",
+    "page": 2,
+    "source": "table_row",
+    "reason": "table_structure",
+    "table": "ScheduleC",
+    "tableLine": "4"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page2[0].Table_ScheduleC[0].Line4[0].f2_11[0]",
+    "page": 2,
+    "source": "table_row",
+    "reason": "table_structure",
+    "table": "ScheduleC",
+    "tableLine": "4"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page2[0].Table_ScheduleC[0].Line4[0].f2_12[0]",
+    "page": 2,
+    "source": "table_row",
+    "reason": "table_structure",
+    "table": "ScheduleC",
+    "tableLine": "4"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page2[0].Table_ScheduleC[0].Line5[0].f2_13[0]",
+    "page": 2,
+    "source": "table_row",
+    "reason": "table_structure",
+    "table": "ScheduleC",
+    "tableLine": "5"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page2[0].Table_ScheduleC[0].Line5[0].f2_14[0]",
+    "page": 2,
+    "source": "table_row",
+    "reason": "table_structure",
+    "table": "ScheduleC",
+    "tableLine": "5"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page2[0].Table_ScheduleC[0].Line5[0].f2_15[0]",
+    "page": 2,
+    "source": "table_row",
+    "reason": "table_structure",
+    "table": "ScheduleC",
+    "tableLine": "5"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page2[0].Table_ScheduleC[0].Line6[0].f2_16[0]",
+    "page": 2,
+    "source": "table_row",
+    "reason": "table_structure",
+    "table": "ScheduleC",
+    "tableLine": "6"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page2[0].Table_ScheduleC[0].Line6[0].f2_17[0]",
+    "page": 2,
+    "source": "table_row",
+    "reason": "table_structure",
+    "table": "ScheduleC",
+    "tableLine": "6"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page2[0].Table_ScheduleC[0].Line6[0].f2_18[0]",
+    "page": 2,
+    "source": "table_row",
+    "reason": "table_structure",
+    "table": "ScheduleC",
+    "tableLine": "6"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page2[0].Table_ScheduleC[0].Line7[0].f2_19[0]",
+    "page": 2,
+    "source": "table_row",
+    "reason": "table_structure",
+    "table": "ScheduleC",
+    "tableLine": "7"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page2[0].Table_ScheduleC[0].Line7[0].f2_20[0]",
+    "page": 2,
+    "source": "table_row",
+    "reason": "table_structure",
+    "table": "ScheduleC",
+    "tableLine": "7"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page2[0].Table_ScheduleC[0].Line7[0].f2_21[0]",
+    "page": 2,
+    "source": "table_row",
+    "reason": "table_structure",
+    "table": "ScheduleC",
+    "tableLine": "7"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page2[0].Table_ScheduleC[0].Line8[0].f2_22[0]",
+    "page": 2,
+    "source": "table_row",
+    "reason": "table_structure",
+    "table": "ScheduleC",
+    "tableLine": "8"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page2[0].Table_ScheduleC[0].Line8[0].f2_23[0]",
+    "page": 2,
+    "source": "table_row",
+    "reason": "table_structure",
+    "table": "ScheduleC",
+    "tableLine": "8"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page2[0].Table_ScheduleC[0].Line8[0].f2_24[0]",
+    "page": 2,
+    "source": "table_row",
+    "reason": "table_structure",
+    "table": "ScheduleC",
+    "tableLine": "8"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page2[0].Table_ScheduleC[0].Line9[0].f2_25[0]",
+    "page": 2,
+    "source": "table_row",
+    "reason": "table_structure",
+    "table": "ScheduleC",
+    "tableLine": "9"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page2[0].Table_ScheduleC[0].Line9[0].f2_26[0]",
+    "page": 2,
+    "source": "table_row",
+    "reason": "table_structure",
+    "table": "ScheduleC",
+    "tableLine": "9"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page2[0].Table_ScheduleC[0].Line9[0].f2_27[0]",
+    "page": 2,
+    "source": "table_row",
+    "reason": "table_structure",
+    "table": "ScheduleC",
+    "tableLine": "9"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page2[0].Table_ScheduleC[0].Line10[0].f2_28[0]",
+    "page": 2,
+    "source": "table_row",
+    "reason": "table_structure",
+    "table": "ScheduleC",
+    "tableLine": "10"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page2[0].Table_ScheduleC[0].Line10[0].f2_29[0]",
+    "page": 2,
+    "source": "table_row",
+    "reason": "table_structure",
+    "table": "ScheduleC",
+    "tableLine": "10"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page2[0].Table_ScheduleC[0].Line10[0].f2_30[0]",
+    "page": 2,
+    "source": "table_row",
+    "reason": "table_structure",
+    "table": "ScheduleC",
+    "tableLine": "10"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page2[0].Table_ScheduleC[0].Line11[0].f2_31[0]",
+    "page": 2,
+    "source": "table_row",
+    "reason": "table_structure",
+    "table": "ScheduleC",
+    "tableLine": "11"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page2[0].Table_ScheduleC[0].Line11[0].f2_32[0]",
+    "page": 2,
+    "source": "table_row",
+    "reason": "table_structure",
+    "table": "ScheduleC",
+    "tableLine": "11"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page2[0].Table_ScheduleC[0].Line11[0].f2_33[0]",
+    "page": 2,
+    "source": "table_row",
+    "reason": "table_structure",
+    "table": "ScheduleC",
+    "tableLine": "11"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page2[0].Table_ScheduleC[0].Line12[0].f2_34[0]",
+    "page": 2,
+    "source": "table_row",
+    "reason": "table_structure",
+    "table": "ScheduleC",
+    "tableLine": "12"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page2[0].Table_ScheduleC[0].Line12[0].f2_35[0]",
+    "page": 2,
+    "source": "table_row",
+    "reason": "table_structure",
+    "table": "ScheduleC",
+    "tableLine": "12"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page2[0].Table_ScheduleC[0].Line12[0].f2_36[0]",
+    "page": 2,
+    "source": "table_row",
+    "reason": "table_structure",
+    "table": "ScheduleC",
+    "tableLine": "12"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page2[0].Table_ScheduleC[0].Line13[0].f2_37[0]",
+    "page": 2,
+    "source": "table_row",
+    "reason": "table_structure",
+    "table": "ScheduleC",
+    "tableLine": "13"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page2[0].Table_ScheduleC[0].Line13[0].f2_38[0]",
+    "page": 2,
+    "source": "table_row",
+    "reason": "table_structure",
+    "table": "ScheduleC",
+    "tableLine": "13"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page2[0].Table_ScheduleC[0].Line13[0].f2_39[0]",
+    "page": 2,
+    "source": "table_row",
+    "reason": "table_structure",
+    "table": "ScheduleC",
+    "tableLine": "13"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page2[0].Table_ScheduleC[0].Line14[0].f2_40[0]",
+    "page": 2,
+    "source": "table_row",
+    "reason": "table_structure",
+    "table": "ScheduleC",
+    "tableLine": "14"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page2[0].Table_ScheduleC[0].Line14[0].f2_41[0]",
+    "page": 2,
+    "source": "table_row",
+    "reason": "table_structure",
+    "table": "ScheduleC",
+    "tableLine": "14"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page2[0].Table_ScheduleC[0].Line14[0].f2_42[0]",
+    "page": 2,
+    "source": "table_row",
+    "reason": "table_structure",
+    "table": "ScheduleC",
+    "tableLine": "14"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page2[0].Table_ScheduleC[0].Line15[0].f2_43[0]",
+    "page": 2,
+    "source": "table_row",
+    "reason": "table_structure",
+    "table": "ScheduleC",
+    "tableLine": "15"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page2[0].Table_ScheduleC[0].Line15[0].f2_44[0]",
+    "page": 2,
+    "source": "table_row",
+    "reason": "table_structure",
+    "table": "ScheduleC",
+    "tableLine": "15"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page2[0].Table_ScheduleC[0].Line15[0].f2_45[0]",
+    "page": 2,
+    "source": "table_row",
+    "reason": "table_structure",
+    "table": "ScheduleC",
+    "tableLine": "15"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page2[0].Table_ScheduleC[0].Line16a[0].f2_46[0]",
+    "page": 2,
+    "source": "table_row",
+    "reason": "table_structure",
+    "table": "ScheduleC",
+    "tableLine": "16a"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page2[0].Table_ScheduleC[0].Line16a[0].f2_47[0]",
+    "page": 2,
+    "source": "table_row",
+    "reason": "table_structure",
+    "table": "ScheduleC",
+    "tableLine": "16a"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page2[0].Table_ScheduleC[0].Line16a[0].f2_48[0]",
+    "page": 2,
+    "source": "table_row",
+    "reason": "table_structure",
+    "table": "ScheduleC",
+    "tableLine": "16a"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page2[0].Table_ScheduleC[0].Line16b[0].f2_49[0]",
+    "page": 2,
+    "source": "table_row",
+    "reason": "table_structure",
+    "table": "ScheduleC",
+    "tableLine": "16b"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page2[0].Table_ScheduleC[0].Line16b[0].f2_50[0]",
+    "page": 2,
+    "source": "table_row",
+    "reason": "table_structure",
+    "table": "ScheduleC",
+    "tableLine": "16b"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page2[0].Table_ScheduleC[0].Line16b[0].f2_51[0]",
+    "page": 2,
+    "source": "table_row",
+    "reason": "table_structure",
+    "table": "ScheduleC",
+    "tableLine": "16b"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page2[0].Table_ScheduleC[0].Line16c[0].f2_52[0]",
+    "page": 2,
+    "source": "table_row",
+    "reason": "table_structure",
+    "table": "ScheduleC",
+    "tableLine": "16c"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page2[0].Table_ScheduleC[0].Line16c[0].f2_53[0]",
+    "page": 2,
+    "source": "table_row",
+    "reason": "table_structure",
+    "table": "ScheduleC",
+    "tableLine": "16c"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page2[0].Table_ScheduleC[0].Line16c[0].f2_54[0]",
+    "page": 2,
+    "source": "table_row",
+    "reason": "table_structure",
+    "table": "ScheduleC",
+    "tableLine": "16c"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page2[0].Table_ScheduleC[0].Line17[0].f2_55[0]",
+    "page": 2,
+    "source": "table_row",
+    "reason": "table_structure",
+    "table": "ScheduleC",
+    "tableLine": "17"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page2[0].Table_ScheduleC[0].Line17[0].f2_56[0]",
+    "page": 2,
+    "source": "table_row",
+    "reason": "table_structure",
+    "table": "ScheduleC",
+    "tableLine": "17"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page2[0].Table_ScheduleC[0].Line17[0].f2_57[0]",
+    "page": 2,
+    "source": "table_row",
+    "reason": "table_structure",
+    "table": "ScheduleC",
+    "tableLine": "17"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page2[0].Table_ScheduleC[0].Line18[0].f2_58[0]",
+    "page": 2,
+    "source": "table_row",
+    "reason": "table_structure",
+    "table": "ScheduleC",
+    "tableLine": "18"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page2[0].Table_ScheduleC[0].Line18[0].f2_59[0]",
+    "page": 2,
+    "source": "table_row",
+    "reason": "table_structure",
+    "table": "ScheduleC",
+    "tableLine": "18"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page2[0].Table_ScheduleC[0].Line18[0].f2_60[0]",
+    "page": 2,
+    "source": "table_row",
+    "reason": "table_structure",
+    "table": "ScheduleC",
+    "tableLine": "18"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page2[0].Table_ScheduleC[0].Line19[0].f2_61[0]",
+    "page": 2,
+    "source": "table_row",
+    "reason": "table_structure",
+    "table": "ScheduleC",
+    "tableLine": "19"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page2[0].Table_ScheduleC[0].Line19[0].f2_62[0]",
+    "page": 2,
+    "source": "table_row",
+    "reason": "table_structure",
+    "table": "ScheduleC",
+    "tableLine": "19"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page2[0].Table_ScheduleC[0].Line19[0].f2_63[0]",
+    "page": 2,
+    "source": "table_row",
+    "reason": "table_structure",
+    "table": "ScheduleC",
+    "tableLine": "19"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page2[0].Table_ScheduleC[0].Line20[0].f2_64[0]",
+    "page": 2,
+    "source": "table_row",
+    "reason": "table_structure",
+    "table": "ScheduleC",
+    "tableLine": "20"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page2[0].Table_ScheduleC[0].Line20[0].f2_65[0]",
+    "page": 2,
+    "source": "table_row",
+    "reason": "table_structure",
+    "table": "ScheduleC",
+    "tableLine": "20"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page2[0].Table_ScheduleC[0].Line20[0].f2_66[0]",
+    "page": 2,
+    "source": "table_row",
+    "reason": "table_structure",
+    "table": "ScheduleC",
+    "tableLine": "20"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page2[0].Table_ScheduleC[0].Line21[0].f2_67[0]",
+    "page": 2,
+    "source": "table_row",
+    "reason": "table_structure",
+    "table": "ScheduleC",
+    "tableLine": "21"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page2[0].Table_ScheduleC[0].Line21[0].f2_68[0]",
+    "page": 2,
+    "source": "table_row",
+    "reason": "table_structure",
+    "table": "ScheduleC",
+    "tableLine": "21"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page2[0].Table_ScheduleC[0].Line21[0].f2_69[0]",
+    "page": 2,
+    "source": "table_row",
+    "reason": "table_structure",
+    "table": "ScheduleC",
+    "tableLine": "21"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page2[0].Table_ScheduleC[0].Line22[0].f2_70[0]",
+    "page": 2,
+    "source": "table_row",
+    "reason": "table_structure",
+    "table": "ScheduleC",
+    "tableLine": "22"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page2[0].Table_ScheduleC[0].Line22[0].f2_71[0]",
+    "page": 2,
+    "source": "table_row",
+    "reason": "table_structure",
+    "table": "ScheduleC",
+    "tableLine": "22"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page2[0].Table_ScheduleC[0].Line22[0].f2_72[0]",
+    "page": 2,
+    "source": "table_row",
+    "reason": "table_structure",
+    "table": "ScheduleC",
+    "tableLine": "22"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page2[0].Table_ScheduleC[0].Line23[0].f2_73[0]",
+    "page": 2,
+    "source": "table_row",
+    "reason": "table_structure",
+    "table": "ScheduleC",
+    "tableLine": "23"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page2[0].Table_ScheduleC[0].Line23[0].f2_74[0]",
+    "page": 2,
+    "source": "table_row",
+    "reason": "table_structure",
+    "table": "ScheduleC",
+    "tableLine": "23"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page2[0].Table_ScheduleC[0].Line23[0].f2_75[0]",
+    "page": 2,
+    "source": "table_row",
+    "reason": "table_structure",
+    "table": "ScheduleC",
+    "tableLine": "23"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page2[0].f2_76[0]",
+    "page": 2,
+    "staticValue": "",
+    "reason": "unmapped_blank"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page3[0].f3_23[0]",
+    "page": 3,
+    "staticValue": "",
+    "reason": "unmapped_blank"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page3[0].f3_24[0]",
+    "page": 3,
+    "staticValue": "",
+    "reason": "unmapped_blank"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page3[0].f3_25[0]",
+    "page": 3,
+    "staticValue": "",
+    "reason": "unmapped_blank"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page3[0].f3_26[0]",
+    "page": 3,
+    "staticValue": "",
+    "reason": "unmapped_blank"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page3[0].f3_27[0]",
+    "page": 3,
+    "staticValue": "",
+    "reason": "unmapped_blank"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page3[0].f3_28[0]",
+    "page": 3,
+    "staticValue": "",
+    "reason": "unmapped_blank"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page3[0].f3_29[0]",
+    "page": 3,
+    "staticValue": "",
+    "reason": "unmapped_blank"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page3[0].f3_30[0]",
+    "page": 3,
+    "staticValue": "",
+    "reason": "unmapped_blank"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page3[0].f3_31[0]",
+    "page": 3,
+    "staticValue": "",
+    "reason": "unmapped_blank"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page3[0].f3_32[0]",
+    "page": 3,
+    "staticValue": "",
+    "reason": "unmapped_blank"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page3[0].f3_33[0]",
+    "page": 3,
+    "staticValue": "",
+    "reason": "unmapped_blank"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page3[0].f3_34[0]",
+    "page": 3,
+    "staticValue": "",
+    "reason": "unmapped_blank"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page3[0].f3_35[0]",
+    "page": 3,
+    "staticValue": "",
+    "reason": "unmapped_blank"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page3[0].f3_36[0]",
+    "page": 3,
+    "staticValue": "",
+    "reason": "unmapped_blank"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page3[0].f3_43[0]",
+    "page": 3,
+    "staticValue": "",
+    "reason": "unmapped_blank"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page3[0].f3_44[0]",
+    "page": 3,
+    "staticValue": "",
+    "reason": "unmapped_blank"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page3[0].f3_45[0]",
+    "page": 3,
+    "staticValue": "",
+    "reason": "unmapped_blank"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page3[0].f3_46[0]",
+    "page": 3,
+    "staticValue": "",
+    "reason": "unmapped_blank"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page3[0].f3_47[0]",
+    "page": 3,
+    "staticValue": "",
+    "reason": "unmapped_blank"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page3[0].f3_48[0]",
+    "page": 3,
+    "staticValue": "",
+    "reason": "unmapped_blank"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page4[0].c4_1[0]",
+    "page": 4,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p4_q1",
+    "reason": "schedule_b_checkbox"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page4[0].c4_1[1]",
+    "page": 4,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p4_q1",
+    "reason": "schedule_b_checkbox"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page4[0].c4_1[2]",
+    "page": 4,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p4_q1",
+    "reason": "schedule_b_checkbox"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page4[0].f4_1[0]",
+    "page": 4,
+    "staticValue": "",
+    "reason": "unmapped_blank"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page4[0].f4_2[0]",
+    "page": 4,
+    "staticValue": "",
+    "reason": "unmapped_blank"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page4[0].f4_3[0]",
+    "page": 4,
+    "staticValue": "",
+    "reason": "unmapped_blank"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page4[0].f4_4[0]",
+    "page": 4,
+    "staticValue": "",
+    "reason": "unmapped_blank"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page4[0].c4_2[0]",
+    "page": 4,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p4_q2",
+    "reason": "schedule_b_checkbox"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page4[0].c4_2[1]",
+    "page": 4,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p4_q2",
+    "reason": "schedule_b_checkbox"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page4[0].c4_3[0]",
+    "page": 4,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p4_q3",
+    "reason": "schedule_b_checkbox"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page4[0].c4_3[1]",
+    "page": 4,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p4_q3",
+    "reason": "schedule_b_checkbox"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page4[0].c4_4[0]",
+    "page": 4,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p4_q4",
+    "reason": "schedule_b_checkbox"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page4[0].c4_4[1]",
+    "page": 4,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p4_q4",
+    "reason": "schedule_b_checkbox"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page4[0].c4_5[0]",
+    "page": 4,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p4_q5",
+    "reason": "schedule_b_checkbox"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page4[0].c4_5[1]",
+    "page": 4,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p4_q5",
+    "reason": "schedule_b_checkbox"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page4[0].c4_6[0]",
+    "page": 4,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p4_q6",
+    "reason": "schedule_b_checkbox"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page4[0].c4_6[1]",
+    "page": 4,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p4_q6",
+    "reason": "schedule_b_checkbox"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page4[0].c4_7[0]",
+    "page": 4,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p4_q7",
+    "reason": "schedule_b_checkbox"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page4[0].c4_7[1]",
+    "page": 4,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p4_q7",
+    "reason": "schedule_b_checkbox"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page4[0].c4_8[0]",
+    "page": 4,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p4_q8",
+    "reason": "schedule_b_checkbox"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page4[0].c4_8[1]",
+    "page": 4,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p4_q8",
+    "reason": "schedule_b_checkbox"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page4[0].c4_9[0]",
+    "page": 4,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p4_q9",
+    "reason": "schedule_b_checkbox"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page4[0].c4_10[0]",
+    "page": 4,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p4_q10",
+    "reason": "schedule_b_checkbox"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page5[0].c5_1[0]",
+    "page": 5,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p5_q1",
+    "reason": "schedule_b_checkbox"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page5[0].c5_1[1]",
+    "page": 5,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p5_q1",
+    "reason": "schedule_b_checkbox"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page5[0].c5_2[0]",
+    "page": 5,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p5_q2",
+    "reason": "schedule_b_checkbox"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page5[0].c5_2[1]",
+    "page": 5,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p5_q2",
+    "reason": "schedule_b_checkbox"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page5[0].c5_3[0]",
+    "page": 5,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p5_q3",
+    "reason": "schedule_b_checkbox"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page5[0].c5_3[1]",
+    "page": 5,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p5_q3",
+    "reason": "schedule_b_checkbox"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page5[0].c5_4[0]",
+    "page": 5,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p5_q4",
+    "reason": "schedule_b_checkbox"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page5[0].c5_4[1]",
+    "page": 5,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p5_q4",
+    "reason": "schedule_b_checkbox"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page5[0].c5_5[0]",
+    "page": 5,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p5_q5",
+    "reason": "schedule_b_checkbox"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page5[0].c5_5[1]",
+    "page": 5,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p5_q5",
+    "reason": "schedule_b_checkbox"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page5[0].c5_6[0]",
+    "page": 5,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p5_q6",
+    "reason": "schedule_b_checkbox"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page5[0].c5_6[1]",
+    "page": 5,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p5_q6",
+    "reason": "schedule_b_checkbox"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page5[0].c5_7[0]",
+    "page": 5,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p5_q7",
+    "reason": "schedule_b_checkbox"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page5[0].c5_7[1]",
+    "page": 5,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p5_q7",
+    "reason": "schedule_b_checkbox"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page5[0].c5_8[0]",
+    "page": 5,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p5_q8",
+    "reason": "schedule_b_checkbox"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page5[0].c5_8[1]",
+    "page": 5,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p5_q8",
+    "reason": "schedule_b_checkbox"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page5[0].c5_9[0]",
+    "page": 5,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p5_q9",
+    "reason": "schedule_b_checkbox"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page5[0].c5_9[1]",
+    "page": 5,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p5_q9",
+    "reason": "schedule_b_checkbox"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page5[0].c5_10[0]",
+    "page": 5,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p5_q10",
+    "reason": "schedule_b_checkbox"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page5[0].c5_10[1]",
+    "page": 5,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p5_q10",
+    "reason": "schedule_b_checkbox"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page5[0].c5_11[0]",
+    "page": 5,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p5_q11",
+    "reason": "schedule_b_checkbox"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page5[0].c5_11[1]",
+    "page": 5,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p5_q11",
+    "reason": "schedule_b_checkbox"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page5[0].c5_12[0]",
+    "page": 5,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p5_q12",
+    "reason": "schedule_b_checkbox"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page5[0].c5_12[1]",
+    "page": 5,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p5_q12",
+    "reason": "schedule_b_checkbox"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page5[0].c5_13[0]",
+    "page": 5,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p5_q13",
+    "reason": "schedule_b_checkbox"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page5[0].c5_13[1]",
+    "page": 5,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p5_q13",
+    "reason": "schedule_b_checkbox"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page5[0].c5_14[0]",
+    "page": 5,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p5_q14",
+    "reason": "schedule_b_checkbox"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page5[0].c5_14[1]",
+    "page": 5,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p5_q14",
+    "reason": "schedule_b_checkbox"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page5[0].c5_15[0]",
+    "page": 5,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p5_q15",
+    "reason": "schedule_b_checkbox"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page5[0].c5_15[1]",
+    "page": 5,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p5_q15",
+    "reason": "schedule_b_checkbox"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page5[0].c5_16[0]",
+    "page": 5,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p5_q16",
+    "reason": "schedule_b_checkbox"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page5[0].c5_16[1]",
+    "page": 5,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p5_q16",
+    "reason": "schedule_b_checkbox"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page5[0].c5_17[0]",
+    "page": 5,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p5_q17",
+    "reason": "schedule_b_checkbox"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page5[0].c5_17[1]",
+    "page": 5,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p5_q17",
+    "reason": "schedule_b_checkbox"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page5[0].c5_18[0]",
+    "page": 5,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p5_q18",
+    "reason": "schedule_b_checkbox"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page5[0].c5_18[1]",
+    "page": 5,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p5_q18",
+    "reason": "schedule_b_checkbox"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page5[0].c5_19[0]",
+    "page": 5,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p5_q19",
+    "reason": "schedule_b_checkbox"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page5[0].c5_19[1]",
+    "page": 5,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p5_q19",
+    "reason": "schedule_b_checkbox"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page5[0].c5_20[0]",
+    "page": 5,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p5_q20",
+    "reason": "schedule_b_checkbox"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page5[0].c5_20[1]",
+    "page": 5,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p5_q20",
+    "reason": "schedule_b_checkbox"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page5[0].c5_21[0]",
+    "page": 5,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p5_q21",
+    "reason": "schedule_b_checkbox"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page5[0].c5_21[1]",
+    "page": 5,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p5_q21",
+    "reason": "schedule_b_checkbox"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page5[0].c5_22[0]",
+    "page": 5,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p5_q22",
+    "reason": "schedule_b_checkbox"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page5[0].c5_22[1]",
+    "page": 5,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p5_q22",
+    "reason": "schedule_b_checkbox"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page5[0].c5_23[0]",
+    "page": 5,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p5_q23",
+    "reason": "schedule_b_checkbox"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page5[0].c5_23[1]",
+    "page": 5,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p5_q23",
+    "reason": "schedule_b_checkbox"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page5[0].c5_24[0]",
+    "page": 5,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p5_q24",
+    "reason": "schedule_b_checkbox"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page5[0].c5_24[1]",
+    "page": 5,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p5_q24",
+    "reason": "schedule_b_checkbox"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page5[0].c5_25[0]",
+    "page": 5,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p5_q25",
+    "reason": "schedule_b_checkbox"
+  },
+  {
+    "pdfFieldName": "topmostSubform[0].Page5[0].c5_25[1]",
+    "page": 5,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p5_q25",
+    "reason": "schedule_b_checkbox"
+  }
+]

@@ -57,5 +57,18 @@ export const F1065SB1_MAPPING: FormPdfMapping = {
       irsLine: "Part I",
       description: "Maximum percentage owned — row 1",
     },
+
+    // ── Auto-generated mappings (remaining fields) ──────────────────
+    { pdfFieldName: "topmostSubform[0].Page1[0].PartIITable[0].TableBodyRow4[0].f1_52[0]", staticValue: "", description: "Table  Line " },
+    { pdfFieldName: "topmostSubform[0].Page1[0].PartIITable[0].TableBodyRow4[0].f1_53[0]", staticValue: "", description: "Table  Line " },
+    { pdfFieldName: "topmostSubform[0].Page1[0].PartIITable[0].TableBodyRow5[0].f1_54[0]", staticValue: "", description: "Table  Line " },
+    { pdfFieldName: "topmostSubform[0].Page1[0].PartIITable[0].TableBodyRow5[0].f1_56[0]", staticValue: "", description: "Table  Line " },
+    { pdfFieldName: "topmostSubform[0].Page1[0].PartIITable[0].TableBodyRow5[0].f1_57[0]", staticValue: "", description: "Table  Line " },
+    { pdfFieldName: "topmostSubform[0].Page1[0].PartIITable[0].TableBodyRow6[0].f1_58[0]", staticValue: "", description: "Table  Line " },
+    { pdfFieldName: "topmostSubform[0].Page1[0].PartIITable[0].TableBodyRow6[0].f1_60[0]", staticValue: "", description: "Table  Line " },
+    { pdfFieldName: "topmostSubform[0].Page1[0].PartIITable[0].TableBodyRow6[0].f1_61[0]", staticValue: "", description: "Table  Line " },
+    { pdfFieldName: "topmostSubform[0].Page1[0].PartIITable[0].TableBodyRow7[0].f1_62[0]", staticValue: "", description: "Table  Line " },
+    { pdfFieldName: "topmostSubform[0].Page1[0].PartIITable[0].TableBodyRow7[0].f1_64[0]", staticValue: "", description: "Table  Line " },
+    { pdfFieldName: "topmostSubform[0].Page1[0].PartIITable[0].TableBodyRow7[0].f1_65[0]", staticValue: "", description: "Table  Line " },
   ],
 };

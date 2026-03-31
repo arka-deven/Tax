@@ -1,0 +1,117 @@
+---
+form: "1120-S"
+tax_year: 2023
+version: "1.0"
+
+fields:
+  - field_id: gross_receipts
+    label: "Gross receipts or sales"
+    form: "1120-S"
+    line: "1a"
+    mandatory: true
+    source_type: QBO
+    qbo_accounts: ["income_sales", "income_services"]
+    data_type: currency
+
+  - field_id: returns_allowances
+    label: "Returns and allowances"
+    form: "1120-S"
+    line: "1b"
+    mandatory: false
+    source_type: QBO
+    qbo_accounts: ["returns_allowances"]
+    data_type: currency
+    default_value: 0
+
+  - field_id: net_receipts
+    label: "Balance (1a minus 1b)"
+    form: "1120-S"
+    line: "1c"
+    mandatory: true
+    source_type: CALCULATED
+    formula: "gross_receipts - returns_allowances"
+    data_type: currency
+
+  - field_id: cogs
+    label: "Cost of goods sold"
+    form: "1120-S"
+    line: "2"
+    mandatory: true
+    source_type: QBO
+    qbo_accounts: ["cogs_materials", "cogs_labor"]
+    data_type: currency
+
+  - field_id: gross_profit
+    label: "Gross profit"
+    form: "1120-S"
+    line: "3"
+    mandatory: true
+    source_type: CALCULATED
+    formula: "net_receipts - cogs"
+    data_type: currency
+
+  - field_id: other_income
+    label: "Net gain (loss) from Form 4797"
+    form: "1120-S"
+    line: "4"
+    mandatory: false
+    source_type: QBO
+    qbo_accounts: ["other_income"]
+    data_type: currency
+    warn_if_missing: false
+
+  - field_id: total_income
+    label: "Total income (loss)"
+    form: "1120-S"
+    line: "6"
+    mandatory: true
+    source_type: CALCULATED
+    formula: "gross_profit + other_income"
+    data_type: currency
+
+  - field_id: compensation
+    label: "Compensation of officers"
+    form: "1120-S"
+    line: "7"
+    mandatory: false
+    source_type: QBO
+    qbo_accounts: ["officer_compensation"]
+    data_type: currency
+    default_value: 0
+
+  - field_id: rent
+    label: "Rents"
+    form: "1120-S"
+    line: "13"
+    mandatory: false
+    source_type: QBO
+    qbo_accounts: ["rent_expense"]
+    data_type: currency
+    default_value: 0
+
+  - field_id: total_deductions
+    label: "Total deductions"
+    form: "1120-S"
+    line: "20"
+    mandatory: true
+    source_type: CALCULATED
+    formula: "compensation + rent"
+    data_type: currency
+
+  - field_id: ordinary_income
+    label: "Ordinary business income (loss)"
+    form: "1120-S"
+    line: "21"
+    mandatory: true
+    source_type: CALCULATED
+    formula: "total_income - total_deductions"
+    data_type: currency
+
+  - field_id: old_field_2023
+    label: "Deprecated 2023-only field"
+    form: "1120-S"
+    line: "X"
+    mandatory: false
+    source_type: QBO
+    qbo_accounts: ["old_account"]
+    data_type: currency

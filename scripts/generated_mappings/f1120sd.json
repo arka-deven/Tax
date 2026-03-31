@@ -1,0 +1,22 @@
+[
+  {
+    "pdfFieldName": "Return[0].Page1[0].c1_1[1]",
+    "page": 1,
+    "type": "checkbox",
+    "source": "scheduleBAnswer",
+    "questionKey": "p1_q1",
+    "reason": "schedule_b_checkbox"
+  },
+  {
+    "pdfFieldName": "Return[0].Page1[0].Table1[0].Line1a[0].ShadeBox[0]",
+    "page": 1,
+    "source": "table_row",
+    "reason": "table_structure"
+  },
+  {
+    "pdfFieldName": "Return[0].Page1[0].Table2[0].BodyRow1[0].R1[0]",
+    "page": 1,
+    "source": "table_row",
+    "reason": "table_structure"
+  }
+]

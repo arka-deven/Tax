@@ -1,0 +1,73 @@
+---
+form: "1040"
+tax_year: 2024
+version: "1.0"
+
+fields:
+  - field_id: wages
+    label: "Wages, salaries, tips"
+    form: "1040"
+    line: "1"
+    mandatory: true
+    source_type: QBO
+    qbo_accounts: ["w2_wages"]
+    data_type: currency
+
+  - field_id: interest_income
+    label: "Taxable interest"
+    form: "1040"
+    line: "2b"
+    mandatory: false
+    source_type: QBO
+    qbo_accounts: ["interest_income"]
+    data_type: currency
+    default_value: 0
+
+  - field_id: schedule_c_income
+    label: "Business income or (loss)"
+    form: "1040"
+    line: "8"
+    mandatory: false
+    source_type: CONDITIONAL
+    condition: "entity_type == 'sole_proprietor'"
+    qbo_accounts: ["business_income"]
+    data_type: currency
+
+  - field_id: total_income
+    label: "Total income"
+    form: "1040"
+    line: "9"
+    mandatory: true
+    source_type: CALCULATED
+    formula: "wages + interest_income"
+    data_type: currency
+
+  - field_id: ssn_field
+    label: "Social security number"
+    form: "1040"
+    line: "top"
+    mandatory: true
+    source_type: MANUAL
+    data_type: ssn
+
+  - field_id: standard_deduction
+    label: "Standard deduction"
+    form: "1040"
+    line: "12"
+    mandatory: true
+    source_type: QBO
+    qbo_accounts: ["standard_deduction"]
+    data_type: currency
+    cross_validations:
+      - "standard_deduction <= total_income * 0.25"
+
+  - field_id: foreign_earned_income
+    label: "Foreign earned income"
+    form: "1040"
+    line: "F1"
+    mandatory: false
+    source_type: CONDITIONAL
+    condition: "has_foreign_income == True"
+    qbo_accounts: ["foreign_earned_income"]
+    data_type: currency
+    default_value: 0

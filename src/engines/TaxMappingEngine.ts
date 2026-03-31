@@ -164,7 +164,15 @@ const SEMANTIC_MAP: Record<
   "Other Asset|OtherAsset":            { semantic_category: "other_assets",             tax_code: "OTHER_ASSETS",            form: "1120",       schedule: "L",    line: "14" },
   "Other Asset|SecurityDeposits":      { semantic_category: "other_assets",             tax_code: "OTHER_ASSETS",            form: "1120",       schedule: "L",    line: "14" },
   "Other Asset|AccumulatedAmortization": { semantic_category: "accum_amortization",     tax_code: "ACCUM_AMORTIZATION",      form: "1120",       schedule: "L",    line: "12b" },
-  "Other Asset|AccumulatedDepletion":  { semantic_category: "accum_amortization",       tax_code: "ACCUM_AMORTIZATION",      form: "1120",       schedule: "L",    line: "12b" },
+  "Other Asset|AccumulatedDepletion":  { semantic_category: "accum_depletion",          tax_code: "ACCUM_DEPLETION",         form: "1120",       schedule: "L",    line: "10b" },
+
+  // ── Balance Sheet categories currently missing from QBO ────────────────────
+  // These don't have direct QBO account subtypes but may appear via reclassification
+  "Other Current Asset|USGovernmentObligations": { semantic_category: "us_govt_obligations", tax_code: "US_GOVT_OBLIGATIONS", form: "1120", schedule: "L", line: "4" },
+  "Other Current Asset|TaxExemptSecurities": { semantic_category: "tax_exempt_securities", tax_code: "TAX_EXEMPT_SECURITIES", form: "1120", schedule: "L", line: "5" },
+  "Other Current Asset|MortgageRealEstateLoans": { semantic_category: "mortgage_loans", tax_code: "MORTGAGE_LOANS", form: "1120", schedule: "L", line: "8" },
+  "Other Current Liability|ShortTermNotesPayable": { semantic_category: "short_term_notes", tax_code: "SHORT_TERM_NOTES", form: "1120", schedule: "L", line: "17" },
+  "Equity|AdditionalPaidInCapital": { semantic_category: "additional_paid_in_capital", tax_code: "ADDITIONAL_PAID_IN_CAPITAL", form: "1120", schedule: "L", line: "23" },
 
   // Fixed Asset accumulated depreciation (contra-asset on Schedule L line 9b)
   "Fixed Asset|AccumulatedDepreciation": { semantic_category: "accum_depreciation",     tax_code: "ACCUM_DEPRECIATION",      form: "1120",       schedule: "L",    line: "9b" },
@@ -224,6 +232,63 @@ const SEMANTIC_MAP: Record<
   "Equity|PreferredStock":               { semantic_category: "equity",                   tax_code: "EQUITY",                  form: "1120",       schedule: "L",    line: "36" },
 };
 
+/**
+ * Keyword-based fallback: tries to resolve a more specific tax code from
+ * the combined account type + subtype string, avoiding the catch-all "Other deductions".
+ */
+function resolveByKeyword(hint: string): { cat: string; code: string; form: string; line: string; confidence: number } | null {
+  // Order matters — more specific patterns first
+  const KEYWORD_RULES: { pattern: RegExp; cat: string; code: string; form: string; line: string }[] = [
+    // Wages & payroll
+    { pattern: /salari|wage|payroll(?!.*tax)|compensation(?!.*officer)/i, cat: "wages", code: "WAGES", form: "1120", line: "13" },
+    { pattern: /officer.*comp|comp.*officer/i, cat: "officer_compensation", code: "OFFICER_COMPENSATION", form: "1120", line: "12" },
+    // Rent
+    { pattern: /rent|lease.*build/i, cat: "rent_expense", code: "RENT_BUILDING", form: "1120", line: "16" },
+    // Taxes & licenses
+    { pattern: /tax(?:es)?(?:.*paid|.*license|.*permit)|license|permit/i, cat: "taxes_and_licenses", code: "TAXES_LICENSES", form: "1120", line: "17" },
+    { pattern: /payroll.*tax|fica|suta|futa/i, cat: "taxes_and_licenses", code: "TAXES_LICENSES", form: "1120", line: "17" },
+    // Interest
+    { pattern: /interest(?:.*paid|.*expense)/i, cat: "interest_expense", code: "INTEREST_EXPENSE", form: "1120", line: "18" },
+    // Depreciation
+    { pattern: /deprec|amortiz/i, cat: "depreciation", code: "DEPRECIATION", form: "1120", line: "20" },
+    // Advertising
+    { pattern: /advertis|promot|market/i, cat: "general_expenses", code: "ADVERTISING", form: "1120", line: "22" },
+    // Insurance
+    { pattern: /insurance|liability.*ins/i, cat: "general_expenses", code: "INSURANCE", form: "1120", line: "26" },
+    // Repairs
+    { pattern: /repair|maintenance/i, cat: "general_expenses", code: "REPAIRS", form: "1120", line: "14" },
+    // Bad debts
+    { pattern: /bad.*debt|uncollect/i, cat: "bad_debt", code: "BAD_DEBT", form: "1120", line: "15" },
+    // Charitable
+    { pattern: /charit|donat|contribut/i, cat: "charitable_contributions", code: "CHARITABLE_CONTRIBUTION", form: "1120", line: "19" },
+    // Employee benefits
+    { pattern: /benefit|health.*ins|pension|401k|retirement|profit.*shar/i, cat: "general_expenses", code: "EMPLOYEE_BENEFITS", form: "1120", line: "24" },
+    // Professional fees
+    { pattern: /legal|profess|account|consult.*fee|attorney/i, cat: "general_expenses", code: "PROFESSIONAL_FEES", form: "1120", line: "26" },
+    // Meals
+    { pattern: /meal|entertain|food/i, cat: "meals_entertainment", code: "MEALS_50PCT", form: "1120", line: "26" },
+    // Travel
+    { pattern: /travel/i, cat: "travel", code: "TRAVEL", form: "1120", line: "26" },
+    // Utilities
+    { pattern: /utilit|electric|water|gas(?!oline)|phone|telecom|internet/i, cat: "general_expenses", code: "UTILITIES", form: "1120", line: "26" },
+    // Office
+    { pattern: /office(?!r)|supplies|postage|shipping/i, cat: "general_expenses", code: "OFFICE_EXPENSE", form: "1120", line: "26" },
+    // Auto/vehicle
+    { pattern: /auto|vehicle|car|mileage|fuel|gasoline|parking|toll/i, cat: "general_expenses", code: "AUTO_EXPENSE", form: "1120", line: "26" },
+    // Contractors
+    { pattern: /contract|freelanc|subcontract|1099/i, cat: "general_expenses", code: "CONTRACT_LABOR", form: "1120", line: "26" },
+    // Software/tech
+    { pattern: /software|computer|tech|saas|hosting|domain|cloud/i, cat: "general_expenses", code: "GENERAL_DEDUCTION", form: "1120", line: "26" },
+  ];
+
+  for (const rule of KEYWORD_RULES) {
+    if (rule.pattern.test(hint)) {
+      return { ...rule, confidence: 0.75 };
+    }
+  }
+  return null;
+}
+
 export function mapTrialBalanceLines(
   lines: TrialBalanceLine[],
   accountTypeByAccountId: Map<string, string>,
@@ -262,10 +327,16 @@ export function mapTrialBalanceLines(
         source_refs: line.source_refs,
       });
     } else {
-      // Smart fallback: classify by account type keyword before giving up
+      // Smart fallback: first try to match account name keywords to specific tax codes,
+      // then fall back to broad category by account type
       const typeLower = (accountType ?? "").toLowerCase();
-      const fallback =
-        typeLower.includes("income") || typeLower.includes("revenue")
+      const subtypeLower = (accountSubtype ?? "").toLowerCase();
+      const combinedHint = `${typeLower} ${subtypeLower}`;
+
+      // Try specific keyword matching on subtype/name before broad fallback
+      const specificFallback = resolveByKeyword(combinedHint);
+      const fallback = specificFallback
+        ?? (typeLower.includes("income") || typeLower.includes("revenue")
           ? { cat: "other_income", code: "OTHER_INCOME", form: "1120", line: "10" }
         : typeLower.includes("expense") || typeLower.includes("cost")
           ? { cat: "general_expenses", code: "GENERAL_DEDUCTION", form: "1120", line: "26" }
@@ -275,19 +346,22 @@ export function mapTrialBalanceLines(
           ? { cat: "other_current_liabilities", code: "OTHER_CURRENT_LIABS", form: "1120", line: "18" }
         : typeLower.includes("equity")
           ? { cat: "equity", code: "EQUITY", form: "1120", line: "36" }
-        : null;
+        : null);
 
       if (fallback) {
+        const conf = "confidence" in fallback ? (fallback as { confidence: number }).confidence : 0.5;
         mappings.push({
           mapping_id: `map_${line.tb_line_id}`,
           entity_id: line.entity_id, tax_year: line.tax_year, tb_line_id: line.tb_line_id,
           semantic_category: fallback.cat, tax_code: fallback.code,
           target_form: fallback.form, target_schedule: null, target_line: fallback.line,
-          mapping_method: "heuristic",
-          confidence_score: 0.5,
-          requires_review: true,
-          review_reason_code: "HEURISTIC_FALLBACK",
-          explanation: `Auto-classified "${accountType}${accountSubtype ? `|${accountSubtype}` : ""}" as ${fallback.cat} (review recommended)`,
+          mapping_method: conf >= 0.7 ? "keyword" : "heuristic",
+          confidence_score: conf,
+          requires_review: conf < 0.7,
+          review_reason_code: conf < 0.7 ? "HEURISTIC_FALLBACK" : null,
+          explanation: conf >= 0.7
+            ? `Keyword-matched "${accountType}${accountSubtype ? `|${accountSubtype}` : ""}" → ${fallback.code}`
+            : `Auto-classified "${accountType}${accountSubtype ? `|${accountSubtype}` : ""}" as ${fallback.cat} (review recommended)`,
           source_refs: line.source_refs,
         });
       } else {

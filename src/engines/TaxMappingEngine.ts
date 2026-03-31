@@ -1,4 +1,4 @@
-import type { TaxCodeMapping, TrialBalanceLine } from "../models/index.js";
+import type { TaxCodeMapping, TrialBalanceLine, MappingMethod } from "../models/index.js";
 
 /**
  * Maps a QBO AccountType / AccountSubType pair to a semantic tax category.
@@ -355,7 +355,7 @@ export function mapTrialBalanceLines(
           entity_id: line.entity_id, tax_year: line.tax_year, tb_line_id: line.tb_line_id,
           semantic_category: fallback.cat, tax_code: fallback.code,
           target_form: fallback.form, target_schedule: null, target_line: fallback.line,
-          mapping_method: conf >= 0.7 ? "keyword" : "heuristic",
+          mapping_method: (conf >= 0.7 ? "keyword" : "heuristic") as MappingMethod,
           confidence_score: conf,
           requires_review: conf < 0.7,
           review_reason_code: conf < 0.7 ? "HEURISTIC_FALLBACK" : null,

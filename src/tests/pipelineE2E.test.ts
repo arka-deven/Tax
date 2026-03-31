@@ -11,16 +11,16 @@ import type { TaxCodeMapping, TrialBalanceLine } from "../models/index";
 function makeTBLine(id: string, balance: number): TrialBalanceLine {
   return {
     tb_line_id: id,
-    raw_source_id: "src_1",
     entity_id: "e1",
     account_id: `acct_${id}`,
-    account_name: id,
     tax_year: 2024,
     beginning_balance: 0,
     activity_debits: balance > 0 ? balance : 0,
     activity_credits: balance < 0 ? Math.abs(balance) : 0,
     ending_balance: balance,
     adjusted_balance: balance,
+    adjustment_ids: [],
+    source_refs: [],
   };
 }
 
@@ -39,9 +39,12 @@ function makeMapping(
     target_form: "1120-S",
     target_schedule: null,
     target_line: "",
-    mapping_method: "auto",
+    mapping_method: "deterministic",
     confidence_score: 0.95,
-    is_ambiguous: false,
+    requires_review: false,
+    review_reason_code: null,
+    explanation: "test",
+    source_refs: [],
   };
 }
 

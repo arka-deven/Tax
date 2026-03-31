@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import {
   FileText, RefreshCw, XCircle, AlertTriangle, Info, CheckCircle2,
   ChevronRight, Plug, LogOut, Play, Building2, Plus, Send,
+  Zap, BookOpen, Shield, ArrowRight,
 } from "lucide-react";
 import { BlurFade } from "@/components/magicui/blur-fade";
 import { AnimatedList } from "@/components/magicui/animated-list";
@@ -376,185 +377,276 @@ export default function Home() {
     const currentStep = onboardingStep === 0 ? 1 : onboardingStep === 1 ? 2 : 3;
 
     return (
-      <div className="flex h-screen bg-(--linen)">
-        {/* Left — branding */}
-        <div className="hidden lg:flex w-96 bg-(--parchment) flex-col justify-between p-10">
-          <div>
-            <div className="flex items-center gap-3 mb-12">
-              <div className="w-10 h-10 rounded-xl bg-[#3d3229] flex items-center justify-center">
-                <FileText size={20} className="text-white" />
-              </div>
-              <span className="text-xl font-bold text-[#3d3229]">Tax</span>
+      <div className="min-h-screen bg-(--parchment)">
+
+        {/* ── Nav ──────────────────────────────────────────────────────── */}
+        <nav className="flex items-center justify-between px-8 py-5 max-w-6xl mx-auto">
+          <div className="flex items-center gap-2.5">
+            <div className="w-9 h-9 rounded-xl bg-[#2d232e] flex items-center justify-center">
+              <FileText size={18} className="text-white" />
             </div>
-            <h2 className="text-2xl font-bold text-[#3d3229] leading-tight">Automated tax<br />preparation from<br />your books.</h2>
-            <p className="text-sm text-[#8a7e74] mt-4 leading-relaxed">Connect QuickBooks, select your entity type, and we'll prepare every IRS form automatically.</p>
+            <span className="text-lg font-bold text-[#2d232e] tracking-tight">Tax</span>
           </div>
-          <div className="space-y-3">
-            {steps.map((s) => (
-              <div key={s.num} className="flex items-center gap-3">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold transition-colors ${
+          <div className="hidden sm:flex items-center gap-1.5">
+            {steps.map((s, i) => (
+              <div key={s.num} className="flex items-center gap-1.5">
+                {i > 0 && <div className={`w-8 h-px ${s.num <= currentStep ? "bg-[#2d232e]" : "bg-(--bone)"}`} />}
+                <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold transition-all ${
                   s.num < currentStep ? "bg-emerald-100 text-emerald-700"
-                  : s.num === currentStep ? "bg-[#3d3229] text-white"
-                  : "bg-(--powder-petal) text-[#a89f97]"
+                  : s.num === currentStep ? "bg-[#2d232e] text-white"
+                  : "bg-(--bone) text-[#9a959c]"
                 }`}>
-                  {s.num < currentStep ? <CheckCircle2 size={16} /> : s.num}
+                  {s.num < currentStep ? <CheckCircle2 size={13} /> : s.num}
                 </div>
-                <span className={`text-sm ${s.num === currentStep ? "text-[#3d3229] font-semibold" : "text-[#a89f97]"}`}>{s.label}</span>
+                <span className={`text-xs hidden md:block ${s.num === currentStep ? "text-[#2d232e] font-semibold" : "text-[#9a959c]"}`}>{s.label}</span>
               </div>
             ))}
           </div>
-        </div>
+        </nav>
 
-        {/* Right — form area */}
-        <div className="flex-1 flex items-center justify-center p-8">
-          <BlurFade delay={0} key={currentStep}>
-            <div className="w-full max-w-md">
+        {/* ── Hero + Action ───────────────────────────────────────────── */}
+        <div className="max-w-6xl mx-auto px-8 pt-12 pb-20">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
 
-              {/* Step 1: Connect QBO */}
-              {currentStep === 1 && (
-                <div className="text-center">
-                  <div className="w-16 h-16 rounded-2xl bg-(--parchment) flex items-center justify-center mx-auto mb-6 shadow-sm">
-                    <Plug size={28} className="text-[#8a7e74]" />
-                  </div>
-                  <h2 className="text-2xl font-bold text-[#3d3229]">Connect QuickBooks</h2>
-                  <p className="text-[#8a7e74] text-sm mt-2 mb-8">We'll read your chart of accounts and transactions to prepare your tax returns.</p>
-                  <button onClick={connectQBO} className="flex items-center gap-2.5 mx-auto bg-[#2CA01C] hover:bg-[#248518] text-white text-sm font-semibold px-8 py-3.5 rounded-xl transition-colors shadow-sm">
-                    <Plug size={16} /> Connect QuickBooks Online
-                  </button>
-                  <p className="text-[#c4bab2] text-xs mt-4">Read-only access. We never modify your books.</p>
+            {/* Left — copy */}
+            <div>
+              <BlurFade delay={0}>
+                <p className="text-xs font-semibold uppercase tracking-widest text-[#9a959c] mb-4">Automated Tax Preparation</p>
+                <h1 className="text-4xl md:text-5xl font-bold text-[#2d232e] leading-[1.1] tracking-tight">
+                  From your books<br />to filed returns.
+                </h1>
+                <p className="text-lg text-[#534b52] mt-6 leading-relaxed max-w-lg">
+                  Connect QuickBooks Online. We read your chart of accounts, normalize every transaction,
+                  derive tax facts, and fill every IRS form — ready for your CPA to review and file.
+                </p>
+              </BlurFade>
+
+              {/* Feature pills */}
+              <BlurFade delay={0.08}>
+                <div className="flex flex-wrap gap-2 mt-8">
+                  {[
+                    { icon: <Zap size={13} />, text: "29 IRS forms" },
+                    { icon: <Shield size={13} />, text: "23 diagnostic checks" },
+                    { icon: <BookOpen size={13} />, text: "MeF e-file ready" },
+                    { icon: <FileText size={13} />, text: "Real-time editing" },
+                  ].map((pill) => (
+                    <span key={pill.text} className="inline-flex items-center gap-1.5 text-xs font-medium text-[#474448] bg-(--bone) px-3 py-1.5 rounded-full">
+                      {pill.icon} {pill.text}
+                    </span>
+                  ))}
                 </div>
-              )}
+              </BlurFade>
+            </div>
 
-              {/* Step 2: Entity Type */}
-              {currentStep === 2 && (
-                <div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="w-2 h-2 rounded-full bg-emerald-400" />
-                    <span className="text-xs text-emerald-600 font-medium">{onboardingCompany?.name ?? "Company"} connected</span>
-                  </div>
-                  <h2 className="text-2xl font-bold text-[#3d3229]">Entity Type</h2>
-                  <p className="text-[#8a7e74] text-sm mt-1 mb-6">This determines which IRS forms apply.</p>
-                  <div className="space-y-2">
-                    {ENTITY_OPTIONS.map((opt) => (
-                      <button key={opt.value} onClick={() => {
-                        const company = companies.find((c) => c.id === choosingTypeFor);
-                        if (!company?.ein) {
-                          setPendingType({ companyId: choosingTypeFor!, type: opt.value });
-                          setChoosingTypeFor(null);
-                        } else {
-                          autoFillCompany(choosingTypeFor!, opt.value);
-                        }
-                      }}
-                        className="w-full flex items-center justify-between px-4 py-3.5 rounded-xl border border-(--dust-grey) hover:border-(--almond-silk) hover:bg-(--parchment) transition-all text-left group">
-                        <div>
-                          <p className="text-sm font-semibold text-[#3d3229] group-hover:text-[#3d3229]">{opt.label}</p>
-                          <p className="text-xs text-[#a89f97]">{opt.sub}</p>
-                        </div>
-                        <ChevronRight size={14} className="text-[#c4bab2] group-hover:text-[#8a7e74] transition-colors" />
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
+            {/* Right — action card */}
+            <BlurFade delay={0.04} key={currentStep}>
+              <div className="bg-white/60 backdrop-blur-sm rounded-3xl p-8 shadow-sm border border-(--bone)/50">
 
-              {/* Step 3: Company Details (EIN + manual fields) */}
-              {currentStep === 3 && (() => {
-                const typeLabel = ENTITY_OPTIONS.find((o) => o.value === pendingType?.type)?.label ?? "";
-                return (
+                {/* Step 1: Connect QBO */}
+                {currentStep === 1 && (
+                  <div className="text-center py-4">
+                    <div className="w-16 h-16 rounded-2xl bg-(--bone) flex items-center justify-center mx-auto mb-6">
+                      <Plug size={28} className="text-[#534b52]" />
+                    </div>
+                    <h2 className="text-2xl font-bold text-[#2d232e]">Connect QuickBooks</h2>
+                    <p className="text-[#78737a] text-sm mt-2 mb-8 max-w-xs mx-auto">Link your QuickBooks Online account to get started. We read your data in read-only mode.</p>
+                    <button onClick={connectQBO} className="flex items-center gap-2.5 mx-auto bg-[#2CA01C] hover:bg-[#248518] text-white text-sm font-semibold px-8 py-3.5 rounded-xl transition-colors shadow-sm">
+                      <Plug size={16} /> Connect QuickBooks Online
+                    </button>
+                    <p className="text-[#b5b2b4] text-xs mt-4">We never modify your books.</p>
+                  </div>
+                )}
+
+                {/* Step 2: Entity Type */}
+                {currentStep === 2 && (
                   <div>
                     <div className="flex items-center gap-2 mb-1">
                       <span className="w-2 h-2 rounded-full bg-emerald-400" />
-                      <span className="text-xs text-emerald-600 font-medium">{onboardingCompany?.name} · {typeLabel}</span>
+                      <span className="text-xs text-emerald-600 font-medium">{onboardingCompany?.name ?? "Company"} connected</span>
                     </div>
-                    <h2 className="text-2xl font-bold text-[#3d3229]">Company Details</h2>
-                    <p className="text-[#8a7e74] text-sm mt-1 mb-6">These fields are required on tax returns but aren't stored in QuickBooks.</p>
-
-                    <div className="space-y-4">
-                      {/* EIN */}
-                      <div>
-                        <label className="text-xs font-semibold text-[#5a4a3f] block mb-1.5">EIN (Employer Identification Number) *</label>
-                        <input type="text" value={einInput}
-                          onChange={(e) => {
-                            const v = e.target.value.replace(/[^0-9-]/g, "");
-                            if (v.length === 2 && !v.includes("-") && einInput.length < v.length) setEinInput(v + "-");
-                            else setEinInput(v.slice(0, 10));
-                          }}
-                          placeholder="XX-XXXXXXX"
-                          className="w-full px-4 py-3 rounded-xl border border-(--dust-grey) bg-(--linen) text-[#3d3229] font-mono tracking-wider placeholder:text-[#c4bab2] focus:border-(--almond-silk) focus:outline-none transition-colors" />
-                      </div>
-
-                      {/* Date Incorporated / Business Start Date */}
-                      <div className="grid grid-cols-2 gap-3">
-                        <div>
-                          <label className="text-xs font-semibold text-[#5a4a3f] block mb-1.5">
-                            {pendingType?.type === "sole_prop" || pendingType?.type === "llc_single" ? "Business Start Date" : "Date Incorporated"}
-                          </label>
-                          <input type="date"
-                            className="w-full px-3 py-3 rounded-xl border border-(--dust-grey) bg-(--linen) text-[#3d3229] text-sm focus:border-(--almond-silk) focus:outline-none transition-colors" />
-                        </div>
-                        <div>
-                          <label className="text-xs font-semibold text-[#5a4a3f] block mb-1.5">State</label>
-                          <input type="text" placeholder="e.g. DE" maxLength={2}
-                            className="w-full px-3 py-3 rounded-xl border border-(--dust-grey) bg-(--linen) text-[#3d3229] text-sm uppercase placeholder:text-[#c4bab2] focus:border-(--almond-silk) focus:outline-none transition-colors" />
-                        </div>
-                      </div>
-
-                      {/* NAICS / Business Activity */}
-                      <div>
-                        <label className="text-xs font-semibold text-[#5a4a3f] block mb-1.5">Principal Business Activity</label>
-                        <input type="text" placeholder="e.g. Software Development"
-                          className="w-full px-4 py-3 rounded-xl border border-(--dust-grey) bg-(--linen) text-[#3d3229] text-sm placeholder:text-[#c4bab2] focus:border-(--almond-silk) focus:outline-none transition-colors" />
-                      </div>
-
-                      {/* S-Corp specific */}
-                      {pendingType?.type === "s_corp" && (
-                        <div>
-                          <label className="text-xs font-semibold text-[#5a4a3f] block mb-1.5">S-Election Effective Date</label>
-                          <input type="date"
-                            className="w-full px-3 py-3 rounded-xl border border-(--dust-grey) bg-(--linen) text-[#3d3229] text-sm focus:border-(--almond-silk) focus:outline-none transition-colors" />
-                        </div>
-                      )}
-
-                      {/* Partnership/S-Corp: number of owners */}
-                      {(pendingType?.type === "s_corp" || pendingType?.type === "llc_partnership") && (
-                        <div>
-                          <label className="text-xs font-semibold text-[#5a4a3f] block mb-1.5">
-                            Number of {pendingType.type === "s_corp" ? "Shareholders" : "Partners"}
-                          </label>
-                          <input type="number" min={1} placeholder="e.g. 2"
-                            className="w-full px-4 py-3 rounded-xl border border-(--dust-grey) bg-(--linen) text-[#3d3229] text-sm placeholder:text-[#c4bab2] focus:border-(--almond-silk) focus:outline-none transition-colors" />
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="flex gap-2 mt-6">
-                      <button onClick={() => { setPendingType(null); setEinInput(""); setChoosingTypeFor(pendingType!.companyId); }}
-                        className="px-5 py-3 rounded-xl border border-(--dust-grey) text-sm text-[#8a7e74] hover:bg-(--parchment) transition-colors">
-                        Back
-                      </button>
-                      <button
-                        onClick={() => {
-                          if (onboardingCompany) updateCompany(onboardingCompany.id, { ein: einInput });
-                          const pt = pendingType!;
-                          setPendingType(null); setEinInput("");
-                          autoFillCompany(pt.companyId, pt.type);
+                    <h2 className="text-2xl font-bold text-[#2d232e]">Select Entity Type</h2>
+                    <p className="text-[#78737a] text-sm mt-1 mb-5">This determines which IRS forms apply.</p>
+                    <div className="space-y-2">
+                      {ENTITY_OPTIONS.map((opt) => (
+                        <button key={opt.value} onClick={() => {
+                          const company = companies.find((c) => c.id === choosingTypeFor);
+                          if (!company?.ein) {
+                            setPendingType({ companyId: choosingTypeFor!, type: opt.value });
+                            setChoosingTypeFor(null);
+                          } else {
+                            autoFillCompany(choosingTypeFor!, opt.value);
+                          }
                         }}
-                        className="flex-1 px-5 py-3 rounded-xl bg-[#3d3229] text-white text-sm font-semibold hover:bg-[#5a4a3f] transition-colors">
-                        Prepare Tax Returns
+                          className="w-full flex items-center justify-between px-4 py-3 rounded-xl border border-(--bone)/60 hover:border-(--taupe-grey) hover:bg-(--bone)/60 transition-all text-left group">
+                          <div>
+                            <p className="text-sm font-semibold text-[#2d232e]">{opt.label}</p>
+                            <p className="text-xs text-[#9a959c]">{opt.sub}</p>
+                          </div>
+                          <ArrowRight size={14} className="text-[#b5b2b4] group-hover:text-[#78737a] group-hover:translate-x-0.5 transition-all" />
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Step 3: Company Details */}
+                {currentStep === 3 && (() => {
+                  const typeLabel = ENTITY_OPTIONS.find((o) => o.value === pendingType?.type)?.label ?? "";
+                  return (
+                    <div>
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="w-2 h-2 rounded-full bg-emerald-400" />
+                        <span className="text-xs text-emerald-600 font-medium">{onboardingCompany?.name} · {typeLabel}</span>
+                      </div>
+                      <h2 className="text-2xl font-bold text-[#2d232e]">Company Details</h2>
+                      <p className="text-[#78737a] text-sm mt-1 mb-5">Required on tax returns but not stored in QuickBooks.</p>
+
+                      <div className="space-y-3.5">
+                        <div>
+                          <label className="text-xs font-semibold text-[#474448] block mb-1.5">EIN *</label>
+                          <input type="text" value={einInput}
+                            onChange={(e) => {
+                              const v = e.target.value.replace(/[^0-9-]/g, "");
+                              if (v.length === 2 && !v.includes("-") && einInput.length < v.length) setEinInput(v + "-");
+                              else setEinInput(v.slice(0, 10));
+                            }}
+                            placeholder="XX-XXXXXXX"
+                            className="w-full px-4 py-3 rounded-xl border border-(--bone)/60 bg-(--parchment) text-[#2d232e] font-mono tracking-wider placeholder:text-[#b5b2b4] focus:border-(--taupe-grey) focus:outline-none transition-colors" />
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-3">
+                          <div>
+                            <label className="text-xs font-semibold text-[#474448] block mb-1.5">
+                              {pendingType?.type === "sole_prop" || pendingType?.type === "llc_single" ? "Start Date" : "Incorporated"}
+                            </label>
+                            <input type="date"
+                              className="w-full px-3 py-3 rounded-xl border border-(--bone)/60 bg-(--parchment) text-[#2d232e] text-sm focus:border-(--taupe-grey) focus:outline-none transition-colors" />
+                          </div>
+                          <div>
+                            <label className="text-xs font-semibold text-[#474448] block mb-1.5">State</label>
+                            <input type="text" placeholder="e.g. DE" maxLength={2}
+                              className="w-full px-3 py-3 rounded-xl border border-(--bone)/60 bg-(--parchment) text-[#2d232e] text-sm uppercase placeholder:text-[#b5b2b4] focus:border-(--taupe-grey) focus:outline-none transition-colors" />
+                          </div>
+                        </div>
+
+                        <div>
+                          <label className="text-xs font-semibold text-[#474448] block mb-1.5">Business Activity</label>
+                          <input type="text" placeholder="e.g. Software Development"
+                            className="w-full px-4 py-3 rounded-xl border border-(--bone)/60 bg-(--parchment) text-[#2d232e] text-sm placeholder:text-[#b5b2b4] focus:border-(--taupe-grey) focus:outline-none transition-colors" />
+                        </div>
+
+                        {pendingType?.type === "s_corp" && (
+                          <div>
+                            <label className="text-xs font-semibold text-[#474448] block mb-1.5">S-Election Date</label>
+                            <input type="date"
+                              className="w-full px-3 py-3 rounded-xl border border-(--bone)/60 bg-(--parchment) text-[#2d232e] text-sm focus:border-(--taupe-grey) focus:outline-none transition-colors" />
+                          </div>
+                        )}
+
+                        {(pendingType?.type === "s_corp" || pendingType?.type === "llc_partnership") && (
+                          <div>
+                            <label className="text-xs font-semibold text-[#474448] block mb-1.5">
+                              Number of {pendingType.type === "s_corp" ? "Shareholders" : "Partners"}
+                            </label>
+                            <input type="number" min={1} placeholder="e.g. 2"
+                              className="w-full px-4 py-3 rounded-xl border border-(--bone)/60 bg-(--parchment) text-[#2d232e] text-sm placeholder:text-[#b5b2b4] focus:border-(--taupe-grey) focus:outline-none transition-colors" />
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="flex gap-2 mt-6">
+                        <button onClick={() => { setPendingType(null); setEinInput(""); setChoosingTypeFor(pendingType!.companyId); }}
+                          className="px-5 py-3 rounded-xl border border-(--bone)/60 text-sm text-[#78737a] hover:bg-(--bone) transition-colors">
+                          Back
+                        </button>
+                        <button
+                          onClick={() => {
+                            if (onboardingCompany) updateCompany(onboardingCompany.id, { ein: einInput });
+                            const pt = pendingType!;
+                            setPendingType(null); setEinInput("");
+                            autoFillCompany(pt.companyId, pt.type);
+                          }}
+                          className="flex-1 flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-[#2d232e] text-white text-sm font-semibold hover:bg-[#474448] transition-colors">
+                          Prepare Tax Returns <ArrowRight size={14} />
+                        </button>
+                      </div>
+                      <button
+                        onClick={() => { const pt = pendingType!; setPendingType(null); setEinInput(""); autoFillCompany(pt.companyId, pt.type); }}
+                        className="text-xs text-[#9a959c] hover:text-[#534b52] transition-colors text-center w-full mt-3">
+                        Skip — I'll enter these in the forms
                       </button>
                     </div>
-                    <button
-                      onClick={() => { const pt = pendingType!; setPendingType(null); setEinInput(""); autoFillCompany(pt.companyId, pt.type); }}
-                      className="text-xs text-[#a89f97] hover:text-[#6b5e52] transition-colors text-center w-full mt-3">
-                      Skip — I'll enter these in the forms
-                    </button>
-                  </div>
-                );
-              })()}
+                  );
+                })()}
 
+              </div>
+            </BlurFade>
+          </div>
+        </div>
+
+        {/* ── How It Works ────────────────────────────────────────────── */}
+        <div className="border-t border-(--bone)/40">
+          <div className="max-w-6xl mx-auto px-8 py-16">
+            <div className="grid md:grid-cols-3 gap-8">
+              {[
+                { icon: <Zap size={20} />, title: "Connect", text: "Link your QuickBooks Online account. We read your data in read-only mode — never modify your books." },
+                { icon: <BookOpen size={20} />, title: "Prepare", text: "Every transaction is normalized, mapped to IRS tax codes, and computed into form-ready values." },
+                { icon: <Shield size={20} />, title: "Review & File", text: "Your CPA reviews the filled forms, makes adjustments, and exports MeF XML for IRS e-filing." },
+              ].map((step, i) => (
+                <BlurFade key={i} delay={0.06 + i * 0.04}>
+                  <div className="flex gap-4">
+                    <div className="w-10 h-10 rounded-xl bg-[#2d232e] text-white flex items-center justify-center shrink-0">
+                      {step.icon}
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-[#2d232e] text-sm mb-1">{step.title}</h3>
+                      <p className="text-sm text-[#78737a] leading-relaxed">{step.text}</p>
+                    </div>
+                  </div>
+                </BlurFade>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* ── Supported Forms ─────────────────────────────────────────── */}
+        <div className="max-w-6xl mx-auto px-8 pb-16">
+          <BlurFade delay={0.2}>
+            <div className="bg-(--bone) rounded-2xl p-8">
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+                <h2 className="text-lg font-bold text-[#2d232e]">Every entity type. Every form.</h2>
+                <p className="text-xs text-[#9a959c]">6 entity types, 29+ IRS forms, complete coverage</p>
+              </div>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5">
+                {[
+                  "C-Corp · 1120", "S-Corp · 1120-S", "Partnership · 1065", "Sole Prop · Sch C",
+                  "LLC · Sch C", "Nonprofit · 990", "Balance Sheet · Sch L", "Reconciliation · M-1",
+                  "Depreciation · 4562", "COGS · 1125-A", "Capital Gains · Sch D", "Self-Employment · SE",
+                ].map((item) => (
+                  <div key={item} className="flex items-center gap-2 text-xs text-[#474448]">
+                    <CheckCircle2 size={12} className="text-emerald-500 shrink-0" />
+                    <span>{item}</span>
+                  </div>
+                ))}
+              </div>
             </div>
           </BlurFade>
         </div>
+
+        {/* ── Footer ──────────────────────────────────────────────────── */}
+        <footer className="max-w-6xl mx-auto px-8 py-6 flex items-center justify-between border-t border-(--bone)/40">
+          <div className="flex items-center gap-2">
+            <div className="w-6 h-6 rounded-lg bg-[#2d232e] flex items-center justify-center">
+              <FileText size={12} className="text-white" />
+            </div>
+            <span className="text-xs font-semibold text-[#78737a]">Tax</span>
+          </div>
+          <div className="flex items-center gap-6 text-xs text-[#9a959c]">
+            <a href="/legal/privacy" className="hover:text-[#534b52] transition-colors">Privacy</a>
+            <a href="/legal/terms" className="hover:text-[#534b52] transition-colors">Terms</a>
+            <a href="/legal/eula" className="hover:text-[#534b52] transition-colors">EULA</a>
+          </div>
+        </footer>
       </div>
     );
   }
@@ -569,36 +661,36 @@ export default function Home() {
   const formsTotal = forms.length;
 
   return (
-    <div className="flex h-screen overflow-hidden bg-(--linen) font-sans">
+    <div className="flex h-screen overflow-hidden bg-(--parchment) font-sans">
       {errorMsg && <ErrorToast message={errorMsg} onClose={() => setErrorMsg(null)} />}
 
       {/* ── Sidebar ──────────────────────────────────────────────────── */}
-      <aside className="w-60 shrink-0 flex flex-col bg-(--parchment)">
+      <aside className="w-60 shrink-0 flex flex-col bg-(--bone)">
         {/* Logo */}
         <div className="h-16 px-6 flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-[#3d3229] flex items-center justify-center">
+          <div className="w-8 h-8 rounded-lg bg-[#2d232e] flex items-center justify-center">
             <FileText size={16} className="text-white" />
           </div>
-          <span className="font-bold text-[#3d3229] text-base tracking-tight">Tax</span>
+          <span className="font-bold text-[#2d232e] text-base tracking-tight">Tax</span>
         </div>
 
         {/* Nav / Company list */}
         <div className="flex-1 px-4 py-2 space-y-1 overflow-y-auto">
-          <p className="text-[10px] font-semibold text-[#a89f97] uppercase tracking-widest px-3 pt-2 pb-1">Companies</p>
+          <p className="text-[10px] font-semibold text-[#9a959c] uppercase tracking-widest px-3 pt-2 pb-1">Companies</p>
           {companies.map((co) => {
             const isActive = co.id === activeId;
             const coLabel = co.entityType ? ENTITY_OPTIONS.find((o) => o.value === co.entityType)?.label : null;
             return (
               <button key={co.id} onClick={() => { setActiveId(co.id); setExpandedForms(new Set()); }}
-                className={`w-full text-left px-3 py-2.5 rounded-xl transition-all ${isActive ? "bg-(--powder-petal) shadow-sm" : "hover:bg-(--linen)"}`}>
+                className={`w-full text-left px-3 py-2.5 rounded-xl transition-all ${isActive ? "bg-(--bone) shadow-sm" : "hover:bg-(--parchment)"}`}>
                 <div className="flex items-center gap-2.5">
-                  <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${isActive ? "bg-[#3d3229] text-white" : "bg-(--powder-petal) text-[#a89f97]"}`}>
+                  <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${isActive ? "bg-[#2d232e] text-white" : "bg-(--bone) text-[#9a959c]"}`}>
                     <Building2 size={14} />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className={`text-sm truncate ${isActive ? "font-semibold text-[#3d3229]" : "text-[#6b5e52]"}`}>{co.name}</p>
+                    <p className={`text-sm truncate ${isActive ? "font-semibold text-[#2d232e]" : "text-[#534b52]"}`}>{co.name}</p>
                     {coLabel ? (
-                      <p className="text-[10px] text-[#a89f97]">{coLabel}</p>
+                      <p className="text-[10px] text-[#9a959c]">{coLabel}</p>
                     ) : (
                       <button onClick={(e) => { e.stopPropagation(); setChoosingTypeFor(co.id); }}
                         className="text-[10px] text-blue-500 hover:text-blue-700 font-medium">
@@ -606,15 +698,15 @@ export default function Home() {
                       </button>
                     )}
                   </div>
-                  {co.loading && <RefreshCw size={12} className="animate-spin text-[#a89f97] shrink-0" />}
+                  {co.loading && <RefreshCw size={12} className="animate-spin text-[#9a959c] shrink-0" />}
                 </div>
               </button>
             );
           })}
 
           <button onClick={connectQBO}
-            className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl hover:bg-(--linen) transition-colors text-sm text-[#a89f97] hover:text-[#6b5e52]">
-            <div className="w-7 h-7 rounded-lg border-2 border-dashed border-(--dust-grey) flex items-center justify-center"><Plus size={14} /></div>
+            className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl hover:bg-(--parchment) transition-colors text-sm text-[#9a959c] hover:text-[#534b52]">
+            <div className="w-7 h-7 rounded-lg border-2 border-dashed border-(--bone) flex items-center justify-center"><Plus size={14} /></div>
             Add Company
           </button>
         </div>
@@ -623,7 +715,7 @@ export default function Home() {
         <div className="px-4 py-4 space-y-1">
           {active && (
             <button onClick={() => disconnectCompany(active.id)}
-              className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-[#a89f97] hover:text-red-500 hover:bg-red-50 transition-colors text-sm">
+              className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-[#9a959c] hover:text-red-500 hover:bg-red-50 transition-colors text-sm">
               <LogOut size={14} /> Disconnect
             </button>
           )}
@@ -633,22 +725,22 @@ export default function Home() {
       {/* ── Main ─────────────────────────────────────────────────────── */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Header */}
-        <header className="shrink-0 h-16 bg-(--parchment) px-8 flex items-center justify-between">
+        <header className="shrink-0 h-16 bg-(--bone) px-8 flex items-center justify-between">
           {active ? (
             <div>
               <div className="flex items-center gap-3">
-                <h1 className="text-xl font-bold text-[#3d3229]">{active.name}</h1>
-                {entityLabel && <span className="text-xs font-medium text-[#8a7e74] bg-(--powder-petal) px-2.5 py-1 rounded-full">{entityLabel}</span>}
+                <h1 className="text-xl font-bold text-[#2d232e]">{active.name}</h1>
+                {entityLabel && <span className="text-xs font-medium text-[#78737a] bg-(--bone) px-2.5 py-1 rounded-full">{entityLabel}</span>}
               </div>
               <div className="flex items-center gap-2 mt-0.5">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                <span className="text-xs text-[#a89f97]">QuickBooks Online connected</span>
-                {active.ein && <span className="text-xs text-[#a89f97]">· EIN {active.ein}</span>}
-                {active.loading && <><RefreshCw size={10} className="animate-spin text-[#a89f97] ml-1" /><span className="text-xs text-[#a89f97]">Filling…</span></>}
+                <span className="text-xs text-[#9a959c]">QuickBooks Online connected</span>
+                {active.ein && <span className="text-xs text-[#9a959c]">· EIN {active.ein}</span>}
+                {active.loading && <><RefreshCw size={10} className="animate-spin text-[#9a959c] ml-1" /><span className="text-xs text-[#9a959c]">Filling…</span></>}
               </div>
             </div>
           ) : (
-            <p className="text-[#a89f97] text-sm">Select a company</p>
+            <p className="text-[#9a959c] text-sm">Select a company</p>
           )}
           <div className="flex items-center gap-3">
             {active?.result && blocking.length === 0 && (
@@ -669,11 +761,11 @@ export default function Home() {
                   URL.revokeObjectURL(url);
                 } catch (err) { setErrorMsg("E-file XML generation failed"); }
               }}
-                className="flex items-center gap-2 bg-[#3d3229] hover:bg-[#5a4a3f] text-white text-sm font-semibold px-4 py-2 rounded-xl transition-colors shadow-sm">
+                className="flex items-center gap-2 bg-[#2d232e] hover:bg-[#474448] text-white text-sm font-semibold px-4 py-2 rounded-xl transition-colors shadow-sm">
                 <Send size={14} /> E-File XML
               </button>
             )}
-            <select className="text-sm border border-(--dust-grey) rounded-xl px-4 py-2 text-[#3d3229] bg-(--parchment) shadow-sm" value={taxYear}
+            <select className="text-sm border border-(--bone) rounded-xl px-4 py-2 text-[#2d232e] bg-(--bone) shadow-sm" value={taxYear}
               onChange={(e) => setTaxYear(Number(e.target.value))}>
               {[2025, 2024, 2023].map((y) => <option key={y}>{y}</option>)}
             </select>
@@ -683,8 +775,8 @@ export default function Home() {
         {/* Content */}
         <main className="flex-1 overflow-y-auto p-6">
           {!active?.entityType ? (
-            <div className="flex flex-col items-center justify-center h-full text-[#a89f97] gap-4">
-              <div className="w-16 h-16 rounded-2xl bg-(--parchment) shadow-sm flex items-center justify-center"><Building2 size={28} className="text-[#d6ccc2]" /></div>
+            <div className="flex flex-col items-center justify-center h-full text-[#9a959c] gap-4">
+              <div className="w-16 h-16 rounded-2xl bg-(--bone) shadow-sm flex items-center justify-center"><Building2 size={28} className="text-[#e0ddcf]" /></div>
               <p className="text-sm">{active ? "Choose an entity type to auto-fill forms" : "Select a company from the sidebar"}</p>
             </div>
           ) : (
@@ -692,7 +784,7 @@ export default function Home() {
 
               {/* ── Diagnostics Card ─────────────────────────────────── */}
               {active.result && (blocking.length > 0 || warnings.length > 0) && (
-                <div className="bg-(--parchment) rounded-2xl shadow-sm overflow-hidden">
+                <div className="bg-(--bone) rounded-2xl shadow-sm overflow-hidden">
                   <div className={`flex items-center gap-3 px-5 py-3 ${
                     blocking.length > 0 ? "bg-red-50 text-red-700" : "bg-amber-50 text-amber-700"
                   }`}>
@@ -701,7 +793,7 @@ export default function Home() {
                       {blocking.length > 0 ? `${blocking.length} blocking issue${blocking.length > 1 ? "s" : ""}` : `${warnings.length} warning${warnings.length > 1 ? "s" : ""} to review`}
                     </span>
                     {warnings.length > 0 && blocking.length > 0 && <span className="text-xs text-amber-600 bg-amber-100 px-2 py-0.5 rounded-full">{warnings.length} warnings</span>}
-                    {infos.length > 0 && <span className="text-xs text-[#8a7e74] bg-(--powder-petal) px-2 py-0.5 rounded-full">{infos.length} info</span>}
+                    {infos.length > 0 && <span className="text-xs text-[#78737a] bg-(--bone) px-2 py-0.5 rounded-full">{infos.length} info</span>}
                   </div>
                   <div className="px-5 py-3 space-y-2">
                     {[...blocking, ...warnings].map((d, i) => (
@@ -711,7 +803,7 @@ export default function Home() {
                           : <AlertTriangle size={14} className="text-amber-400 mt-0.5 shrink-0" />}
                         <div>
                           <span className={`font-medium ${d.severity === "blocking_error" ? "text-red-700" : "text-amber-700"}`}>{d.title}</span>
-                          <p className="text-xs text-[#8a7e74] mt-0.5">{d.message}</p>
+                          <p className="text-xs text-[#78737a] mt-0.5">{d.message}</p>
                         </div>
                       </div>
                     ))}
@@ -721,11 +813,11 @@ export default function Home() {
 
               {/* Form cards */}
               {groupedForms.map(({ cat, items }) => (
-                <div key={cat} className="bg-(--parchment) rounded-2xl shadow-sm overflow-hidden">
-                  <div className="px-5 py-3 border-b border-(--powder-petal)">
-                    <p className="text-xs font-semibold text-[#a89f97] uppercase tracking-wider">{CATEGORY_LABELS[cat]}</p>
+                <div key={cat} className="bg-(--bone) rounded-2xl shadow-sm overflow-hidden">
+                  <div className="px-5 py-3 border-b border-(--bone)">
+                    <p className="text-xs font-semibold text-[#9a959c] uppercase tracking-wider">{CATEGORY_LABELS[cat]}</p>
                   </div>
-                  <div className="divide-y divide-(--powder-petal)">
+                  <div className="divide-y divide-(--bone)">
                     {items.map((f) => {
                       const isExpanded = expandedForms.has(f.form);
                       const filled = active.filledPdfs[f.form];
@@ -733,9 +825,9 @@ export default function Home() {
                       if (f.form === "990-N") {
                         return (
                           <div key={f.form} className="flex items-center gap-4 px-5 py-3.5">
-                            <span className="w-20 text-sm font-semibold text-[#8a7e74] shrink-0">{f.form}</span>
-                            <span className="text-sm text-[#6b5e52] flex-1">{f.title}</span>
-                            <span className="text-xs text-[#c4bab2]">Electronic only</span>
+                            <span className="w-20 text-sm font-semibold text-[#78737a] shrink-0">{f.form}</span>
+                            <span className="text-sm text-[#534b52] flex-1">{f.title}</span>
+                            <span className="text-xs text-[#b5b2b4]">Electronic only</span>
                           </div>
                         );
                       }
@@ -743,35 +835,25 @@ export default function Home() {
                       return (
                         <div key={f.form}>
                           <button onClick={() => toggleForm(f.form)}
-                            className="flex items-center gap-4 w-full px-5 py-3.5 text-left hover:bg-(--linen) transition-colors">
-                            <ChevronRight size={14} className={`shrink-0 text-[#c4bab2] transition-transform ${isExpanded ? "rotate-90" : ""}`} />
-                            <span className="w-20 text-sm font-bold text-[#3d3229] shrink-0">{f.form}</span>
-                            <span className="text-sm text-[#6b5e52] flex-1 truncate">{f.title}</span>
+                            className="flex items-center gap-4 w-full px-5 py-3.5 text-left hover:bg-(--parchment) transition-colors">
+                            <ChevronRight size={14} className={`shrink-0 text-[#b5b2b4] transition-transform ${isExpanded ? "rotate-90" : ""}`} />
+                            <span className="w-20 text-sm font-bold text-[#2d232e] shrink-0">{f.form}</span>
+                            <span className="text-sm text-[#534b52] flex-1 truncate">{f.title}</span>
                             {filled && <span className="text-[10px] font-medium text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full shrink-0">Filled</span>}
-                            <span className="text-xs text-[#c4bab2] shrink-0">{f.due}</span>
+                            <span className="text-xs text-[#b5b2b4] shrink-0">{f.due}</span>
                           </button>
                           {isExpanded && (
-                            <div className="mx-5 mb-3 rounded-xl overflow-hidden border border-(--dust-grey) shadow-sm" style={{ height: "80vh" }}>
-                              {UNIFIED_SCHEMAS[f.form] ? (
-                                <XmlFormWrapper
-                                  entityId={active.id}
-                                  formCode={f.form}
-                                  taxYear={taxYear}
-                                  facts={active.result?.facts ?? {}}
-                                  meta={{ companyName: active.name, ein: active.ein, taxYear, entityType: active.entityType }}
-                                />
-                              ) : (
-                                <PDFFormViewer
-                                  pdfBytes={filled?.pdfBytes ?? null}
-                                  pdfFileName={PDF_MAPPINGS[f.form]?.pdfFileName}
-                                  formCode={f.form}
-                                  onGenerate={() => regenerateForm(f.form)}
-                                  isGenerating={active.loading}
-                                  onDownload={() => downloadPdf(f.form)}
-                                  filledCount={filled?.filledCount}
-                                  totalMapped={filled?.totalMapped}
-                                />
-                              )}
+                            <div className="mx-5 mb-3 rounded-xl overflow-hidden border border-(--bone) shadow-sm" style={{ height: "80vh" }}>
+                              <PDFFormViewer
+                                pdfBytes={filled?.pdfBytes ?? null}
+                                pdfFileName={PDF_MAPPINGS[f.form]?.pdfFileName}
+                                formCode={f.form}
+                                onGenerate={() => regenerateForm(f.form)}
+                                isGenerating={active.loading}
+                                onDownload={() => downloadPdf(f.form)}
+                                filledCount={filled?.filledCount}
+                                totalMapped={filled?.totalMapped}
+                              />
                             </div>
                           )}
                         </div>
@@ -784,16 +866,16 @@ export default function Home() {
               {/* Diagnostics */}
               {active.result && active.result.diagnostics.length > 0 && (
                 <BlurFade delay={0.05}>
-                  <div className="bg-(--parchment) rounded-2xl shadow-sm overflow-hidden">
-                    <div className="flex items-center justify-between px-5 py-3 border-b border-(--powder-petal)">
-                      <p className="text-xs font-semibold text-[#a89f97] uppercase tracking-wider">All Diagnostics</p>
+                  <div className="bg-(--bone) rounded-2xl shadow-sm overflow-hidden">
+                    <div className="flex items-center justify-between px-5 py-3 border-b border-(--bone)">
+                      <p className="text-xs font-semibold text-[#9a959c] uppercase tracking-wider">All Diagnostics</p>
                       <div className="flex items-center gap-2 text-xs">
                         {blocking.length > 0 && <span className="text-red-500 bg-red-50 px-2 py-0.5 rounded-full font-medium">{blocking.length} blocking</span>}
                         {warnings.length > 0 && <span className="text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full font-medium">{warnings.length} warnings</span>}
-                        {infos.length > 0 && <span className="text-[#8a7e74] bg-(--powder-petal) px-2 py-0.5 rounded-full font-medium">{infos.length} info</span>}
+                        {infos.length > 0 && <span className="text-[#78737a] bg-(--bone) px-2 py-0.5 rounded-full font-medium">{infos.length} info</span>}
                       </div>
                     </div>
-                    <div className="divide-y divide-(--powder-petal)">
+                    <div className="divide-y divide-(--bone)">
                       {active.result.diagnostics.map((d, i) => {
                         const isBlock = d.severity === "blocking_error";
                         const isWarn = d.severity === "warning";
@@ -801,10 +883,10 @@ export default function Home() {
                           <div key={i} className="flex gap-3 px-5 py-3">
                             {isBlock ? <XCircle size={16} className="text-red-400 shrink-0 mt-0.5" />
                               : isWarn ? <AlertTriangle size={16} className="text-amber-400 shrink-0 mt-0.5" />
-                              : <Info size={16} className="text-[#c4bab2] shrink-0 mt-0.5" />}
+                              : <Info size={16} className="text-[#b5b2b4] shrink-0 mt-0.5" />}
                             <div className="min-w-0">
-                              <p className={`text-sm font-medium ${isBlock ? "text-red-700" : isWarn ? "text-amber-700" : "text-[#6b5e52]"}`}>{d.title}</p>
-                              <p className="text-xs text-[#a89f97] mt-0.5">{d.message}</p>
+                              <p className={`text-sm font-medium ${isBlock ? "text-red-700" : isWarn ? "text-amber-700" : "text-[#534b52]"}`}>{d.title}</p>
+                              <p className="text-xs text-[#9a959c] mt-0.5">{d.message}</p>
                             </div>
                           </div>
                         );

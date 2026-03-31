@@ -29,20 +29,20 @@ export default function FormField({ def, value, onChange, isEdited }: FormFieldP
     <div className={`flex items-center gap-3 px-4 py-2 ${isEdited ? "bg-amber-50/40" : ""}`}>
       {/* Line number */}
       <div className="w-12 text-right shrink-0">
-        <span className={`text-xs font-mono ${def.bold ? "font-bold text-[#3d3229]" : "text-[#8a7e74]"}`}>
+        <span className={`text-xs font-mono ${def.bold ? "font-bold text-[#2d232e]" : "text-[#78737a]"}`}>
           {def.irsLine}
         </span>
       </div>
 
       {/* Label with dot leader */}
-      <div className={`flex-1 flex items-center gap-1 min-w-0 ${def.bold ? "font-semibold text-[#3d3229]" : "text-[#5a4a3f]"}`}>
+      <div className={`flex-1 flex items-center gap-1 min-w-0 ${def.bold ? "font-semibold text-[#2d232e]" : "text-[#474448]"}`}>
         <span className="text-sm truncate">{def.label}</span>
-        <span className="flex-1 border-b border-dotted border-[#d6ccc2] min-w-8" />
+        <span className="flex-1 border-b border-dotted border-[#e0ddcf] min-w-8" />
       </div>
 
       {/* Line number echo */}
       <div className="w-10 text-right shrink-0">
-        <span className="text-[10px] font-mono text-[#a89f97]">{def.irsLine}</span>
+        <span className="text-[10px] font-mono text-[#9a959c]">{def.irsLine}</span>
       </div>
 
       {/* Value input */}
@@ -53,7 +53,7 @@ export default function FormField({ def, value, onChange, isEdited }: FormFieldP
             checked={rawVal === true || rawVal === "X" || rawVal === "Yes"}
             onChange={(e) => onChange(def.fieldId, e.target.checked ? "X" : "")}
             disabled={readonly}
-            className="w-4 h-4 accent-[#3d3229]"
+            className="w-4 h-4 accent-[#2d232e]"
           />
         ) : (
           <input
@@ -69,8 +69,8 @@ export default function FormField({ def, value, onChange, isEdited }: FormFieldP
             readOnly={readonly}
             className={`w-full text-right text-sm font-mono px-2 py-1.5 rounded-lg border transition-colors outline-none
               ${readonly
-                ? "bg-[#f5f5f5] text-[#8a7e74] border-transparent cursor-default"
-                : "bg-white text-[#3d3229] border-[#d6ccc2] focus:border-[#d5bdaf] focus:ring-1 focus:ring-[#d5bdaf]/30"
+                ? "bg-[#f5f4f0] text-[#78737a] border-transparent cursor-default"
+                : "bg-white text-[#2d232e] border-[#e0ddcf] focus:border-[#534b52] focus:ring-1 focus:ring-[#534b52]/20"
               }
               ${isEdited ? "border-amber-300 bg-amber-50" : ""}
               ${def.bold ? "font-bold" : ""}

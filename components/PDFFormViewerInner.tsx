@@ -46,19 +46,19 @@ export default function PDFFormViewerInner({
   const hasFillStats = typeof filledCount === "number" && typeof totalMapped === "number";
 
   return (
-    <div className="flex flex-col h-full bg-(--linen)">
+    <div className="flex flex-col h-full bg-(--parchment)">
       {/* Toolbar */}
-      <div className="sticky top-0 z-10 bg-(--parchment) border-b border-(--powder-petal)">
+      <div className="sticky top-0 z-10 bg-(--bone) border-b border-(--bone)">
         <div className="flex items-center gap-3 px-4 py-2.5">
           <div className="flex items-center gap-2 min-w-0 flex-1">
-            <FileText size={15} className="text-[#c4bab2] shrink-0" />
-            <span className="text-sm font-semibold text-[#3d3229] truncate">
+            <FileText size={15} className="text-[#b5b2b4] shrink-0" />
+            <span className="text-sm font-semibold text-[#2d232e] truncate">
               Form {formCode}
             </span>
             {hasFillStats && (
-              <span className="ml-1 text-xs text-[#8a7e74] whitespace-nowrap">
-                — <span className="font-medium text-[#5a4a3f]">{filledCount}</span>
-                <span className="text-[#a89f97]">/{totalMapped}</span> fields filled
+              <span className="ml-1 text-xs text-[#78737a] whitespace-nowrap">
+                — <span className="font-medium text-[#474448]">{filledCount}</span>
+                <span className="text-[#9a959c]">/{totalMapped}</span> fields filled
               </span>
             )}
             {pdfBytes && (
@@ -70,14 +70,14 @@ export default function PDFFormViewerInner({
 
           <div className="flex items-center gap-2 shrink-0">
             <button onClick={onGenerate} disabled={isGenerating}
-              className="flex items-center gap-1.5 bg-[#3d3229] hover:bg-[#5a4a3f] disabled:opacity-50 text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors">
+              className="flex items-center gap-1.5 bg-[#2d232e] hover:bg-[#474448] disabled:opacity-50 text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors">
               {isGenerating
                 ? <><RefreshCw size={12} className="animate-spin" /> Re-filling…</>
                 : <><Play size={12} /> Re-fill</>}
             </button>
             {pdfBytes && (
               <button onClick={onDownload}
-                className="flex items-center gap-1.5 border border-(--dust-grey) hover:border-(--almond-silk) hover:bg-(--linen) text-[#5a4a3f] text-xs font-medium px-3 py-1.5 rounded-lg transition-colors">
+                className="flex items-center gap-1.5 border border-(--bone) hover:border-(--taupe-grey) hover:bg-(--parchment) text-[#474448] text-xs font-medium px-3 py-1.5 rounded-lg transition-colors">
                 <Download size={12} /> Download
               </button>
             )}
@@ -94,9 +94,9 @@ export default function PDFFormViewerInner({
             title={`Form ${formCode}`}
           />
         ) : (
-          <div className="flex flex-col items-center justify-center h-full gap-4 text-[#a89f97] select-none">
-            <RefreshCw size={24} className="animate-spin text-[#d6ccc2]" />
-            <p className="text-sm text-[#8a7e74]">Loading form…</p>
+          <div className="flex flex-col items-center justify-center h-full gap-4 text-[#9a959c] select-none">
+            <RefreshCw size={24} className="animate-spin text-[#e0ddcf]" />
+            <p className="text-sm text-[#78737a]">Loading form…</p>
           </div>
         )}
       </div>

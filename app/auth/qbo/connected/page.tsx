@@ -39,36 +39,36 @@ function QBOConnectedInner() {
 
   if (!closed) {
     return (
-      <div className="flex h-screen items-center justify-center" style={{ background: "#f5ebe0" }}>
-        <p className="text-sm" style={{ color: "#8a7e74" }}>Connecting…</p>
+      <div className="flex h-screen items-center justify-center" style={{ background: "#f1f0ea" }}>
+        <p className="text-sm" style={{ color: "#78737a" }}>Connecting…</p>
       </div>
     );
   }
 
   // Popup didn't close — show success + link back
   return (
-    <div className="flex h-screen items-center justify-center" style={{ background: "#f5ebe0" }}>
+    <div className="flex h-screen items-center justify-center" style={{ background: "#f1f0ea" }}>
       <div className="text-center max-w-xs px-6">
         {error ? (
           <>
             <p className="text-red-600 font-semibold text-sm">Connection failed</p>
-            <p className="text-xs mt-1" style={{ color: "#8a7e74" }}>{error}</p>
+            <p className="text-xs mt-1" style={{ color: "#78737a" }}>{error}</p>
           </>
         ) : (
           <>
             <div className="w-12 h-12 rounded-full bg-emerald-100 flex items-center justify-center mx-auto mb-4">
               <CheckCircle2 size={24} className="text-emerald-600" />
             </div>
-            <p className="font-semibold text-sm" style={{ color: "#3d3229" }}>
+            <p className="font-semibold text-sm" style={{ color: "#2d232e" }}>
               {companyName || "QuickBooks"} connected
             </p>
-            <p className="text-xs mt-1 mb-6" style={{ color: "#8a7e74" }}>
+            <p className="text-xs mt-1 mb-6" style={{ color: "#78737a" }}>
               You can close this window, or click below to continue.
             </p>
             <a
               href="/"
               className="inline-block px-6 py-2.5 rounded-xl text-white text-sm font-semibold transition-colors"
-              style={{ background: "#3d3229" }}
+              style={{ background: "#2d232e" }}
             >
               Continue to Tax
             </a>
@@ -81,7 +81,7 @@ function QBOConnectedInner() {
 
 export default function QBOConnectedPage() {
   return (
-    <Suspense fallback={<div className="flex h-screen items-center justify-center" style={{ background: "#f5ebe0" }}><p className="text-sm" style={{ color: "#8a7e74" }}>Connecting…</p></div>}>
+    <Suspense fallback={<div className="flex h-screen items-center justify-center" style={{ background: "#f1f0ea" }}><p className="text-sm" style={{ color: "#78737a" }}>Connecting…</p></div>}>
       <QBOConnectedInner />
     </Suspense>
   );

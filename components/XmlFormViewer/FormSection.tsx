@@ -17,19 +17,19 @@ export default function FormSection({ section, fields, values, onFieldChange, ed
   return (
     <div className="mb-2">
       {/* Section header */}
-      <div className="flex items-center gap-3 px-4 py-2 bg-[#f0ece8] border-y border-[#d6ccc2]">
+      <div className="flex items-center gap-3 px-4 py-2 bg-[#e8e7e1] border-y border-[#e0ddcf]">
         {section.sideLabel && (
           <div className="w-6 shrink-0">
-            <span className="text-[8px] font-bold uppercase tracking-wider text-[#8a7e74] writing-vertical-rl" style={{ writingMode: "vertical-rl", transform: "rotate(180deg)" }}>
+            <span className="text-[8px] font-bold uppercase tracking-wider text-[#78737a] writing-vertical-rl" style={{ writingMode: "vertical-rl", transform: "rotate(180deg)" }}>
               {section.sideLabel}
             </span>
           </div>
         )}
-        <span className="text-xs font-bold uppercase tracking-wider text-[#5a4a3f]">{section.title}</span>
+        <span className="text-xs font-bold uppercase tracking-wider text-[#474448]">{section.title}</span>
       </div>
 
       {/* Fields */}
-      <div className="divide-y divide-[#f0ece8]">
+      <div className="divide-y divide-[#e8e7e1]">
         {fields.map((def) => (
           <FormField
             key={def.fieldId}

@@ -1,4 +1,4 @@
-export type MappingMethod = "deterministic" | "heuristic" | "manual";
+export type MappingMethod = "deterministic" | "keyword" | "heuristic" | "manual";
 
 export interface TaxCodeMapping {
   mapping_id: string;

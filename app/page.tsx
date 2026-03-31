@@ -79,7 +79,7 @@ interface Company {
   loading: boolean; // true while pipeline + PDF fill is running
 }
 
-// ── Form definitions (unchanged) ─────────────────────────────────────────────
+// ── Form definitions ─────────────────────────────────────────────────────────
 
 const FORMS_BY_ENTITY: Record<EntityType, IRSForm[]> = {
   c_corp: [

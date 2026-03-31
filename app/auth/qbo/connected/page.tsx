@@ -12,6 +12,7 @@ function QBOConnectedInner() {
     const entityId = params.get("entityId");
     const companyName = params.get("companyName") ?? "";
     const ein = params.get("ein") ?? "";
+    const entityType = params.get("entityType") ?? "";
     const error = params.get("error");
 
     // Notify parent window — use "*" because the popup may land on a
@@ -21,7 +22,7 @@ function QBOConnectedInner() {
       window.opener.postMessage(
         error
           ? { type: "QBO_AUTH_ERROR", error }
-          : { type: "QBO_AUTH_SUCCESS", entityId, companyName, ein },
+          : { type: "QBO_AUTH_SUCCESS", entityId, companyName, ein, entityType },
         "*"
       );
     }

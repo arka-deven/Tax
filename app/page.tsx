@@ -182,6 +182,8 @@ export default function Home() {
   const [choosingTypeFor, setChoosingTypeFor] = useState<string | null>(null);
   /** Pending entity type — set when user picks type but EIN is missing, needs input first */
   const [pendingType, setPendingType] = useState<{ companyId: string; type: EntityType } | null>(null);
+  /** Auto-fill queued from OAuth/status — fires after companies state settles */
+  const [pendingAutoFill, setPendingAutoFill] = useState<{ companyId: string; type: EntityType } | null>(null);
   const [einInput, setEinInput] = useState("");
 
   const active = companies.find((c) => c.id === activeId) ?? null;
@@ -204,13 +206,21 @@ export default function Home() {
         const res = await fetch("/api/auth/qbo/status?entityId=entity_1");
         const json = await res.json();
         if (json.connected) {
+          const qboType = json.entityType as EntityType | "" | undefined;
+          const detectedType = qboType && ENTITY_OPTIONS.some((o: { value: string }) => o.value === qboType) ? qboType as EntityType : null;
           const co: Company = {
             id: "entity_1", name: json.companyName || "Company", ein: json.ein || "",
-            entityType: null, result: null, filledPdfs: {}, fieldOverrides: {}, loading: false,
+            entityType: detectedType, result: null, filledPdfs: {}, fieldOverrides: {}, loading: false,
           };
           setCompanies([co]);
           setActiveId("entity_1");
-          setChoosingTypeFor("entity_1"); // prompt for type
+          if (detectedType && co.ein) {
+            setPendingAutoFill({ companyId: "entity_1", type: detectedType });
+          } else if (detectedType) {
+            setPendingType({ companyId: "entity_1", type: detectedType });
+          } else {
+            setChoosingTypeFor("entity_1");
+          }
         }
       } catch { /* not connected */ }
     }
@@ -227,17 +237,27 @@ export default function Home() {
       if (!ok) return;
       if (event.data?.type === "QBO_AUTH_SUCCESS") {
         const eid = event.data.entityId ?? `entity_${Date.now()}`;
+        const qboType = event.data.entityType as EntityType | "" | undefined;
+        const detectedType = qboType && ENTITY_OPTIONS.some((o) => o.value === qboType) ? qboType as EntityType : null;
         const co: Company = {
           id: eid, name: event.data.companyName || "Company", ein: event.data.ein || "",
-          entityType: null, result: null, filledPdfs: {}, fieldOverrides: {}, loading: false,
+          entityType: detectedType, result: null, filledPdfs: {}, fieldOverrides: {}, loading: false,
         };
         setCompanies((prev) => {
-          // Replace if same id, otherwise append
           const exists = prev.find((c) => c.id === eid);
           return exists ? prev.map((c) => (c.id === eid ? co : c)) : [...prev, co];
         });
         setActiveId(eid);
-        setChoosingTypeFor(eid);
+        if (detectedType && co.ein) {
+          // Entity type detected from QBO — skip manual selection, run pipeline directly
+          setPendingAutoFill({ companyId: eid, type: detectedType });
+        } else if (detectedType) {
+          // Have type but missing EIN — ask for details
+          setPendingType({ companyId: eid, type: detectedType });
+        } else {
+          // QBO didn't provide TaxForm — fall back to manual selection
+          setChoosingTypeFor(eid);
+        }
       }
     }
     window.addEventListener("message", handleMessage);
@@ -317,6 +337,16 @@ export default function Home() {
     updateCompany(companyId, { result: pipelineResult, filledPdfs: newPdfs, loading: false });
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [companies, taxYear]);
+
+  // ── Auto-fill after QBO entity type detection (runs once companies state is settled) ──
+
+  useEffect(() => {
+    if (!pendingAutoFill) return;
+    const co = companies.find((c) => c.id === pendingAutoFill.companyId);
+    if (!co) return; // companies not settled yet — will re-run when they do
+    setPendingAutoFill(null);
+    autoFillCompany(pendingAutoFill.companyId, pendingAutoFill.type);
+  }, [pendingAutoFill, companies, autoFillCompany]);
 
   // ── Re-generate a single form (after manual edits) ────────────────────────
 

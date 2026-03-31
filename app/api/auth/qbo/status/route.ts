@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { tokenStore, realmStore } from "@/lib/token-store";
 import { getClientForEntity } from "@/lib/qbo-client";
+import { mapTaxForm } from "@/lib/qbo-entity-type";
 
 export async function GET(request: NextRequest) {
   const entityId = request.nextUrl.searchParams.get("entityId");
@@ -14,10 +15,11 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ entityId, connected: false, realmId: null });
   }
 
-  // Token exists on disk — report connected.
-  // Try to fetch company info, but don't fail the connection check if QBO is unreachable.
+  // Token exists — report connected.
+  // Try to fetch company info (incl. TaxForm for entity type), but don't fail the connection check if QBO is unreachable.
   let companyName = "";
   let ein = "";
+  let entityType = "";
   try {
     const client = await getClientForEntity(entityId);
     const base =
@@ -28,10 +30,11 @@ export async function GET(request: NextRequest) {
     const url = `${base}/v3/company/${realmId}/companyinfo/${realmId}?minorversion=65`;
     const response = await client.makeApiCall({ url, method: "GET" });
     const body = (typeof response.getJson === "function" ? response.getJson() : response.json) as {
-      CompanyInfo?: { CompanyName?: string; LegalName?: string; FederalEin?: string };
+      CompanyInfo?: { CompanyName?: string; LegalName?: string; FederalEin?: string; TaxForm?: string };
     };
     companyName = body.CompanyInfo?.LegalName ?? body.CompanyInfo?.CompanyName ?? "";
     ein = body.CompanyInfo?.FederalEin ?? "";
+    entityType = mapTaxForm(body.CompanyInfo?.TaxForm);
   } catch (err) {
     // Check if this is a hard auth failure (refresh token expired) vs transient error
     const msg = err instanceof Error ? err.message : "";
@@ -43,5 +46,5 @@ export async function GET(request: NextRequest) {
     console.warn("[status] QBO API call failed but token exists, reporting connected:", msg);
   }
 
-  return NextResponse.json({ entityId, connected: true, realmId, companyName, ein });
+  return NextResponse.json({ entityId, connected: true, realmId, companyName, ein, entityType });
 }

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { makeOAuthClient } from "@/lib/qbo-client";
 import { tokenStore, realmStore } from "@/lib/token-store";
+import { mapTaxForm } from "@/lib/qbo-entity-type";
 
 export async function GET(request: NextRequest) {
   const { searchParams } = request.nextUrl;
@@ -21,9 +22,10 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(new URL("/auth/qbo/connected?error=oauth_failed", request.url));
   }
 
-  // Fetch company name from QBO CompanyInfo
+  // Fetch company info from QBO — including TaxForm for entity type detection
   let companyName = "";
   let ein = "";
+  let entityType = "";
   if (realmId) {
     try {
       const base =
@@ -33,9 +35,12 @@ export async function GET(request: NextRequest) {
 
       const url = `${base}/v3/company/${realmId}/companyinfo/${realmId}?minorversion=65`;
       const response = await client.makeApiCall({ url, method: "GET" });
-      const body = (typeof response.getJson === "function" ? response.getJson() : response.json) as { CompanyInfo?: { CompanyName?: string; LegalName?: string; FederalEin?: string } };
+      const body = (typeof response.getJson === "function" ? response.getJson() : response.json) as {
+        CompanyInfo?: { CompanyName?: string; LegalName?: string; FederalEin?: string; TaxForm?: string };
+      };
       companyName = body.CompanyInfo?.LegalName ?? body.CompanyInfo?.CompanyName ?? "";
       ein = body.CompanyInfo?.FederalEin ?? "";
+      entityType = mapTaxForm(body.CompanyInfo?.TaxForm);
     } catch {
       // non-fatal — company name stays empty
     }
@@ -44,6 +49,7 @@ export async function GET(request: NextRequest) {
   const params = new URLSearchParams({ entityId });
   if (companyName) params.set("companyName", companyName);
   if (ein) params.set("ein", ein);
+  if (entityType) params.set("entityType", entityType);
 
   return NextResponse.redirect(
     new URL(`/auth/qbo/connected?${params.toString()}`, request.url),

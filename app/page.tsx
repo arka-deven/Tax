@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import {
   FileText, RefreshCw, XCircle, AlertTriangle, Info, CheckCircle2,
-  ChevronRight, Plug, LogOut, Play, Building2, Plus, Send,
+  ChevronRight, ChevronDown, Plug, LogOut, Play, Building2, Plus, Send,
   Zap, BookOpen, Shield, ArrowRight,
 } from "lucide-react";
 import { BlurFade } from "@/components/magicui/blur-fade";
@@ -127,23 +127,27 @@ const FORMS_BY_ENTITY: Record<EntityType, IRSForm[]> = {
     { form: "8990",    title: "Business Interest Expense Limitation",         category: "attachment",   status: "conditional", due: "with 1065",            description: "§163(j) interest deduction limitation." },
   ],
   llc_single: [
-    { form: "Sch C",   title: "Profit or Loss from Business",                 category: "primary",      status: "required",    due: "Apr 15 (ext. Oct 15)", description: "Disregarded entity — income/loss on owner's 1040." },
+    { form: "1040",    title: "U.S. Individual Income Tax Return",             category: "primary",      status: "required",    due: "Apr 15 (ext. Oct 15)", description: "Owner's personal return — Sch C and all business schedules attach here." },
+    { form: "Sch C",   title: "Profit or Loss from Business",                 category: "schedule",     status: "required",    due: "with 1040",            description: "Disregarded entity — income/loss reported on owner's 1040." },
     { form: "Sch SE",  title: "Self-Employment Tax",                          category: "schedule",     status: "required",    due: "with 1040",            description: "Required when net SE income ≥ $400." },
+    { form: "Sch 1",   title: "Additional Income and Adjustments",            category: "schedule",     status: "required",    due: "with 1040",            description: "Sch C net profit flows to Line 3; SE deduction to Line 15." },
+    { form: "Sch D",   title: "Capital Gains and Losses",                     category: "schedule",     status: "conditional", due: "with 1040",            description: "Net capital gain/loss from sales of capital assets." },
     { form: "8995",    title: "Qualified Business Income (QBI) Deduction",    category: "attachment",   status: "conditional", due: "with 1040",            description: "20% §199A deduction." },
     { form: "4562",    title: "Depreciation and Amortization",                category: "attachment",   status: "conditional", due: "with 1040",            description: "§179 and MACRS." },
     { form: "4797",    title: "Sales of Business Property",                   category: "attachment",   status: "conditional", due: "with 1040",            description: "Gain/loss on disposal." },
     { form: "8829",    title: "Expenses for Business Use of Your Home",       category: "attachment",   status: "conditional", due: "with 1040",            description: "Home office deduction." },
-    { form: "Sch D",   title: "Capital Gains and Losses",                     category: "attachment",   status: "conditional", due: "with 1040",            description: "Net capital gain/loss." },
     { form: "1125-A",  title: "Cost of Goods Sold",                           category: "attachment",   status: "conditional", due: "with 1040",            description: "When inventory / COGS is part of Sch C." },
   ],
   sole_prop: [
-    { form: "Sch C",   title: "Profit or Loss from Business",                 category: "primary",      status: "required",    due: "Apr 15 (ext. Oct 15)", description: "Sole proprietor income and deductions." },
+    { form: "1040",    title: "U.S. Individual Income Tax Return",             category: "primary",      status: "required",    due: "Apr 15 (ext. Oct 15)", description: "Owner's personal return — Sch C and all business schedules attach here." },
+    { form: "Sch C",   title: "Profit or Loss from Business",                 category: "schedule",     status: "required",    due: "with 1040",            description: "Sole proprietor income and deductions." },
     { form: "Sch SE",  title: "Self-Employment Tax",                          category: "schedule",     status: "required",    due: "with 1040",            description: "15.3% SE tax on net earnings ≥ $400." },
+    { form: "Sch 1",   title: "Additional Income and Adjustments",            category: "schedule",     status: "required",    due: "with 1040",            description: "Sch C net profit flows to Line 3; SE deduction to Line 15." },
+    { form: "Sch D",   title: "Capital Gains and Losses",                     category: "schedule",     status: "conditional", due: "with 1040",            description: "Net capital gain/loss from sales of capital assets." },
     { form: "8995",    title: "Qualified Business Income (QBI) Deduction",    category: "attachment",   status: "conditional", due: "with 1040",            description: "20% §199A deduction." },
     { form: "4562",    title: "Depreciation and Amortization",                category: "attachment",   status: "conditional", due: "with 1040",            description: "§179 and MACRS." },
     { form: "4797",    title: "Sales of Business Property",                   category: "attachment",   status: "conditional", due: "with 1040",            description: "Gain/loss on disposal." },
     { form: "8829",    title: "Expenses for Business Use of Your Home",       category: "attachment",   status: "conditional", due: "with 1040",            description: "Home office deduction." },
-    { form: "Sch D",   title: "Capital Gains and Losses",                     category: "attachment",   status: "conditional", due: "with 1040",            description: "Net capital gain/loss." },
   ],
   nonprofit: [
     { form: "990",     title: "Return of Organization Exempt from Income Tax", category: "primary",     status: "conditional", due: "May 15 (ext. Nov 15)", description: "Required when gross receipts ≥ $200K or assets ≥ $500K." },
@@ -160,8 +164,8 @@ const ENTITY_OPTIONS: { value: EntityType; label: string; sub: string }[] = [
   { value: "c_corp",          label: "C-Corporation",       sub: "Form 1120" },
   { value: "s_corp",          label: "S-Corporation",       sub: "Form 1120-S" },
   { value: "llc_partnership", label: "LLC (Multi-Member)",  sub: "Form 1065" },
-  { value: "llc_single",      label: "LLC (Single-Member)", sub: "Schedule C" },
-  { value: "sole_prop",       label: "Sole Proprietor",     sub: "Schedule C" },
+  { value: "llc_single",      label: "LLC (Single-Member)", sub: "Form 1040 + Sch C" },
+  { value: "sole_prop",       label: "Sole Proprietor",     sub: "Form 1040 + Sch C" },
   { value: "nonprofit",       label: "Nonprofit 501(c)(3)", sub: "Form 990" },
 ];
 
@@ -178,6 +182,7 @@ export default function Home() {
   const [taxYear, setTaxYear] = useState(2025);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [expandedForms, setExpandedForms] = useState<Set<string>>(new Set());
+  const [diagOpen, setDiagOpen] = useState(false);
   /** Which company is currently selecting entity type (inline in sidebar) */
   const [choosingTypeFor, setChoosingTypeFor] = useState<string | null>(null);
   /** Pending entity type — set when user picks type but EIN is missing, needs input first */
@@ -794,7 +799,7 @@ export default function Home() {
             {active?.result && blocking.length === 0 && (
               <button onClick={async () => {
                 if (!active?.result?.facts || !active.entityType) return;
-                const primaryForm = active.entityType === "c_corp" ? "1120" : active.entityType === "s_corp" ? "1120-S" : active.entityType === "llc_partnership" ? "1065" : active.entityType === "nonprofit" ? "990" : "Sch C";
+                const primaryForm = active.entityType === "c_corp" ? "1120" : active.entityType === "s_corp" ? "1120-S" : active.entityType === "llc_partnership" ? "1065" : active.entityType === "nonprofit" ? "990" : "1040";
                 try {
                   const res = await fetch(`/api/efile/${active.id}`, {
                     method: "POST", headers: { "Content-Type": "application/json" },
@@ -830,32 +835,48 @@ export default function Home() {
           ) : (
             <div className="space-y-6">
 
-              {/* ── Diagnostics Card ─────────────────────────────────── */}
-              {active.result && (blocking.length > 0 || warnings.length > 0) && (
+              {/* ── Diagnostics Drawer ────────────────────────────────── */}
+              {active.result && active.result.diagnostics.length > 0 && (
                 <div className="bg-(--bone) rounded-2xl shadow-sm overflow-hidden">
-                  <div className={`flex items-center gap-3 px-5 py-3 ${
-                    blocking.length > 0 ? "bg-red-50 text-red-700" : "bg-amber-50 text-amber-700"
-                  }`}>
-                    {blocking.length > 0 ? <XCircle size={16} /> : <AlertTriangle size={16} />}
-                    <span className="text-sm font-semibold">
-                      {blocking.length > 0 ? `${blocking.length} blocking issue${blocking.length > 1 ? "s" : ""}` : `${warnings.length} warning${warnings.length > 1 ? "s" : ""} to review`}
+                  <button onClick={() => setDiagOpen(!diagOpen)}
+                    className={`w-full flex items-center gap-3 px-5 py-3 transition-colors ${
+                      blocking.length > 0 ? "bg-red-50 text-red-700 hover:bg-red-100/60"
+                      : warnings.length > 0 ? "bg-amber-50 text-amber-700 hover:bg-amber-100/60"
+                      : "bg-(--bone) text-[#534b52] hover:bg-(--parchment)"
+                    }`}>
+                    {blocking.length > 0 ? <XCircle size={16} />
+                      : warnings.length > 0 ? <AlertTriangle size={16} />
+                      : <Info size={16} />}
+                    <span className="text-sm font-semibold flex-1 text-left">
+                      {blocking.length > 0
+                        ? `${blocking.length} blocking issue${blocking.length > 1 ? "s" : ""}`
+                        : warnings.length > 0
+                        ? `${warnings.length} warning${warnings.length > 1 ? "s" : ""}`
+                        : `${infos.length} info`}
                     </span>
                     {warnings.length > 0 && blocking.length > 0 && <span className="text-xs text-amber-600 bg-amber-100 px-2 py-0.5 rounded-full">{warnings.length} warnings</span>}
-                    {infos.length > 0 && <span className="text-xs text-[#78737a] bg-(--bone) px-2 py-0.5 rounded-full">{infos.length} info</span>}
-                  </div>
-                  <div className="px-5 py-3 space-y-2">
-                    {[...blocking, ...warnings].map((d, i) => (
-                      <div key={i} className="flex items-start gap-2.5 text-sm">
-                        {d.severity === "blocking_error"
-                          ? <XCircle size={14} className="text-red-400 mt-0.5 shrink-0" />
-                          : <AlertTriangle size={14} className="text-amber-400 mt-0.5 shrink-0" />}
-                        <div>
-                          <span className={`font-medium ${d.severity === "blocking_error" ? "text-red-700" : "text-amber-700"}`}>{d.title}</span>
-                          <p className="text-xs text-[#78737a] mt-0.5">{d.message}</p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+                    {infos.length > 0 && (blocking.length > 0 || warnings.length > 0) && <span className="text-xs text-[#78737a] bg-white/50 px-2 py-0.5 rounded-full">{infos.length} info</span>}
+                    <ChevronDown size={14} className={`shrink-0 transition-transform ${diagOpen ? "rotate-180" : ""}`} />
+                  </button>
+                  {diagOpen && (
+                    <div className="px-5 py-3 space-y-2 border-t border-(--bone)">
+                      {active.result.diagnostics.map((d, i) => {
+                        const isBlock = d.severity === "blocking_error";
+                        const isWarn = d.severity === "warning";
+                        return (
+                          <div key={i} className="flex items-start gap-2.5 text-sm">
+                            {isBlock ? <XCircle size={14} className="text-red-400 mt-0.5 shrink-0" />
+                              : isWarn ? <AlertTriangle size={14} className="text-amber-400 mt-0.5 shrink-0" />
+                              : <Info size={14} className="text-[#b5b2b4] mt-0.5 shrink-0" />}
+                            <div>
+                              <span className={`font-medium ${isBlock ? "text-red-700" : isWarn ? "text-amber-700" : "text-[#534b52]"}`}>{d.title}</span>
+                              <p className="text-xs text-[#78737a] mt-0.5">{d.message}</p>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
                 </div>
               )}
 
@@ -911,38 +932,6 @@ export default function Home() {
                 </div>
               ))}
 
-              {/* Diagnostics */}
-              {active.result && active.result.diagnostics.length > 0 && (
-                <BlurFade delay={0.05}>
-                  <div className="bg-(--bone) rounded-2xl shadow-sm overflow-hidden">
-                    <div className="flex items-center justify-between px-5 py-3 border-b border-(--bone)">
-                      <p className="text-xs font-semibold text-[#9a959c] uppercase tracking-wider">All Diagnostics</p>
-                      <div className="flex items-center gap-2 text-xs">
-                        {blocking.length > 0 && <span className="text-red-500 bg-red-50 px-2 py-0.5 rounded-full font-medium">{blocking.length} blocking</span>}
-                        {warnings.length > 0 && <span className="text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full font-medium">{warnings.length} warnings</span>}
-                        {infos.length > 0 && <span className="text-[#78737a] bg-(--bone) px-2 py-0.5 rounded-full font-medium">{infos.length} info</span>}
-                      </div>
-                    </div>
-                    <div className="divide-y divide-(--bone)">
-                      {active.result.diagnostics.map((d, i) => {
-                        const isBlock = d.severity === "blocking_error";
-                        const isWarn = d.severity === "warning";
-                        return (
-                          <div key={i} className="flex gap-3 px-5 py-3">
-                            {isBlock ? <XCircle size={16} className="text-red-400 shrink-0 mt-0.5" />
-                              : isWarn ? <AlertTriangle size={16} className="text-amber-400 shrink-0 mt-0.5" />
-                              : <Info size={16} className="text-[#b5b2b4] shrink-0 mt-0.5" />}
-                            <div className="min-w-0">
-                              <p className={`text-sm font-medium ${isBlock ? "text-red-700" : isWarn ? "text-amber-700" : "text-[#534b52]"}`}>{d.title}</p>
-                              <p className="text-xs text-[#9a959c] mt-0.5">{d.message}</p>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                </BlurFade>
-              )}
             </div>
           )}
         </main>
